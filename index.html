@@ -311,7 +311,7 @@ body:not(.showhelp) .note.hint{display:none!important}.panel:has(.hintp){display
 <input type="file" id="restoreFile" accept=".json" style="display:none" onchange="if(this.files[0])restoreBackup(this.files[0]);this.value=''">
 <input type="file" id="fsPick" style="display:none" onchange="fsOpenFile(this.files[0]);this.value=''">
 
-<script>window.__FORMTRACK_PWA=true; window.__FORMTRACK_VER="2026.11.04-2048"; window.__FORMTRACK_VERNAME="04 Nov 20:48"; window.__FT_TRIAL_FROM=1793358725887; window.__FT_OWNER_KEYS=["FTK1.Osl5ooyWCagTRuMdk06Obg==.rchABMlUZsicdxq192DnzmUcdgRXTqVE0LzUln8iqDY="]; window.__FT_ACCESS_PUB=""; window.__FT_BLOCKED=[];</script>
+<script>window.__FORMTRACK_PWA=true; window.__FORMTRACK_VER="2026.11.04-2107"; window.__FORMTRACK_VERNAME="04 Nov 21:07"; window.__FT_TRIAL_FROM=1793358725887; window.__FT_OWNER_KEYS=["FTK1.Osl5ooyWCagTRuMdk06Obg==.rchABMlUZsicdxq192DnzmUcdgRXTqVE0LzUln8iqDY="]; window.__FT_ACCESS_PUB=""; window.__FT_BLOCKED=[];</script>
 <script>
 /* FormTrack */
 const STORE_KEY = 'formtrack_data_v2';
@@ -3834,7 +3834,7 @@ const b64u=u=>b64(u).replace(/\+/g,'-').replace(/\//g,'_').replace(/=+$/,''), un
 const isOwnerDev=()=>{ const r=TR.get(); return !!(r&&r.ownerKey); };
 function trialInit(){ if(!TRIAL_ON) return; let r=TR.get()||(state&&state.ftTrial)||null; const now=Date.now();
   if(!r) r={start:now,seen:now};
-  if(!r.v2){ if(!r.ownerKey){ r.start=now; delete r.expired; } r.owner=!!r.ownerKey; r.v2=1; }   /* this version: only the owner key makes an owner device */
+  if(!r.v3){ if(!r.ownerKey){ r.start=now; delete r.expired; delete r.clockBack; } r.owner=!!r.ownerKey; r.v2=1; r.v3=1; }   /* fresh 2 days for every device from this version; only the owner key makes an owner device */
   if(r.ownerKey){ r.owner=true; TR.set(r); TRIAL_END=false; return; }
   if(now<(r.seen||0)-36e5) r.clockBack=1; r.seen=Math.max(r.seen||0,now); TR.set(r);
   if(ACCESS_PUB){ TRIAL_END=true; accessCheck(); return; }          /* access links on: locked until a valid link is checked */
@@ -3871,12 +3871,16 @@ function drawTrialEnd(msg){ let d=document.getElementById('lockscr'); if(!d){ d=
     <p>${acc?'<b>This app needs an access link from the owner.</b><br>Open the link you were sent, or paste it here.':'<b>The 2-day use period on this device has ended.</b><br>Contact the owner of this app.'}</p>
     ${acc?`<input id="acode" placeholder="Paste access link or code" autocomplete="off" onkeydown="if(event.key==='Enter')accessTry()"><button class="btn p" onclick="accessTry()">Open</button>`:''}
     <div class="lk-msg">${m||''}</div>
-    <details class="lk-own"><summary>Owner</summary><input id="okey" type="password" placeholder="Owner key" autocomplete="off" onkeydown="if(event.key==='Enter')ownerKeyTry()"><button class="btn" onclick="ownerKeyTry()">Unlock as owner</button></details>
+    <details class="lk-own"><summary>Owner</summary><input id="okey" type="password" placeholder="Owner key" autocomplete="off" onkeydown="if(event.key==='Enter')ownerKeyTry()"><label style="font-size:12px;display:block;margin:4px 0"><input type="checkbox" onchange="document.getElementById('okey').type=this.checked?'text':'password'"> show key</label><button class="btn" onclick="ownerKeyTry()">Unlock as owner</button></details>
     <p class="lk-cr">© FormTrack · all rights reserved</p></div>`; }
 async function ownerKeyTry(){ const v=(document.getElementById('okey')||{}).value||''; if(!v) return; if(Date.now()<LOCK_WAIT){ drawTrialEnd(`Wait ${Math.ceil((LOCK_WAIT-Date.now())/1000)} s`); return; }
   if(await ownerKeyOk(v)){ const r=TR.get()||{start:Date.now()}; r.ownerKey=true; r.owner=true; r.v2=1; delete r.expired; delete r.clockBack; TR.set(r); TRIAL_END=false; LOCK_FAILS=0; const d=document.getElementById('lockscr'); if(d) d.remove(); document.body.classList.remove('locked'); render(); toast('Owner device – no limit'); return; }
   LOCK_FAILS++; if(LOCK_FAILS>=5) LOCK_WAIT=Date.now()+60000; drawTrialEnd('Wrong owner key'); }
 async function ownerUnlockHere(){ const i=document.getElementById('ouk'); const v=i?i.value:''; if(!v) return; if(await ownerKeyOk(v)){ const r=TR.get()||{start:Date.now()}; r.ownerKey=true; r.owner=true; r.v2=1; TR.set(r); save(); toast('This device is now an owner device – no limit'); } else toast('Wrong owner key'); }
+async function makeOwnerKey(){ const a=(document.getElementById('mk1')||{}).value||'', b=(document.getElementById('mk2')||{}).value||'', out=document.getElementById('mkout');
+  if(a.length<8){ out.textContent='At least 8 characters.'; return; } if(a!==b){ out.textContent='The two do not match.'; return; }
+  const salt=crypto.getRandomValues(new Uint8Array(16)); const code='FTK1.'+b64(salt)+'.'+(await lockHash(a,salt,150000));
+  out.innerHTML=`Send this code to Claude (it is <b>not</b> your key – the key cannot be read from it):<br><code style="user-select:all;word-break:break-all">${code}</code>`; document.getElementById('mk1').value=''; document.getElementById('mk2').value=''; }
 async function makeAccessSetup(){ const v=(document.getElementById('aks')||{}).value||'', out=document.getElementById('aksout'); if(!await ownerKeyOk(v)){ out.textContent='Wrong owner key.'; return; }
   try{ const {pub}=await signKeyFrom(v); out.innerHTML=`Send this setup code to Claude once:<br><code style="user-select:all;word-break:break-all">FTA1.${pub}</code>`; }catch(e){ out.textContent='This browser cannot make access links – update Chrome.'; } }
 async function makeAccess(){ const name=((document.getElementById('ac_n')||{}).value||'').trim().slice(0,40), days=Math.max(1,Math.min(365,Math.round(num((document.getElementById('ac_d')||{}).value)||2))), key=(document.getElementById('ac_k')||{}).value||'', out=document.getElementById('ac_out');
@@ -3890,7 +3894,8 @@ async function makeAccess(){ const name=((document.getElementById('ac_n')||{}).v
   }catch(e){ out.textContent='This browser cannot make access links – update Chrome.'; } }
 function trialPanel(){ if(!PWA||!TRIAL_ON) return ''; const own=isOwnerDev(), L=(state.meta.accessList||[]).slice().reverse();
   let h=`<p class="note">${own?'✅ This device is an <b>owner device</b> – no limit.':ACC?`This device uses the access link of <b>${esc(ACC.name)}</b> – until ${fmtD(new Date(ACC.exp).toISOString().slice(0,10))}.`:`This device: <b>${trialLeft()||'—'} left</b>. Type your owner key to make it an owner device.`}</p>`;
-  if(!own) return panel('Access',h+`<div class="frm"><label>Owner key<input id="ouk" type="password" autocomplete="off"></label></div><button class="btn" onclick="ownerUnlockHere()">Unlock this device as owner</button>`);
+  if(!own) return panel('Access',h+`<div class="frm"><label>Owner key<input id="ouk" type="password" autocomplete="off"></label></div><button class="btn" onclick="ownerUnlockHere()">Unlock this device as owner</button>
+    <details style="margin-top:10px"><summary>Forgot the owner key? Make a new one</summary><p class="note">Type a new key twice and send the code to Claude. It works after the next version.</p><div class="frm"><label>New owner key (min 8)<input id="mk1" type="password" autocomplete="new-password"></label><label>Type it again<input id="mk2" type="password" autocomplete="new-password"></label></div><button class="btn" onclick="makeOwnerKey()">Make code</button><p class="note" id="mkout"></p></details>`);
   if(!ACCESS_PUB) h+=`<p class="note"><b>Access links are not switched on yet.</b> Type your owner key and send the setup code to Claude once. Until then, other devices get 2 days.</p><div class="frm"><label>Owner key<input id="aks" type="password" autocomplete="off"></label></div><button class="btn p" onclick="makeAccessSetup()">Make setup code</button><p class="note" id="aksout"></p>`;
   else h+=`<p class="note">Give someone access: type their name and the number of days, then your owner key. Send them the link – it opens the app with their name until the last day.</p>
     <div class="frm"><label>Name<input id="ac_n" placeholder="e.g. Ravi – site engineer"></label><label>Days<input id="ac_d" type="number" inputmode="numeric" value="2"></label><label>Owner key<input id="ac_k" type="password" autocomplete="off"></label></div><button class="btn p" onclick="makeAccess()">Make access link</button><p class="note" id="ac_out"></p>`;
