@@ -311,7 +311,7 @@ body:not(.showhelp) .note.hint{display:none!important}.panel:has(.hintp){display
 <input type="file" id="restoreFile" accept=".json" style="display:none" onchange="if(this.files[0])restoreBackup(this.files[0]);this.value=''">
 <input type="file" id="fsPick" style="display:none" onchange="fsOpenFile(this.files[0]);this.value=''">
 
-<script>window.__FORMTRACK_PWA=true; window.__FORMTRACK_VER="2026.11.04-2107"; window.__FORMTRACK_VERNAME="04 Nov 21:07"; window.__FT_TRIAL_FROM=1793358725887; window.__FT_OWNER_KEYS=["FTK1.Osl5ooyWCagTRuMdk06Obg==.rchABMlUZsicdxq192DnzmUcdgRXTqVE0LzUln8iqDY="]; window.__FT_ACCESS_PUB=""; window.__FT_BLOCKED=[];</script>
+<script>window.__FORMTRACK_PWA=true; window.__FORMTRACK_VER="2026.11.04-2153"; window.__FORMTRACK_VERNAME="04 Nov 21:53"; window.__FT_TRIAL_FROM=1793358725887; window.__FT_OWNER_KEYS=["FTK1.Osl5ooyWCagTRuMdk06Obg==.rchABMlUZsicdxq192DnzmUcdgRXTqVE0LzUln8iqDY="]; window.__FT_ACCESS_PUB=""; window.__FT_BLOCKED=[];</script>
 <script>
 /* FormTrack */
 const STORE_KEY = 'formtrack_data_v2';
@@ -3841,7 +3841,7 @@ function trialInit(){ if(!TRIAL_ON) return; let r=TR.get()||(state&&state.ftTria
   if(r.clockBack||now-r.start>TRIAL_MS) r.expired=1; TR.set(r); TRIAL_END=!!r.expired; }
 function trialOwnerIdb(p){ if(!TRIAL_ON||!p||!p.ftTrial) return; const t=p.ftTrial, r=TR.get()||{}; if(isOwnerDev()) return;
   if(t.ownerKey){ r.ownerKey=true; r.owner=true; r.v2=1; TR.set(r); TRIAL_END=false; render(); return; }
-  if(t.start&&t.start<r.start){ r.start=t.start; TR.set(r); } if(!ACCESS_PUB&&Date.now()-r.start>TRIAL_MS&&!TRIAL_END){ r.expired=1; TR.set(r); TRIAL_END=true; render(); } }
+  if(t.v3&&r.v3&&t.start&&t.start<r.start){ r.start=t.start; TR.set(r); } if(!ACCESS_PUB&&r.v3&&Date.now()-r.start>TRIAL_MS&&!TRIAL_END){ r.expired=1; TR.set(r); TRIAL_END=true; render(); } }   /* older timers (before this version) are ignored */
 function trialLeft(){ if(!TRIAL_ON||isOwnerDev()) return ''; if(ACC) return ''; const r=TR.get(); if(!r||ACCESS_PUB) return ''; const ms=Math.max(0,r.start+TRIAL_MS-Date.now()), h=Math.floor(ms/36e5); return h>=24?`${Math.floor(h/24)} day ${h%24} h`:`${h} h ${Math.floor(ms%36e5/6e4)} min`; }
 /* ---- signed access links (Ed25519; the signing key is made from the owner key, the app only holds the public half) ---- */
 async function signKeyFrom(ownerKey){ const k=await crypto.subtle.importKey('raw',new TextEncoder().encode(ownerKey),'PBKDF2',false,['deriveBits']);
