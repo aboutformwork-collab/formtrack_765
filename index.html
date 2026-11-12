@@ -561,6 +561,9 @@ body.cows .mh .projname,body.cows .mh .prjsw,body.cows .mh .pcode,body.cows .mh 
 .coT select.coi{max-width:200px}
 body.oneprj .mh .prjsw,body.oneprj .pcard .psw{display:none!important}
 .prjnew #coNewCode{flex:0 0 140px;min-width:0}
+.rcv{display:inline-flex;gap:4px;align-items:center;flex-wrap:wrap;font-size:12.5px}
+.bsrc{display:flex}
+label.bsrc{flex-direction:column}
 </style>
 </head>
 <body>
@@ -570,7 +573,7 @@ body.oneprj .mh .prjsw,body.oneprj .pcard .psw{display:none!important}
 <input type="file" id="restoreFile" accept=".json" style="display:none" onchange="if(this.files[0])restoreBackup(this.files[0]);this.value=''">
 <input type="file" id="fsPick" style="display:none" onchange="fsOpenFile(this.files[0]);this.value=''">
 
-<script>window.__FORMTRACK_PWA=true; window.__FORMTRACK_VER="2026.11.12-2200"; window.__FORMTRACK_VERNAME="12 Nov 22:00"; window.__FT_TRIAL_FROM=1793358725887; window.__FT_OWNER_KEYS=["FTK1.KFWlfr8L9B9vCV5zDqch0g==.dbjdxh8PZxOLP1CNQ2z3RabZkTuh7AORMJY1xre+tWo=", "FTK1.Osl5ooyWCagTRuMdk06Obg==.rchABMlUZsicdxq192DnzmUcdgRXTqVE0LzUln8iqDY="]; window.__FT_ACCESS_PUB="SC1QzgBryXETIvpdPX-L1vNG0PfXbclYD1uqU4rGGy0"; window.__FT_BLOCKED=[];</script>
+<script>window.__FORMTRACK_PWA=true; window.__FORMTRACK_VER="2026.11.12-2214"; window.__FORMTRACK_VERNAME="12 Nov 22:14"; window.__FT_TRIAL_FROM=1793358725887; window.__FT_OWNER_KEYS=["FTK1.KFWlfr8L9B9vCV5zDqch0g==.dbjdxh8PZxOLP1CNQ2z3RabZkTuh7AORMJY1xre+tWo=", "FTK1.Osl5ooyWCagTRuMdk06Obg==.rchABMlUZsicdxq192DnzmUcdgRXTqVE0LzUln8iqDY="]; window.__FT_ACCESS_PUB="SC1QzgBryXETIvpdPX-L1vNG0PfXbclYD1uqU4rGGy0"; window.__FT_BLOCKED=[];</script>
 <script>
 /* FormTrack */
 const STORE_KEY = 'formtrack_data_v2';
@@ -3943,7 +3946,7 @@ function mergeFile(raw){
   if(raw&&raw.format==='formtrack'&&Array.isArray(raw.projects)){
     let a=0,u=0,rm=0; const newNames=[];
     if(raw.photos&&typeof raw.photos==='object') Object.entries(raw.photos).forEach(([id,d])=>{ if(!PH[id]&&typeof d==='string'&&d.startsWith('data:image/')) phPut(id,d); });
-    if(raw.company&&typeof raw.company==='object'){ try{ const c=CO.get(); if(num(raw.company.savedAt)>num(c.savedAt)) CO.set(raw.company,true); }catch(e){} }
+    if(raw.company&&typeof raw.company==='object'){ try{ CO.set(coMerge(CO.get(),coNorm(raw.company)),true); }catch(e){} }
     raw.projects.forEach(P=>{ if(!P||!P.id||!P.state) return; const r=mergeInto(P.id,P.state,P); a+=r.added; u+=r.updated; rm+=r.removed; if(r.isNew) newNames.push(P.name||'project'); });
     prjSync(); clearCaches();
     const txt=(a||u||rm||newNames.length)? `Merged from file: ${a} new, ${u} updated${rm?`, ${rm} removed`:''}${newNames.length?` · new project${newNames.length>1?'s':''}: ${newNames.join(', ')}`:''}. Your own entries were kept.` : 'Already up to date – nothing new in the file.';
@@ -4083,7 +4086,7 @@ const lockOn=()=>!!LK.get();
 function lockNow(){ if(!lockOn()) return; LOCKED=true; document.body.classList.add('locked'); closeAsk&&closeAsk(); drawLock(); }
 function drawLock(msg){ let d=document.getElementById('lockscr'); if(!d){ d=document.createElement('div'); d.id='lockscr'; document.body.appendChild(d); }
   const L=LK.get()||{}, pin=L.kind==='pin';
-  d.innerHTML=`<div class="lk-box"><div class="lk-logo">F</div><h2>FormTrack</h2><p>${esc(state&&state.meta?state.meta.project:'')}${state&&state.meta&&state.meta.projectCode?' · '+esc(state.meta.projectCode):''}</p>
+  d.innerHTML=`<div class="lk-box"><div class="lk-logo">F</div><h2>FormTrack</h2><p></p>
     <input id="lkpw" type="password" ${pin?'inputmode="numeric" pattern="[0-9]*"':''} placeholder="${pin?'Enter PIN':'Enter password'}" autocomplete="current-password" onkeydown="if(event.key==='Enter')lockTry()">
     <button class="btn p" onclick="lockTry()">Unlock</button><div class="lk-msg">${msg||''}</div>
     <button class="lk-forgot" onclick="lockForgot()">Forgot ${pin?'PIN':'password'}?</button></div>`;
@@ -4870,10 +4873,10 @@ const coAllowed=()=>{ try{ return !TRIAL_ON||isOwnerDev(); }catch(e){ return fal
 const wsGet=()=>{ try{ return localStorage.getItem('ft_ws')==='company'&&coAllowed()?'company':'site'; }catch(e){ return 'site'; } };
 function setNav(){ const L=wsGet()==='company'?NAV_CO:NAV_SITE; NAV.length=0; L.forEach(x=>NAV.push(x)); document.body.classList.toggle('cows',wsGet()==='company'); }
 function wsSet(w){ try{ localStorage.setItem('ft_ws',w); }catch(e){} state.route=w==='company'?'portfolio':'dashboard'; persist(); render(); document.getElementById('main').scrollTop=0; }
-{ const _r=render; render=function(){ setNav(); return _r(); }; }
+{ const _r=render; render=function(){ setNav(); if(state&&!NAV.some(g=>g.items.some(([k])=>k===state.route))) state.route=NAV[0].items[0][0]; return _r(); }; }
 { const _s=sideHTML; sideHTML=function(){ let h=_s(); if(!coAllowed()) return h; const w=wsGet(), C=CO.get();
   const sw=`<div class="wsw" role="tablist"><button class="${w==='site'?'on':''}" onclick="wsSet('site')">Site</button><button class="${w==='company'?'on':''}" onclick="wsSet('company')">Company</button></div>`;
-  if(w==='company') h=h.replace(/<button class="pcard"[\s\S]*?<\/button>/,`<div class="pcard cocard"><span class="cic" aria-hidden="true">▦</span><span class="pt"><b>${esc(C.name||state.meta.company||'Company')}</b><em>${PRJ.list.length} site${PRJ.list.length===1?'':'s'}${C.stores.length?' · '+C.stores.length+' store'+(C.stores.length===1?'':'s'):''}</em></span></div>`);
+  if(w==='company') h=h.replace(/<button class="pcard"[\s\S]*?<\/button>/,`<div class="pcard cocard"><span class="cic" aria-hidden="true">▦</span><span class="pt"><b>${esc(C.name||state.meta.company||'Company')}</b><em>${PRJ.list.length} site${PRJ.list.length===1?'':'s'}${C.stores.filter(x=>!x.del).length?' · '+C.stores.filter(x=>!x.del).length+' store'+(C.stores.filter(x=>!x.del).length===1?'':'s'):''}</em></span></div>`);
   return h.replace('<nav class="navw">',sw+'<nav class="navw">'); }; }
 
 /* ---------- company data ---------- */
@@ -4881,9 +4884,9 @@ const CO_KEY=STORE_KEY+'__company';
 const MAT_DEF=[['Aluminium formwork','sqm',80,'SLM',15],['Steel / wall formwork','sqm',150,'SLM',15],['Table & slab forms','sqm',120,'SLM',15],['Plastic formwork','sqm',50,'SLM',20],['Plywood & timber','sheet',8,'SLM',100],['Shoring & props','nos',200,'SLM',20],['Cuplock & scaffolding','nos',250,'SLM',20],['ISMC / H-beam','rmt',150,'WDV',15],['SQ tube / MS pipe','rmt',120,'WDV',20],['Column forms','set',60,'SLM',20],['Climbing forms','set',100,'SLM',15],['Accessories','nos',40,'SLM',33.3]];
 function coNorm(c){ c=c&&typeof c==='object'?c:{}; c.name=c.name||''; c.sites=c.sites&&typeof c.sites==='object'?c.sites:{}; c.stores=Array.isArray(c.stores)?c.stores:[]; c.users=Array.isArray(c.users)?c.users:[]; c.hist=Array.isArray(c.hist)?c.hist:[];
   if(!Array.isArray(c.types)||!c.types.length) c.types=MAT_DEF.map((m,i)=>({id:'mt'+i,name:m[0],unit:m[1],life:m[2],dep:m[3],rate:m[4],residual:5,kg:0,move:'Yes',active:true}));
-  c.items=Array.isArray(c.items)?c.items:[]; return c; }
+  c.items=Array.isArray(c.items)?c.items:[]; ['batches','moves','reqs'].forEach(k=>{ if(!Array.isArray(c[k])) c[k]=[]; }); c.goLive=c.goLive||''; return c; }
 const CO={ get(){ try{ const c=JSON.parse(localStorage.getItem(CO_KEY)||'null'); if(c) return coNorm(c); }catch(e){} return coNorm({}); },
-  set(c,keepTime){ if(!keepTime) c.savedAt=Date.now(); try{ localStorage.setItem(CO_KEY,JSON.stringify(c)); }catch(e){} } };
+  set(c,keepTime){ if(!keepTime){ c.savedAt=Date.now(); coStamp(c); } try{ localStorage.setItem(CO_KEY,JSON.stringify(c)); }catch(e){} } };
 function coSave(c){ CO.set(c); try{ persist(); }catch(e){} render(); }
 function coHist(c,what,from,to){ c.hist.unshift({t:new Date().toISOString().slice(0,16).replace('T',' '),who:state.meta.user||'',what,from:String(from??''),to:String(to??'')}); c.hist=c.hist.slice(0,300); }
 const matOpts=()=>{ const n=CO.get().types.filter(t=>t.active!==false).map(t=>t.name); (state.matProfit||[]).forEach(r=>{ if(r.material&&!n.includes(r.material)) n.push(r.material); }); return n; };
@@ -4904,23 +4907,23 @@ function coCompanyName(v){ v=String(v||'').trim(); const c=CO.get(); coHist(c,'C
   coAll().forEach(({p,st})=>{ if(st.meta.projectCode) return; if(p.id===PRJ.cur){ state.meta.company=v; touchMeta('company'); } else { withState(st,()=>{ state.meta.company=v; touchMeta('company'); }); st.savedAt=nowMs(); stWrite(p.id,st); } p.company=v; });
   prjSave(); save(); coSave(c); }
 function coStore(i,k,v){ const c=CO.get(); if(i<0){ c.stores.push({id:'st'+Date.now(),code:'',name:'New store',start:'',status:'Active'}); } else { const r=c.stores[i]; if(!r) return; coHist(c,'Store '+k+' · '+r.name,r[k],v); r[k]=v; } coSave(c); }
-function coStoreDel(i){ const c=CO.get(); const r=c.stores[i]; if(!r) return; coHist(c,'Store removed',r.name,''); c.stores.splice(i,1); coSave(c); }
+function coStoreDel(i){ const c=CO.get(); const r=c.stores[i]; if(!r) return; coHist(c,'Store removed',r.name,''); r.del=true; coSave(c); }
 PAGES.coSites=()=>{ const C=CO.get(), A=coAll();
   let h=panel('Company',`<div class="frm"><label>Company name<input value="${esc(C.name||state.meta.company||'')}" onchange="coCompanyName(this.value)"></label></div>`);
   h+=panel('Sites',`<div class="tw"><table class="sheet coT"><thead><tr><th>Code</th><th>Site name</th><th>Start date</th><th>End date</th><th>Status</th><th class="r">Scope done</th><th></th></tr></thead><tbody>${A.map(({p,st})=>{ const r=C.sites[p.id]||{}, lk=!!st.meta.projectCode;
     return `<tr><td>${ci(r.code,`coSiteSet('${p.id}','code',this.value.toUpperCase())`,'','style="width:110px;text-transform:uppercase"')}</td><td>${lk?`<b>${esc(st.meta.project)}</b> 🔒`:ci(st.meta.project,`coSiteName('${p.id}',this.value)`,'','style="min-width:220px"')}</td><td>${ci(r.start,`coSiteSet('${p.id}','start',this.value)`,'date')}</td><td>${ci(r.end,`coSiteSet('${p.id}','end',this.value)`,'date')}</td><td>${cs(r.status||'Active',['Active','Finishing','Closed'],`coSiteSet('${p.id}','status',this.value)`)}</td><td class="r">${(v=>v==null?'—':v+'%')(withState(st,()=>prjPct(st)))}</td><td style="white-space:nowrap">${p.id===PRJ.cur?PILL('ok','Open'):`<button class="btn sm" onclick="localStorage.setItem('ft_ws','site');switchProject('${p.id}',true)">Open</button>`} ${A.length>1?`<button class="btn sm d" onclick="removeProject('${p.id}')">Remove</button>`:''}</td></tr>`; }).join('')}</tbody></table></div><div class="prjnew" style="margin-top:10px"><input id="coNewCode" class="coi" placeholder="Code" style="width:110px;text-transform:uppercase"><input id="coNewName" class="coi" placeholder="Site name" style="min-width:240px"><button class="btn p" onclick="coAddSite()">+ Add site</button></div>`);
-  h+=panel('Stores & yards',`<div class="tw"><table class="sheet coT"><thead><tr><th>Code</th><th>Name</th><th>Since</th><th>Status</th><th></th></tr></thead><tbody>${C.stores.map((r,i)=>`<tr><td>${ci(r.code,`coStore(${i},'code',this.value.toUpperCase())`,'','style="width:110px;text-transform:uppercase"')}</td><td>${ci(r.name,`coStore(${i},'name',this.value)`,'','style="min-width:220px"')}</td><td>${ci(r.start,`coStore(${i},'start',this.value)`,'date')}</td><td>${cs(r.status||'Active',['Active','Closed'],`coStore(${i},'status',this.value)`)}</td><td><button class="btn sm d" onclick="coStoreDel(${i})">Remove</button></td></tr>`).join('')||'<tr><td colspan="5" class="muted">—</td></tr>'}</tbody></table></div><div class="acts"><button class="btn" onclick="coStore(-1)">+ Add store / yard</button></div>`);
+  h+=panel('Stores & yards',`<div class="tw"><table class="sheet coT"><thead><tr><th>Code</th><th>Name</th><th>Since</th><th>Status</th><th></th></tr></thead><tbody>${C.stores.map((r,i)=>r.del?'':`<tr><td>${ci(r.code,`coStore(${i},'code',this.value.toUpperCase())`,'','style="width:110px;text-transform:uppercase"')}</td><td>${ci(r.name,`coStore(${i},'name',this.value)`,'','style="min-width:220px"')}</td><td>${ci(r.start,`coStore(${i},'start',this.value)`,'date')}</td><td>${cs(r.status||'Active',['Active','Closed'],`coStore(${i},'status',this.value)`)}</td><td><button class="btn sm d" onclick="coStoreDel(${i})">Remove</button></td></tr>`).join('')||'<tr><td colspan="5" class="muted">—</td></tr>'}</tbody></table></div><div class="acts"><button class="btn" onclick="coStore(-1)">+ Add store / yard</button></div>`);
   if(C.hist.length) h+=panel('Change history',simpleTable([['Date'],['By'],['Change'],['From'],['To']],C.hist.slice(0,40).map(x=>`<tr><td class="calc">${esc(x.t)}</td><td class="calc">${esc(x.who)}</td><td class="calc">${esc(x.what)}</td><td class="calc">${esc(x.from)}</td><td class="calc"><b>${esc(x.to)}</b></td></tr>`)));
   return h; };
 
 /* ---------- Users & Permissions ---------- */
 const ROLES=['Formwork In-charge','Site Formwork Engineer','Head of Department','Store / Yard Keeper'];
 function coUser(i,k,v){ const c=CO.get(); if(i<0){ c.users.push({id:'u'+Date.now(),name:'',role:'Site Formwork Engineer',site:'',consLimit:25000,asset:'Needs approval',assetLimit:0,co:'None',till:'',status:'Active'}); } else { const u=c.users[i]; if(!u) return; coHist(c,'User '+(u.name||'')+' · '+k,u[k],v); u[k]=v; } coSave(c); }
-function coUserDel(i){ const c=CO.get(), u=c.users[i]; if(!u) return; coHist(c,'User removed',u.name,''); c.users.splice(i,1); coSave(c); }
-PAGES.coUsers=()=>{ const C=CO.get(), sites=['All',...PRJ.list.map(p=>(siteCode(p.id)?siteCode(p.id)+' · ':'')+p.name),...C.stores.map(s=>(s.code?s.code+' · ':'')+s.name)];
-  const act=C.users.filter(u=>u.status!=='Revoked'), exp=C.users.filter(u=>u.till&&u.till<todayStr()&&u.status!=='Revoked');
+function coUserDel(i){ const c=CO.get(), u=c.users[i]; if(!u) return; coHist(c,'User removed',u.name,''); u.del=true; coSave(c); }
+PAGES.coUsers=()=>{ const C=CO.get(), sites=['All',...PRJ.list.map(p=>(siteCode(p.id)?siteCode(p.id)+' · ':'')+p.name),...C.stores.filter(s=>!s.del).map(s=>(s.code?s.code+' · ':'')+s.name)];
+  const act=C.users.filter(u=>!u.del&&u.status!=='Revoked'), exp=C.users.filter(u=>!u.del&&u.till&&u.till<todayStr()&&u.status!=='Revoked');
   let h=`<div class="kpis">${kpi('Users',act.length)}${kpi('Site engineers',act.filter(u=>u.role==='Site Formwork Engineer').length)}${kpi('Direct asset purchase',act.filter(u=>u.asset==='Direct').length)}${kpi('Expired',exp.length,'',exp.length?'warn':'good')}</div>`;
-  h+=panel('Users & permissions',`<div class="tw"><table class="sheet coT"><thead><tr><th>Name</th><th>Role</th><th>Site</th><th class="r">Consumables auto-approve (${cur()})</th><th>Company asset purchase</th><th class="r">Direct limit / PO (${cur()})</th><th>Company section</th><th>Valid till</th><th>Status</th><th></th></tr></thead><tbody>${C.users.map((u,i)=>`<tr class="${u.status==='Revoked'?'muted-row':''}"><td>${ci(u.name,`coUser(${i},'name',this.value)`,'','style="min-width:150px"')}</td><td>${cs(u.role,ROLES,`coUser(${i},'role',this.value)`)}</td><td>${cs(u.site||'All',sites,`coUser(${i},'site',this.value)`)}</td><td>${ci(u.consLimit,`coUser(${i},'consLimit',num(this.value))`,'number','style="width:110px;text-align:right"')}</td><td>${cs(u.asset,['Needs approval','Direct'],`coUser(${i},'asset',this.value)`)}</td><td>${u.asset==='Direct'?ci(u.assetLimit,`coUser(${i},'assetLimit',num(this.value))`,'number','style="width:110px;text-align:right"'):'<span class="muted">—</span>'}</td><td>${cs(u.co||'None',['None','View','Edit'],`coUser(${i},'co',this.value)`)}</td><td>${ci(u.till,`coUser(${i},'till',this.value)`,'date')}</td><td>${u.status==='Revoked'?PILL('bd','Revoked'):u.till&&u.till<todayStr()?PILL('wn','Expired'):PILL('ok','Active')}</td><td style="white-space:nowrap">${u.status==='Revoked'?`<button class="btn sm" onclick="coUser(${i},'status','Active')">Restore</button>`:`<button class="btn sm" onclick="coUser(${i},'status','Revoked')">Revoke</button>`} <button class="btn sm d" onclick="coUserDel(${i})">✕</button></td></tr>`).join('')||'<tr><td colspan="10" class="muted">—</td></tr>'}</tbody></table></div><div class="acts"><button class="btn p" onclick="coUser(-1)">+ Add user</button></div>`);
+  h+=panel('Users & permissions',`<div class="tw"><table class="sheet coT"><thead><tr><th>Name</th><th>Role</th><th>Site</th><th class="r">Consumables auto-approve (${cur()})</th><th>Company asset purchase</th><th class="r">Direct limit / PO (${cur()})</th><th>Company section</th><th>Valid till</th><th>Status</th><th></th></tr></thead><tbody>${C.users.map((u,i)=>u.del?'':`<tr class="${u.status==='Revoked'?'muted-row':''}"><td>${ci(u.name,`coUser(${i},'name',this.value)`,'','style="min-width:150px"')}</td><td>${cs(u.role,ROLES,`coUser(${i},'role',this.value)`)}</td><td>${cs(u.site||'All',sites,`coUser(${i},'site',this.value)`)}</td><td>${ci(u.consLimit,`coUser(${i},'consLimit',num(this.value))`,'number','style="width:110px;text-align:right"')}</td><td>${cs(u.asset,['Needs approval','Direct'],`coUser(${i},'asset',this.value)`)}</td><td>${u.asset==='Direct'?ci(u.assetLimit,`coUser(${i},'assetLimit',num(this.value))`,'number','style="width:110px;text-align:right"'):'<span class="muted">—</span>'}</td><td>${cs(u.co||'None',['None','View','Edit'],`coUser(${i},'co',this.value)`)}</td><td>${ci(u.till,`coUser(${i},'till',this.value)`,'date')}</td><td>${u.status==='Revoked'?PILL('bd','Revoked'):u.till&&u.till<todayStr()?PILL('wn','Expired'):PILL('ok','Active')}</td><td style="white-space:nowrap">${u.status==='Revoked'?`<button class="btn sm" onclick="coUser(${i},'status','Active')">Restore</button>`:`<button class="btn sm" onclick="coUser(${i},'status','Revoked')">Revoke</button>`} <button class="btn sm d" onclick="coUserDel(${i})">✕</button></td></tr>`).join('')||'<tr><td colspan="10" class="muted">—</td></tr>'}</tbody></table></div><div class="acts"><button class="btn p" onclick="coUser(-1)">+ Add user</button></div>`);
   return h; };
 
 /* ---------- Material Master ---------- */
@@ -4929,7 +4932,7 @@ function coItem(i,k,v){ const c=CO.get(); if(i<0){ c.items.push({id:'mi'+Date.no
 PAGES.coMaster=()=>{ const C=CO.get(), tab=state.ui.mmTab||'types', T=C.types;
   let h=`<div class="chips">${[['types','Material types'],['items','Items']].map(([k,l])=>`<button class="btn sm ${k===tab?'p':''}" onclick="setUI('mmTab','${k}')">${l}</button>`).join('')}</div>`;
   if(tab==='types') h+=panel('Material types',`<div class="tw"><table class="sheet coT"><thead><tr><th>Material type</th><th>Unit</th><th class="r">Life (uses)</th><th>Depreciation</th><th class="r">Rate / year %</th><th class="r">Residual %</th><th>Moves between sites</th><th>Active</th></tr></thead><tbody>${T.map((t,i)=>`<tr class="${t.active===false?'muted-row':''}"><td>${ci(t.name,`coType(${i},'name',this.value)`,'','style="min-width:200px"')}</td><td>${cs(t.unit,['sqm','nos','rmt','sheet','set','kg','MT'],`coType(${i},'unit',this.value)`)}</td><td>${ci(t.life,`coType(${i},'life',num(this.value))`,'number','style="width:80px;text-align:right"')}</td><td>${cs(t.dep,['SLM','WDV'],`coType(${i},'dep',this.value)`)}</td><td>${ci(t.rate,`coType(${i},'rate',num(this.value))`,'number','style="width:80px;text-align:right"')}</td><td>${ci(t.residual,`coType(${i},'residual',num(this.value))`,'number','style="width:70px;text-align:right"')}</td><td>${cs(t.move||'Yes',['Yes','Same brand only','No'],`coType(${i},'move',this.value)`)}</td><td><input type="checkbox" ${t.active!==false?'checked':''} onchange="coType(${i},'active',this.checked)"></td></tr>`).join('')}</tbody></table></div><div class="acts"><button class="btn p" onclick="coType(-1)">+ Add material type</button></div>`);
-  else h+=panel('Items',`<div class="tw"><table class="sheet coT"><thead><tr><th>Material type</th><th>Item</th><th>Brand</th><th>Unit</th><th class="r">kg / unit</th><th class="r">Rate (${cur()})</th><th>Active</th><th></th></tr></thead><tbody>${C.items.map((t,i)=>`<tr class="${t.active===false?'muted-row':''}"><td>${cs(t.type,T.map(x=>x.name),`coItem(${i},'type',this.value)`)}</td><td>${ci(t.name,`coItem(${i},'name',this.value)`,'','style="min-width:200px"')}</td><td>${ci(t.brand,`coItem(${i},'brand',this.value)`)}</td><td>${cs(t.unit,['sqm','nos','rmt','sheet','set','kg','MT'],`coItem(${i},'unit',this.value)`)}</td><td>${ci(t.kg,`coItem(${i},'kg',num(this.value))`,'number','style="width:80px;text-align:right"')}</td><td>${ci(t.rate,`coItem(${i},'rate',num(this.value))`,'number','style="width:100px;text-align:right"')}</td><td><input type="checkbox" ${t.active!==false?'checked':''} onchange="coItem(${i},'active',this.checked)"></td><td><button class="btn sm d" onclick="(function(){const c=CO.get();c.items.splice(${i},1);coSave(c);})()">✕</button></td></tr>`).join('')||'<tr><td colspan="8" class="muted">—</td></tr>'}</tbody></table></div><div class="acts"><button class="btn p" onclick="coItem(-1)">+ Add item</button></div>`);
+  else h+=panel('Items',`<div class="tw"><table class="sheet coT"><thead><tr><th>Material type</th><th>Item</th><th>Brand</th><th>Unit</th><th class="r">kg / unit</th><th class="r">Rate (${cur()})</th><th>Active</th><th></th></tr></thead><tbody>${C.items.map((t,i)=>t.del?'':`<tr class="${t.active===false?'muted-row':''}"><td>${cs(t.type,T.map(x=>x.name),`coItem(${i},'type',this.value)`)}</td><td>${ci(t.name,`coItem(${i},'name',this.value)`,'','style="min-width:200px"')}</td><td>${ci(t.brand,`coItem(${i},'brand',this.value)`)}</td><td>${cs(t.unit,['sqm','nos','rmt','sheet','set','kg','MT'],`coItem(${i},'unit',this.value)`)}</td><td>${ci(t.kg,`coItem(${i},'kg',num(this.value))`,'number','style="width:80px;text-align:right"')}</td><td>${ci(t.rate,`coItem(${i},'rate',num(this.value))`,'number','style="width:100px;text-align:right"')}</td><td><input type="checkbox" ${t.active!==false?'checked':''} onchange="coItem(${i},'active',this.checked)"></td><td><button class="btn sm d" onclick="(function(){const c=CO.get();c.items[${i}].del=true;coSave(c);})()">✕</button></td></tr>`).join('')||'<tr><td colspan="8" class="muted">—</td></tr>'}</tbody></table></div><div class="acts"><button class="btn p" onclick="coItem(-1)">+ Add item</button></div>`);
   return h; };
 
 /* ---------- Data Integrity ---------- */
@@ -4976,6 +4979,173 @@ function coAddSite(){ const n=(document.getElementById('coNewName')||{}).value||
   const _a=addProject; addProject=function(n){ if(!coAllowed()){ toast('Sites are added in the Company section.'); return; } return _a(n); };
   const _rm=removeProject; removeProject=function(pid){ if(!coAllowed()){ toast('Sites are removed in the Company section.'); return; } return _rm(pid); }; }
 { const _r2=render; render=function(){ document.body.classList.toggle('oneprj',PRJ.list.length<2); return _r2(); }; }
+
+/* ================= STAGE 2A ================= */
+const CO_ARR=['stores','users','types','items','batches','moves','reqs'];
+const recJ=r=>{ const o={...r}; delete o._t; return JSON.stringify(o); };
+function coStamp(c){ let old={}; try{ old=JSON.parse(localStorage.getItem(CO_KEY)||'{}')||{}; }catch(e){} const now=Date.now();
+  CO_ARR.forEach(k=>{ const M=new Map((old[k]||[]).map(r=>[r.id,r])); (c[k]||[]).forEach(r=>{ if(!r.id) r.id=k+Date.now().toString(36)+Math.random().toString(36).slice(2,5); const o=M.get(r.id); if(!o||recJ(o)!==recJ(r)) r._t=now; else r._t=o._t||r._t||0; }); });
+  const os=old.sites||{}; Object.entries(c.sites||{}).forEach(([k,r])=>{ const o=os[k]; if(!o||recJ(o)!==recJ(r)) r._t=now; else r._t=o._t||0; });
+  ['name','goLive','openLock'].forEach(k=>{ if(JSON.stringify(old[k])!==JSON.stringify(c[k])) (c._ft=c._ft||{})[k]=now; }); }
+function coMerge(a,b){ const o=coNorm(JSON.parse(JSON.stringify(a)));
+  CO_ARR.forEach(k=>{ const M=new Map(o[k].map(r=>[r.id,r])); (b[k]||[]).forEach(r=>{ const x=M.get(r.id); if(!x||num(r._t)>num(x._t)) M.set(r.id,r); }); o[k]=[...M.values()]; });
+  Object.entries(b.sites||{}).forEach(([k,r])=>{ const x=o.sites[k]; if(!x||num(r._t)>num(x._t)) o.sites[k]=r; });
+  ['name','goLive','openLock'].forEach(k=>{ if(num((b._ft||{})[k])>num((o._ft||{})[k])){ o[k]=b[k]; (o._ft=o._ft||{})[k]=b._ft[k]; } });
+  const H=new Map(); [...o.hist,...(b.hist||[])].forEach(h=>H.set(h.t+'|'+h.what+'|'+h.to,h)); o.hist=[...H.values()].sort((x,y)=>y.t.localeCompare(x.t)).slice(0,300);
+  o.savedAt=Math.max(num(a.savedAt),num(b.savedAt)); return o; }
+
+/* ---------- locations, stock ---------- */
+const coLocs=c=>[...PRJ.list.map(p=>({id:p.id,name:p.name,code:(c.sites[p.id]||{}).code||'',kind:'Site'})),...c.stores.filter(s=>!s.del).map(s=>({id:s.id,name:s.name,code:s.code||'',kind:'Store'}))];
+const locNm=(c,id)=>{ const L=coLocs(c).find(x=>x.id===id); return L?(L.code?L.code+' · ':'')+L.name:(id||'—'); };
+const locSh=(c,id)=>{ const L=coLocs(c).find(x=>x.id===id); return L?(L.code||L.name):(id||'—'); };
+const ikey=(i,u)=>String(i||'').trim().toLowerCase()+'|'+String(u||'').trim().toLowerCase();
+const LIVE=c=>({b:c.batches.filter(x=>!x.del),m:c.moves.filter(x=>!x.del&&x.status!=='Cancelled'),r:c.reqs.filter(x=>!x.del)});
+function coStock(c){ const S=new Map(), g=(l,i,u)=>{ const k=l+'||'+ikey(i,u); if(!S.has(k)) S.set(k,{loc:l,item:i,unit:u,good:0,repair:0,scrap:0,tin:0,tout:0}); return S.get(k); }; const {b,m}=LIVE(c);
+  b.forEach(x=>{ const r=g(x.loc,x.item,x.unit), q=num(x.qty); if(x.cond==='Repair') r.repair+=q; else if(x.cond==='Scrap') r.scrap+=q; else r.good+=q; });
+  m.forEach(x=>{ if(x.status==='Dispatched'||x.status==='Received'){ g(x.from,x.item,x.unit).good-=num(x.qty); } if(x.status==='Dispatched'){ g(x.from,x.item,x.unit).tout+=num(x.qty); g(x.to,x.item,x.unit).tin+=num(x.qty); }
+    if(x.status==='Received'){ const r=g(x.to,x.item,x.unit); r.good+=num(x.good); r.repair+=num(x.repair); r.scrap+=num(x.scrap); } });
+  return S; }
+const stockAt=(c,loc,item,unit)=>(coStock(c).get(loc+'||'+ikey(item,unit))||{good:0,repair:0,scrap:0,tin:0,tout:0});
+/* batch quantity at a location on a date (for depreciation share) */
+function bAt(c,bt,loc,d){ let q=(bt.loc===loc&&(bt.date||'')<=d)?num(bt.qty):0; LIVE(c).m.forEach(x=>(x.parts||[]).forEach(p=>{ if(p.b!==bt.id) return; if(x.from===loc&&x.dispDate&&x.dispDate<=d) q-=num(p.q); if(x.to===loc&&x.status==='Received'&&x.recDate&&x.recDate<=d) q+=num(p.q); })); return q; }
+function fifoParts(c,loc,item,unit,qty){ const B=LIVE(c).b.filter(x=>ikey(x.item,x.unit)===ikey(item,unit)).sort((a,b)=>(a.date||'').localeCompare(b.date||'')), t=todayStr(), P=[]; let left=num(qty);
+  B.forEach(bt=>{ if(left<=1e-9) return; const av=bAt(c,bt,loc,t); if(av<=1e-9) return; const q=Math.min(av,left); P.push({b:bt.id,q}); left-=q; }); return P; }
+
+/* ---------- depreciation ---------- */
+const bType=(c,bt)=>c.types.find(t=>t.name===bt.type)||{dep:'SLM',rate:20,residual:5};
+const bCost=bt=>num(bt.value)||num(bt.qty)*num(bt.rate);
+function bBook(c,bt,d){ const t=bType(c,bt), C=bCost(bt), res=C*num(t.residual)/100, y=Math.max(0,dayDiff(bt.date||d,d)/365.25), r=num(t.rate)/100;
+  if(!bt.date||d<bt.date) return C; return Math.max(res, t.dep==='WDV'?C*Math.pow(1-r,y):C-C*r*y); }
+const mEnd=m=>{ const [y,mo]=m.split('-').map(Number); return new Date(Date.UTC(y,mo,0)).toISOString().slice(0,10); };
+const mAddC=(m,n)=>{ const [y,mo]=m.split('-').map(Number); const d=new Date(Date.UTC(y,mo-1+n,1)); return d.toISOString().slice(0,7); };
+function depCharges(c,upto){ const t=todayStr(), last=upto||t.slice(0,7), out=[]; const L=coLocs(c);
+  LIVE(c).b.forEach(bt=>{ if(!bt.date) return; for(let m=bt.date.slice(0,7);m<=last;m=mAddC(m,1)){ const st=m===bt.date.slice(0,7)?bt.date:mEnd(mAddC(m,-1)); let en=mEnd(m); if(en>t) en=t; if(en<st) continue;
+      const ch=bBook(c,bt,st)-bBook(c,bt,en); if(ch<=1e-6) continue; const days=Math.max(1,dayDiff(st,en)), acc=new Map();
+      for(let i=1;i<=days;i++){ const d=new Date(Date.parse(st+'T00:00:00Z')+i*864e5).toISOString().slice(0,10), sh=L.map(l=>[l.id,bAt(c,bt,l.id,d)]).filter(x=>x[1]>1e-9), tot=sh.reduce((a,x)=>a+x[1],0);
+        if(!tot) acc.set(bt.loc,(acc.get(bt.loc)||0)+1); else sh.forEach(([l,q])=>acc.set(l,(acc.get(l)||0)+q/tot)); }
+      acc.forEach((w,l)=>out.push({b:bt.id,m,loc:l,amt:ch*w/days})); } }); return out; }
+
+/* ---------- numbering ---------- */
+const nextNo=(arr,pre)=>{ const n=arr.filter(x=>(x.no||'').startsWith(pre)).map(x=>parseInt((x.no||'').slice(pre.length))||0); return pre+String(Math.max(0,...n)+1).padStart(3,'0'); };
+const coItemsList=c=>[...new Set([...c.items.filter(i=>!i.del&&i.active!==false).map(i=>i.name),...c.batches.filter(b=>!b.del).map(b=>b.item)].filter(Boolean))];
+const coItemUnit=(c,n)=>{ const i=c.items.find(x=>!x.del&&x.name===n); if(i) return i.unit; const b=c.batches.find(x=>!x.del&&x.item===n); return b?b.unit:'nos'; };
+const coItemType=(c,n)=>{ const i=c.items.find(x=>!x.del&&x.name===n); return i?i.type:((c.batches.find(x=>!x.del&&x.item===n)||{}).type||''); };
+const v$=id=>((document.getElementById(id)||{}).value||'').trim();
+const dl=c=>`<datalist id="coItemsDL">${coItemsList(c).map(n=>`<option value="${esc(n)}">`).join('')}</datalist>`;
+const ST_P={Planned:'na',Dispatched:'wn',Received:'ok',Cancelled:'bd',Raised:'wn',Approved:'ok',Rejected:'bd',Closed:'na'};
+
+/* ---------- requisitions ---------- */
+function reqAdd(){ const c=CO.get(), item=v$('rqItem'), qty=num(v$('rqQty')); if(!item||!qty){ toast('Type item and quantity.'); return; }
+  const code=(c.sites[PRJ.cur]||{}).code||'S';
+  c.reqs.push({id:'rq'+Date.now().toString(36),no:nextNo(c.reqs,'REQ-'+code+'-'),site:PRJ.cur,area:v$('rqArea'),item,unit:v$('rqUnit')||coItemUnit(c,item),qty,needBy:v$('rqNeed'),note:v$('rqNote'),date:todayStr(),by:state.meta.user||'',status:'Raised'});
+  coSave(c); toast('Requisition sent.'); }
+function reqDecide(id,act){ const c=CO.get(), r=c.reqs.find(x=>x.id===id); if(!r) return; const q=num(v$('ap_'+id))||num(r.qty), src=v$('src_'+id), rem=v$('rm_'+id);
+  if(act==='reject'){ r.status='Rejected'; r.remark=rem; coHist(c,'Requisition rejected · '+r.no,'',rem); coSave(c); return; }
+  r.appQty=q; r.remark=rem; r.status='Approved'; r.decided=todayStr();
+  if(src&&src!=='Rent'&&src!=='Purchase'){ if(src===r.site){ toast('Source is the same site.'); return; } const st=stockAt(c,src,r.item,r.unit); if(st.good+1e-9<q){ toast('Only '+fmtN(st.good)+' '+r.unit+' good at '+locSh(c,src)+'.'); return; }
+    const mv={id:'mv'+Date.now().toString(36),no:nextNo(c.moves,'TR-'),from:src,to:r.site,item:r.item,unit:r.unit,qty:q,status:'Planned',planDate:todayStr(),needBy:r.needBy,reqId:r.id,note:rem}; c.moves.push(mv); r.source=src; r.moveId=mv.id; }
+  else r.source=src||'Rent';
+  coHist(c,'Requisition approved · '+r.no,fmtN(r.qty),fmtN(q)+' from '+(r.moveId?locSh(c,src):r.source)); coSave(c); }
+
+/* ---------- transfers ---------- */
+function mvNew(){ const c=CO.get(), from=v$('tnFrom'), to=v$('tnTo'), item=v$('tnItem'), q=num(v$('tnQty')); if(!from||!to||from===to||!item||!q){ toast('Choose from, to, item and quantity.'); return; }
+  const unit=coItemUnit(c,item), st=stockAt(c,from,item,unit); if(st.good+1e-9<q){ toast('Only '+fmtN(st.good)+' '+unit+' good at '+locSh(c,from)+'.'); return; }
+  c.moves.push({id:'mv'+Date.now().toString(36),no:nextNo(c.moves,'TR-'),from,to,item,unit,qty:q,status:'Planned',planDate:todayStr(),note:v$('tnNote')}); coSave(c); toast('Transfer planned.'); }
+function mvDispatch(id){ const c=CO.get(), m=c.moves.find(x=>x.id===id); if(!m||m.status!=='Planned') return; const st=stockAt(c,m.from,m.item,m.unit); if(st.good+1e-9<num(m.qty)){ toast('Only '+fmtN(st.good)+' '+m.unit+' good at '+locSh(c,m.from)+'.'); return; }
+  m.parts=fifoParts(c,m.from,m.item,m.unit,m.qty); m.vehicle=v$('vh_'+id); m.dispDate=v$('dd_'+id)||todayStr(); m.dispBy=state.meta.user||''; m.status='Dispatched'; coSave(c); toast(m.no+' dispatched.'); }
+function mvReceive(id){ const c=CO.get(), m=c.moves.find(x=>x.id===id); if(!m||m.status!=='Dispatched') return; const g=num(v$('g_'+id)), r=num(v$('r_'+id)), s=num(v$('s_'+id));
+  if(Math.abs(g+r+s-num(m.qty))>1e-6){ toast('Good + repair + scrap must equal '+fmtN(m.qty)+'.'); return; }
+  Object.assign(m,{good:g,repair:r,scrap:s,recDate:v$('rd_'+id)||todayStr(),recBy:state.meta.user||'',status:'Received'}); const rq=c.reqs.find(x=>x.id===m.reqId); if(rq) rq.status='Closed'; coSave(c); toast(m.no+' received.'); }
+function mvCancel(id){ const c=CO.get(), m=c.moves.find(x=>x.id===id); if(!m||m.status!=='Planned') return; m.status='Cancelled'; coSave(c); }
+function mvRows(c,L,mode){ return L.map(m=>{ let act='';
+    if(m.status==='Planned'&&(mode==='co'||m.from===PRJ.cur)) act=`<input id="vh_${m.id}" class="coi" placeholder="Vehicle no." style="width:120px"> <input id="dd_${m.id}" class="coi" type="date" value="${todayStr()}"> <button class="btn sm p" onclick="mvDispatch('${m.id}')">Dispatch</button>${mode==='co'?` <button class="btn sm" onclick="mvCancel('${m.id}')">Cancel</button>`:''}`;
+    else if(m.status==='Dispatched'&&(mode==='co'||m.to===PRJ.cur)) act=`<span class="rcv">Good <input id="g_${m.id}" class="coi" type="number" value="${num(m.qty)}" style="width:80px"> Repair <input id="r_${m.id}" class="coi" type="number" value="0" style="width:64px"> Scrap <input id="s_${m.id}" class="coi" type="number" value="0" style="width:64px"> <input id="rd_${m.id}" class="coi" type="date" value="${todayStr()}"> <button class="btn sm p" onclick="mvReceive('${m.id}')">Receive</button></span>`;
+    else if(m.status==='Received') act=`<span class="muted">${fmtD(m.recDate)} · good ${fmtN(m.good)}${num(m.repair)?' · repair '+fmtN(m.repair):''}${num(m.scrap)?' · scrap '+fmtN(m.scrap):''}</span>`;
+    else if(m.status==='Dispatched') act=`<span class="muted">${fmtD(m.dispDate)}${m.vehicle?' · '+esc(m.vehicle):''}</span>`;
+    return `<tr><td class="calc"><b>${esc(m.no)}</b></td><td class="calc">${esc(locSh(c,m.from))} → ${esc(locSh(c,m.to))}</td><td class="calc">${esc(m.item)}</td><td class="calc r">${fmtN(m.qty)} ${esc(m.unit)}</td><td class="calc">${PILL(ST_P[m.status]||'na',m.status)}</td><td class="calc">${m.dispDate?fmtD(m.dispDate):m.planDate?fmtD(m.planDate):''}${m.vehicle?' · '+esc(m.vehicle):''}</td><td class="calc">${act}</td></tr>`; }); }
+const MV_H=[['No.'],['Route'],['Item'],['Qty',1],['Status'],['Date / vehicle'],['Action']];
+
+/* ---------- site pages ---------- */
+PAGES.siReq=()=>{ const c=CO.get(), mine=LIVE(c).r.filter(r=>r.site===PRJ.cur).sort((a,b)=>(b.date||'').localeCompare(a.date||''));
+  let h=dl(c)+panel('New material requisition',`<div class="frm"><label>Area<select id="rqArea" class="coi"><option value="">—</option>${state.areas.map(a=>`<option>${esc(a.name)}</option>`).join('')}</select></label><label>Item<input id="rqItem" list="coItemsDL" class="coi" oninput="(function(e){const u=document.getElementById('rqUnit');if(u&&!u.dataset.t)u.value=coItemUnit(CO.get(),e.value);})(this)"></label><label>Unit<input id="rqUnit" class="coi" style="width:90px" oninput="this.dataset.t=1"></label><label>Quantity<input id="rqQty" type="number" class="coi"></label><label>Needed by<input id="rqNeed" type="date" class="coi"></label><label>Note<input id="rqNote" class="coi"></label></div><div class="acts"><button class="btn p" onclick="reqAdd()">Send requisition</button></div>`);
+  h+=panel('My requisitions',simpleTable([['No.'],['Date'],['Area'],['Item'],['Asked',1],['Approved',1],['Source'],['Transfer'],['Status'],['Remark']],mine.map(r=>{ const m=c.moves.find(x=>x.id===r.moveId); return `<tr><td class="calc"><b>${esc(r.no)}</b></td><td class="calc">${fmtD(r.date)}</td><td class="calc">${esc(r.area||'')}</td><td class="calc">${esc(r.item)}</td><td class="calc r">${fmtN(r.qty)} ${esc(r.unit)}</td><td class="calc r">${r.appQty!=null?fmtN(r.appQty):'—'}</td><td class="calc">${r.source?esc(r.moveId?locSh(c,r.source):r.source):'—'}</td><td class="calc">${m?esc(m.no)+' · '+PILL(ST_P[m.status],m.status):'—'}</td><td class="calc">${PILL(ST_P[r.status]||'na',r.status)}</td><td class="calc">${esc(r.remark||'')}</td></tr>`; })));
+  return h; };
+PAGES.siTr=()=>{ const c=CO.get(), L=LIVE(c).m.filter(m=>m.from===PRJ.cur||m.to===PRJ.cur), todo=L.filter(m=>(m.from===PRJ.cur&&m.status==='Planned')||(m.to===PRJ.cur&&m.status==='Dispatched')), done=L.filter(m=>!todo.includes(m)).sort((a,b)=>(b.no||'').localeCompare(a.no||''));
+  let h=`<div class="kpis">${kpi('To send',L.filter(m=>m.from===PRJ.cur&&m.status==='Planned').length,'',L.some(m=>m.from===PRJ.cur&&m.status==='Planned')?'warn':'good')}${kpi('To receive',L.filter(m=>m.to===PRJ.cur&&m.status==='Dispatched').length,'',L.some(m=>m.to===PRJ.cur&&m.status==='Dispatched')?'warn':'good')}${kpi('Completed',L.filter(m=>m.status==='Received').length)}</div>`;
+  h+=panel('Action required',todo.length?simpleTable(MV_H,mvRows(c,todo,'site')):'<p class="note">—</p>');
+  h+=panel('Transfer history',simpleTable(MV_H,mvRows(c,done,'site')));
+  const S=[...coStock(c).values()].filter(x=>x.loc===PRJ.cur&&(x.good||x.repair||x.scrap||x.tin));
+  h+=panel('Company assets at this site',simpleTable([['Item'],['Unit'],['Good',1],['Repair',1],['Scrap',1],['Incoming',1]],S.map(x=>`<tr><td class="calc"><b>${esc(x.item)}</b></td><td class="calc">${esc(x.unit)}</td><td class="calc r">${fmtN(x.good)}</td><td class="calc r">${fmtN(x.repair)}</td><td class="calc r">${fmtN(x.scrap)}</td><td class="calc r">${x.tin?fmtN(x.tin):'—'}</td></tr>`)));
+  return h; };
+
+/* ---------- company pages ---------- */
+PAGES.coReq=()=>{ const c=CO.get(), f=state.ui.coRqF||'Raised', R=LIVE(c).r.filter(r=>f==='All'||r.status===f).sort((a,b)=>(a.needBy||'9').localeCompare(b.needBy||'9')), L=coLocs(c);
+  let h=`<div class="kpis">${kpi('Waiting for decision',LIVE(c).r.filter(r=>r.status==='Raised').length,'',LIVE(c).r.some(r=>r.status==='Raised')?'warn':'good')}${kpi('Approved',LIVE(c).r.filter(r=>r.status==='Approved').length)}${kpi('Closed',LIVE(c).r.filter(r=>r.status==='Closed').length)}</div>`;
+  h+=`<div class="chips">${['Raised','Approved','Closed','Rejected','All'].map(x=>`<button class="btn sm ${x===f?'p':''}" onclick="setUI('coRqF','${x}')">${x}</button>`).join('')}</div>`;
+  h+=panel('Material requisitions',simpleTable([['No.'],['Site · area'],['Item'],['Asked',1],['Needed by'],['Good stock available'],['Decision']],R.map(r=>{ const av=L.filter(l=>l.id!==r.site).map(l=>[l,stockAt(c,l.id,r.item,r.unit).good]).filter(x=>x[1]>1e-9);
+    const dec=r.status==='Raised'?`<input id="ap_${r.id}" class="coi" type="number" value="${num(r.qty)}" style="width:90px"> <select id="src_${r.id}" class="coi">${av.map(([l,q])=>`<option value="${l.id}">${esc(l.code||l.name)} (${fmtN(q)})</option>`).join('')}<option value="Rent">Rent</option><option value="Purchase">Purchase</option></select> <input id="rm_${r.id}" class="coi" placeholder="Remark" style="width:150px"> <button class="btn sm p" onclick="reqDecide('${r.id}','ok')">Approve</button> <button class="btn sm d" onclick="reqDecide('${r.id}','reject')">Reject</button>`
+      :`${PILL(ST_P[r.status]||'na',r.status)} ${r.appQty!=null?fmtN(r.appQty)+' '+esc(r.unit):''} ${r.source?'· '+esc(r.moveId?locSh(c,r.source):r.source):''} ${r.remark?'· '+esc(r.remark):''}`;
+    return `<tr><td class="calc"><b>${esc(r.no)}</b><br><small class="muted">${fmtD(r.date)}${r.by?' · '+esc(r.by):''}</small></td><td class="calc">${esc(locSh(c,r.site))}${r.area?' · '+esc(r.area):''}</td><td class="calc"><b>${esc(r.item)}</b>${r.note?`<br><small class="muted">${esc(r.note)}</small>`:''}</td><td class="calc r">${fmtN(r.qty)} ${esc(r.unit)}</td><td class="calc">${r.needBy?fmtD(r.needBy):'—'}</td><td class="calc">${av.map(([l,q])=>`${esc(l.code||l.name)}: <b>${fmtN(q)}</b>`).join('<br>')||'<span class="muted">none</span>'}</td><td class="calc" style="white-space:nowrap">${dec}</td></tr>`; })));
+  return h; };
+PAGES.coTr=()=>{ const c=CO.get(), L=coLocs(c), M=LIVE(c).m, f=state.ui.coTrF||'Open', S=M.filter(m=>f==='All'||(f==='Open'?m.status!=='Received':m.status===f)).sort((a,b)=>(b.no||'').localeCompare(a.no||''));
+  let h=dl(c)+`<div class="kpis">${kpi('Planned',M.filter(m=>m.status==='Planned').length)}${kpi('In transit',M.filter(m=>m.status==='Dispatched').length,'',M.some(m=>m.status==='Dispatched')?'warn':'good')}${kpi('Received',M.filter(m=>m.status==='Received').length)}</div>`;
+  h+=panel('New transfer',`<div class="frm"><label>From<select id="tnFrom" class="coi">${L.map(l=>`<option value="${l.id}">${esc(locNm(c,l.id))}</option>`).join('')}</select></label><label>To<select id="tnTo" class="coi">${L.map((l,i)=>`<option value="${l.id}" ${i===1?'selected':''}>${esc(locNm(c,l.id))}</option>`).join('')}</select></label><label>Item<input id="tnItem" list="coItemsDL" class="coi"></label><label>Quantity<input id="tnQty" type="number" class="coi"></label><label>Note<input id="tnNote" class="coi"></label></div><div class="acts"><button class="btn p" onclick="mvNew()">Plan transfer</button></div>`);
+  h+=`<div class="chips">${['Open','Planned','Dispatched','Received','All'].map(x=>`<button class="btn sm ${x===f?'p':''}" onclick="setUI('coTrF','${x}')">${x==='Dispatched'?'In transit':x}</button>`).join('')}</div>`;
+  h+=panel('Inter-site transfers',simpleTable(MV_H,mvRows(c,S,'co')));
+  return h; };
+PAGES.coLoc=()=>{ const c=CO.get(), L=coLocs(c), S=[...coStock(c).values()], items=[...new Map(S.map(x=>[ikey(x.item,x.unit),[x.item,x.unit]])).values()].sort((a,b)=>a[0].localeCompare(b[0]));
+  const bk=new Map(); const t=todayStr(); LIVE(c).b.forEach(bt=>{ const B=bBook(c,bt,t), q=num(bt.qty)||1; L.forEach(l=>{ const a=bAt(c,bt,l.id,t); if(a>1e-9) bk.set(l.id,(bk.get(l.id)||0)+B*a/q); }); });
+  const used=L.filter(l=>S.some(x=>x.loc===l.id&&(x.good||x.repair||x.scrap||x.tin))||bk.get(l.id));
+  let h=`<div class="kpis">${kpi('Locations',used.length)}${kpi('Items',items.length)}${kpi('Book value today',money([...bk.values()].reduce((a,x)=>a+x,0)))}${kpi('In transit',fmtN(S.reduce((a,x)=>a+x.tout,0)),'all units')}</div>`;
+  h+=panel('Good stock by location',simpleTable([['Item'],['Unit'],...used.map(l=>[l.code||l.name,1]),['In transit',1],['Repair',1],['Scrap',1],['Total',1]],items.map(([i,u])=>{ const g=l=>stockAt(c,l.id,i,u); const tr=S.filter(x=>ikey(x.item,x.unit)===ikey(i,u)).reduce((a,x)=>a+x.tout,0), rp=S.filter(x=>ikey(x.item,x.unit)===ikey(i,u)).reduce((a,x)=>a+x.repair,0), sc=S.filter(x=>ikey(x.item,x.unit)===ikey(i,u)).reduce((a,x)=>a+x.scrap,0), gd=used.reduce((a,l)=>a+g(l).good,0);
+    return `<tr><td class="calc"><b>${esc(i)}</b></td><td class="calc">${esc(u)}</td>${used.map(l=>`<td class="calc r">${g(l).good?fmtN(g(l).good):'—'}</td>`).join('')}<td class="calc r">${tr?fmtN(tr):'—'}</td><td class="calc r">${rp?fmtN(rp):'—'}</td><td class="calc r">${sc?fmtN(sc):'—'}</td><td class="calc r"><b>${fmtN(gd+tr+rp+sc)}</b></td></tr>`; }),
+    `<tr><td>Book value</td><td></td>${used.map(l=>`<td class="r">${money(bk.get(l.id)||0)}</td>`).join('')}<td></td><td></td><td></td><td class="r"><b>${money([...bk.values()].reduce((a,x)=>a+x,0))}</b></td></tr>`));
+  return h; };
+function bNew(src){ const c=CO.get(); if(src!=='P'&&c.openLock){ toast('Opening balances are locked.'); return; }
+  const item=v$('bnItem'), qty=num(v$('bnQty')), loc=v$('bnLoc'); if(!item||!qty||!loc){ toast('Choose location, item and quantity.'); return; }
+  const S=src==='P'?'P':v$('bnSrc'), unit=v$('bnUnit')||coItemUnit(c,item), type=v$('bnType')||coItemType(c,item)||(c.types[0]||{}).name, date=(S==='A'||S==='P')?(v$('bnDate')||todayStr()):(c.goLive||todayStr());
+  let value=0, basis=''; const a=num(v$('bnA')), b2=num(v$('bnB'));
+  if(S==='A'||S==='P'){ value=qty*a; basis=fmtN(a)+' / '+unit; } else if(S==='B'){ value=a; basis='book value'; } else if(S==='C'){ value=qty*a*b2/100; basis=fmtN(a)+' × '+fmtN(b2)+'%'; } else { value=qty*a*b2; basis=fmtN(a)+' kg × '+fmtN(b2)+' /kg'; }
+  const ym=date.slice(2,4)+date.slice(5,7); c.batches.push({id:'bt'+Date.now().toString(36),code:nextNo(c.batches,'AS-'+ym+'-'),src:S,loc,type,item,unit,qty,cond:v$('bnCond')||'Good',date,value,rate:value/qty,basis,inv:v$('bnInv'),by:state.meta.user||''});
+  coHist(c,(S==='P'?'Purchase':'Opening balance')+' · '+item,'',fmtN(qty)+' '+unit+' · '+money(value)); coSave(c); }
+function bForm(c,src){ const L=coLocs(c), P=src==='P';
+  return dl(c)+`<div class="frm"><label>Location<select id="bnLoc" class="coi">${L.map(l=>`<option value="${l.id}">${esc(locNm(c,l.id))}</option>`).join('')}</select></label><label>Material type<select id="bnType" class="coi">${c.types.filter(t=>t.active!==false).map(t=>`<option>${esc(t.name)}</option>`).join('')}</select></label><label>Item<input id="bnItem" list="coItemsDL" class="coi" oninput="(function(v){const c=CO.get(),t=coItemType(c,v),u=document.getElementById('bnUnit'),ty=document.getElementById('bnType');if(t&&ty)ty.value=t;if(u&&!u.dataset.t)u.value=coItemUnit(c,v);})(this.value)"></label><label>Unit<input id="bnUnit" class="coi" style="width:80px" oninput="this.dataset.t=1"></label><label>Quantity<input id="bnQty" type="number" class="coi"></label><label>Condition<select id="bnCond" class="coi"><option>Good</option><option>Repair</option><option>Scrap</option></select></label>
+  ${P?`<label>Purchase date<input id="bnDate" type="date" class="coi" value="${todayStr()}"></label><label>Rate / unit (${cur()})<input id="bnA" type="number" class="coi"></label><label>Invoice no.<input id="bnInv" class="coi"></label>`
+  :`<label>Value source<select id="bnSrc" class="coi" onchange="document.querySelectorAll('.bsrc').forEach(e=>e.style.display=e.dataset.s.includes(this.value)?'':'none')"><option value="A">A · Invoice</option><option value="B">B · Accounts book value</option><option value="C">C · Estimate</option><option value="D">D · Scrap value</option></select></label><label class="bsrc" data-s="A">Purchase date<input id="bnDate" type="date" class="coi"></label><label class="bsrc" data-s="ABCD"><span class="bsrc" data-s="A">Rate / unit</span><span class="bsrc" data-s="B" style="display:none">Book value (${cur()})</span><span class="bsrc" data-s="C" style="display:none">New rate / unit</span><span class="bsrc" data-s="D" style="display:none">kg / unit</span><input id="bnA" type="number" class="coi"></label><label class="bsrc" data-s="CD" style="display:none"><span class="bsrc" data-s="C">Condition %</span><span class="bsrc" data-s="D" style="display:none">Scrap ${cur()} / kg</span><input id="bnB" type="number" class="coi"></label><label class="bsrc" data-s="A">Invoice no.<input id="bnInv" class="coi"></label>`}</div>
+  <div class="acts"><button class="btn p" onclick="bNew('${P?'P':'O'}')">${P?'+ Add purchase':'+ Add opening line'}</button></div>`; }
+const SRC_N={A:'A · Invoice',B:'B · Accounts',C:'C · Estimate',D:'D · Scrap',P:'Purchase'};
+PAGES.coOpen=()=>{ const c=CO.get(), O=LIVE(c).b.filter(b=>b.src!=='P'), tot=O.reduce((a,b)=>a+bCost(b),0), by=k=>O.filter(b=>b.src===k).reduce((a,b)=>a+bCost(b),0);
+  let h=panel('Go-live',`<div class="frm"><label>Go-live date<input type="date" class="coi" value="${esc(c.goLive||'')}" ${c.openLock?'disabled':''} onchange="(function(v){const c=CO.get();coHist(c,'Go-live date',c.goLive,v);c.goLive=v;coSave(c);})(this.value)"></label></div>${c.openLock?`<p>${PILL('ok','🔒 Locked')} </p>`:''}`);
+  h+=`<div class="kpis">${kpi('Opening value',money(tot))}${['A','B','C','D'].map(k=>kpi(SRC_N[k],money(by(k)),tot?Math.round(by(k)/tot*100)+'%':'')).join('')}</div>`;
+  if(!c.openLock) h+=panel('Add opening line',bForm(c,'O'));
+  h+=panel('Opening balances',simpleTable([['Batch'],['Location'],['Material type'],['Item'],['Qty',1],['Condition'],['Source'],['Date'],['Basis'],['Value',1],['']],O.map(b=>`<tr><td class="calc"><b>${esc(b.code)}</b></td><td class="calc">${esc(locSh(c,b.loc))}</td><td class="calc">${esc(b.type)}</td><td class="calc">${esc(b.item)}</td><td class="calc r">${fmtN(b.qty)} ${esc(b.unit)}</td><td class="calc">${esc(b.cond)}</td><td class="calc">${SRC_N[b.src]}</td><td class="calc">${fmtD(b.date)}</td><td class="calc">${esc(b.basis||'')}</td><td class="calc r">${money(bCost(b))}</td><td class="calc">${c.openLock?'':`<button class="btn sm d" onclick="(function(){const c=CO.get();const x=c.batches.find(y=>y.id==='${b.id}');if(x){x.del=true;coSave(c);}})()">✕</button>`}</td></tr>`),O.length?`<tr><td>Total</td><td colspan="8"></td><td class="r"><b>${money(tot)}</b></td><td></td></tr>`:''));
+  if(!c.openLock&&O.length) h+=`<div class="acts"><button class="btn p" onclick="askConfirm('Lock opening balances? After this they cannot be edited.',()=>{const c=CO.get();c.openLock=true;coHist(c,'Opening balances locked','','${money(tot)}');coSave(c);},'Lock')">🔒 Sign off &amp; lock</button></div>`;
+  return h; };
+PAGES.coLedger=()=>{ const c=CO.get(), B=LIVE(c).b.sort((a,b)=>(b.date||'').localeCompare(a.date||'')), t=todayStr(), sel=state.ui.coBt||'', L=coLocs(c);
+  let h=`<div class="kpis">${kpi('Batches',B.length)}${kpi('Cost',money(B.reduce((a,b)=>a+bCost(b),0)))}${kpi('Book value today',money(B.reduce((a,b)=>a+bBook(c,b,t),0)))}${kpi('Depreciation to date',money(B.reduce((a,b)=>a+bCost(b)-bBook(c,b,t),0)))}</div>`;
+  h+=panel('Add purchase',bForm(c,'P'));
+  h+=panel('Company asset ledger',simpleTable([['Batch'],['Item'],['Qty',1],['Date'],['Source'],['Cost',1],['Book value',1],['Where now'],['']],B.map(b=>{ const w=L.map(l=>[l,bAt(c,b,l.id,t)]).filter(x=>x[1]>1e-9);
+    return `<tr${b.id===sel?' class="tkrow"':''}><td class="calc"><b>${esc(b.code)}</b></td><td class="calc">${esc(b.item)}<br><small class="muted">${esc(b.type)}</small></td><td class="calc r">${fmtN(b.qty)} ${esc(b.unit)}</td><td class="calc">${fmtD(b.date)}</td><td class="calc">${SRC_N[b.src]||''}${b.inv?' · '+esc(b.inv):''}</td><td class="calc r">${money(bCost(b))}</td><td class="calc r">${money(bBook(c,b,t))}</td><td class="calc">${w.map(([l,q])=>esc(l.code||l.name)+': '+fmtN(q)).join('<br>')||'<span class="muted">in transit</span>'}</td><td class="calc"><button class="btn sm" onclick="setUI('coBt','${b.id===sel?'':b.id}')">${b.id===sel?'Hide':'History'}</button></td></tr>`; })));
+  const b=B.find(x=>x.id===sel); if(b){ const M=LIVE(c).m.filter(m=>(m.parts||[]).some(p=>p.b===b.id));
+    h+=panel('Movement history · '+esc(b.code),simpleTable([['Date'],['Document'],['From'],['To'],['Qty',1],['Status']],[`<tr><td class="calc">${fmtD(b.date)}</td><td class="calc">${b.src==='P'?'Purchase'+(b.inv?' · '+esc(b.inv):''):'Opening balance'}</td><td class="calc">${b.src==='P'?'Supplier':'—'}</td><td class="calc">${esc(locSh(c,b.loc))}</td><td class="calc r">${fmtN(b.qty)}</td><td class="calc">${esc(b.cond||'Good')}</td></tr>`,...M.map(m=>`<tr><td class="calc">${fmtD(m.dispDate)}</td><td class="calc">${esc(m.no)}</td><td class="calc">${esc(locSh(c,m.from))}</td><td class="calc">${esc(locSh(c,m.to))}</td><td class="calc r">${fmtN((m.parts.find(p=>p.b===b.id)||{}).q)}</td><td class="calc">${PILL(ST_P[m.status],m.status)}</td></tr>`)])); }
+  return h; };
+PAGES.coDep=()=>{ const c=CO.get(), m=state.ui.month||thisMonth(), CH=depCharges(c,m), L=coLocs(c), t=todayStr();
+  const inM=CH.filter(x=>x.m===m), loc=id=>({m:inM.filter(x=>x.loc===id).reduce((a,x)=>a+x.amt,0),all:CH.filter(x=>x.loc===id).reduce((a,x)=>a+x.amt,0)});
+  let h=monthBar()+`<div class="kpis">${kpi('Depreciation · '+monthLabel(m),money(inM.reduce((a,x)=>a+x.amt,0)))}${kpi('Depreciation to date',money(CH.reduce((a,x)=>a+x.amt,0)))}${kpi('Book value today',money(LIVE(c).b.reduce((a,b)=>a+bBook(c,b,t),0)))}</div>`;
+  h+=panel('Charge by location',simpleTable([['Location'],[monthLabel(m),1],['To date',1]],L.filter(l=>loc(l.id).all>0.5).map(l=>`<tr><td class="calc"><b>${esc(locNm(c,l.id))}</b></td><td class="calc r">${money(loc(l.id).m)}</td><td class="calc r">${money(loc(l.id).all)}</td></tr>`)));
+  h+=panel('Schedule by batch',simpleTable([['Batch'],['Item'],['Method'],['Rate',1],['Cost',1],['Residual',1],[monthLabel(m),1],['To date',1],['Book value',1]],LIVE(c).b.map(b=>{ const T=bType(c,b), cm=CH.filter(x=>x.b===b.id&&x.m===m).reduce((a,x)=>a+x.amt,0), ca=CH.filter(x=>x.b===b.id).reduce((a,x)=>a+x.amt,0);
+    return `<tr><td class="calc"><b>${esc(b.code)}</b></td><td class="calc">${esc(b.item)}</td><td class="calc">${esc(T.dep)}</td><td class="calc r">${fmtN(num(T.rate))}%</td><td class="calc r">${money(bCost(b))}</td><td class="calc r">${money(bCost(b)*num(T.residual)/100)}</td><td class="calc r">${money(cm)}</td><td class="calc r">${money(ca)}</td><td class="calc r"><b>${money(bBook(c,b,t))}</b></td></tr>`; })));
+  return h; };
+
+/* ---------- menus & badges ---------- */
+(()=>{ const de=NAV_SITE.find(g=>g.g==='Daily Entry'); if(de) de.items.push(['siReq','Material Requisition']); const st=NAV_SITE.find(g=>g.g==='Store'); if(st) st.items.splice(2,0,['siTr','Inter-site Transfers']);
+  const ov=NAV_CO.find(g=>g.g==='Overview'); NAV_CO.splice(NAV_CO.indexOf(ov)+1,0,{g:'Planning',items:[['coReq','Material Requisitions'],['coTr','Inter-site Transfers']]});
+  const am=NAV_CO.find(g=>g.g==='Asset Management'); am.items=[['coLoc','Company Asset Location'],['coLedger','Company Asset Ledger'],['coDep','Depreciation Schedule'],['coAssets','Site Asset Registers']];
+  NAV_CO.find(g=>g.g==='Administration').items.push(['coOpen','Opening Balances']); })();
+{ const _b=sideBadges; sideBadges=function(){ const b=_b(); try{ const c=CO.get(), M=LIVE(c).m, R=LIVE(c).r;
+  const n=M.filter(m=>(m.from===PRJ.cur&&m.status==='Planned')||(m.to===PRJ.cur&&m.status==='Dispatched')).length; if(n) b.siTr=[n,'wn'];
+  const rq=R.filter(r=>r.site===PRJ.cur&&r.status==='Approved').length; if(rq) b.siReq=[rq,'ok'];
+  const cr=R.filter(r=>r.status==='Raised').length; if(cr) b.coReq=[cr,'wn']; const ct=M.filter(m=>m.status==='Dispatched').length; if(ct) b.coTr=[ct,'wn']; }catch(e){} return b; }; }
 
 </script>
 </body>
