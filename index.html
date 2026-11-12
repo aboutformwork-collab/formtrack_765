@@ -564,6 +564,24 @@ body.oneprj .mh .prjsw,body.oneprj .pcard .psw{display:none!important}
 .rcv{display:inline-flex;gap:4px;align-items:center;flex-wrap:wrap;font-size:12.5px}
 .bsrc{display:flex}
 label.bsrc{flex-direction:column}
+.pcard.cocard{position:relative}
+.coadd{position:absolute;bottom:8px;right:8px;border:0;border-radius:7px;background:var(--accent2,#e0a526);color:#15232d;font:700 11.5px/1 inherit;padding:5px 8px;cursor:pointer}
+#side.mini .coadd{display:none}
+.repgrid{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(520px,100%),1fr));gap:14px}
+.repch{border:1px solid var(--line2);border-radius:10px;padding:10px 12px;background:var(--paper)}
+.repch h4{margin:0 0 6px;font-size:13px;color:var(--title)}
+@media print{.repch{break-inside:avoid}}
+.wsst{position:fixed;inset:0;background:var(--bg,#f2efe9);display:grid;place-items:center;z-index:998;padding:20px;overflow:auto}
+.wsst .box{text-align:center;max-width:1000px;width:100%}.wsst h2{font-size:28px;margin:0 0 6px}.wsst>.box>p{color:var(--muted);margin:0 0 26px}
+.wsst .cards{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(320px,100%),1fr));gap:22px}
+.wsst .cd{background:var(--paper,#fffdf9);border:1px solid var(--line);border-radius:18px;padding:26px;text-align:left;box-shadow:0 8px 30px #0001}
+.wsst .cd.s{border-top:6px solid #0d6e74}.wsst .cd.c{border-top:6px solid #2b3459}
+.wsst .ic{font-size:34px}.wsst h3{margin:8px 0 4px;font-size:20px}.wsst .cd p{margin:0 0 12px;color:var(--muted)}.wsst ul{margin:0 0 16px;padding-left:18px}.wsst li{margin:4px 0}
+.wsst .go{display:block;width:100%;border:0;border-radius:10px;padding:12px;font-family:inherit;font-weight:800;font-size:15px;color:#fff;cursor:pointer}
+.wsst .cd.s .go{background:#0d6e74}.wsst .cd.c .go{background:#2b3459}
+.wochart{display:block;color:var(--ink)}.wolg{display:flex;gap:16px;font-size:12px;margin:4px 0 10px}.wolg i{display:inline-block;width:18px;height:4px;border-radius:2px;margin-right:6px;vertical-align:middle}
+.wochart{max-width:980px;max-height:300px}
+.wsst h2{margin-bottom:26px!important}.wsst .cards{max-width:820px;margin:0 auto}
 </style>
 </head>
 <body>
@@ -573,7 +591,7 @@ label.bsrc{flex-direction:column}
 <input type="file" id="restoreFile" accept=".json" style="display:none" onchange="if(this.files[0])restoreBackup(this.files[0]);this.value=''">
 <input type="file" id="fsPick" style="display:none" onchange="fsOpenFile(this.files[0]);this.value=''">
 
-<script>window.__FORMTRACK_PWA=true; window.__FORMTRACK_VER="2026.11.12-2214"; window.__FORMTRACK_VERNAME="12 Nov 22:14"; window.__FT_TRIAL_FROM=1793358725887; window.__FT_OWNER_KEYS=["FTK1.KFWlfr8L9B9vCV5zDqch0g==.dbjdxh8PZxOLP1CNQ2z3RabZkTuh7AORMJY1xre+tWo=", "FTK1.Osl5ooyWCagTRuMdk06Obg==.rchABMlUZsicdxq192DnzmUcdgRXTqVE0LzUln8iqDY="]; window.__FT_ACCESS_PUB="SC1QzgBryXETIvpdPX-L1vNG0PfXbclYD1uqU4rGGy0"; window.__FT_BLOCKED=[];</script>
+<script>window.__FORMTRACK_PWA=true; window.__FORMTRACK_VER="2026.11.12-2331"; window.__FORMTRACK_VERNAME="12 Nov 23:31"; window.__FT_TRIAL_FROM=1793358725887; window.__FT_OWNER_KEYS=["FTK1.KFWlfr8L9B9vCV5zDqch0g==.dbjdxh8PZxOLP1CNQ2z3RabZkTuh7AORMJY1xre+tWo=", "FTK1.Osl5ooyWCagTRuMdk06Obg==.rchABMlUZsicdxq192DnzmUcdgRXTqVE0LzUln8iqDY="]; window.__FT_ACCESS_PUB="SC1QzgBryXETIvpdPX-L1vNG0PfXbclYD1uqU4rGGy0"; window.__FT_BLOCKED=[];</script>
 <script>
 /* FormTrack */
 const STORE_KEY = 'formtrack_data_v2';
@@ -643,7 +661,7 @@ function seed(){
       {id:'si-runner-75x75',item:'Runner 75x75',kind:'Reusable',unit:'Rmt',rate:0,minStock:0},
       {id:'si-batten-50x75',item:'Batten 50x75',kind:'Reusable',unit:'Rmt',rate:0,minStock:0},
       {id:'si-steel-props',item:'Steel props',kind:'Reusable',unit:'Nos',rate:0,minStock:0}],
-    storeTx:[], contractors:[], prpo:[], ownedTx:[], machines:[], machineTx:[], consNorms:[], manAreas:[], manSystems:[], plans:[], sysCmp:[], shifts:[], practices:[], notes:[], calcs:[], mapUnits:[], dehire:[], cyOpts:[], pours:[], matProfit:[], deleted:{},
+    storeTx:[], contractors:[], prpo:[], ownedTx:[], machines:[], machineTx:[], consNorms:[], manAreas:[], manSystems:[], plans:[], sysCmp:[], shifts:[], practices:[], notes:[], calcs:[], mapUnits:[], dehire:[], cyOpts:[], pours:[], matProfit:[], rentDmg:[], acts:[], deleted:{},
     meeting:{cards:{attention:true,progress:true,cost:true,rental:true,bills:true,idle:true,delays:true,stock:false,labour:false},approved:{},locks:[],requireApproval:true},
     rev:0,
     route:'dashboard', ui:{month:thisMonth(), period:'month', groupBy:'system', sysSel:[]}
@@ -685,7 +703,7 @@ function hydrate(p){
   const s=seed(); const out=Object.assign(s,p);
   out.meta=Object.assign(seed().meta,p.meta||{});
   out.ui=Object.assign({month:thisMonth(),period:'month',groupBy:'system',sysSel:[]},p.ui||{});
-  ['consItems','scope','labour','consTx','usage','targets','items','itemTx','storeItems','storeTx','contractors','prpo','ownedTx','machines','machineTx','consNorms','manAreas','manSystems','plans','sysCmp','shifts','practices','notes','calcs','mapUnits','dehire','cyOpts','pours','matProfit','billLines','billedQty'].forEach(k=>{ if(!Array.isArray(out[k])) out[k]=s[k]||[]; });
+  ['consItems','scope','labour','consTx','usage','targets','items','itemTx','storeItems','storeTx','contractors','prpo','ownedTx','machines','machineTx','consNorms','manAreas','manSystems','plans','sysCmp','shifts','practices','notes','calcs','mapUnits','dehire','cyOpts','pours','matProfit','rentDmg','acts','billLines','billedQty'].forEach(k=>{ if(!Array.isArray(out[k])) out[k]=s[k]||[]; });
   if(!out.deleted||typeof out.deleted!=='object'||Array.isArray(out.deleted)) out.deleted={};
   if(!out.bin||typeof out.bin!=='object'||!Array.isArray(out.bin.list)) out.bin={list:[]};
   out.meeting=Object.assign(s.meeting,out.meeting||{}); ['cards','approved'].forEach(k=>{ if(!out.meeting[k]||typeof out.meeting[k]!=='object') out.meeting[k]=s.meeting[k]; }); if(!Array.isArray(out.meeting.locks)) out.meeting.locks=[];
@@ -1101,6 +1119,8 @@ const DEFAULTS = {
   notes:()=>({date:todayStr(),title:'',text:''}),
   mapUnits:()=>({part:'Substructure',kind:'Zone',name:'',areaId:'',systemId:'',total:0,done:0,unit:'nos',status:'Not started',remarks:''}),
   cyOpts:()=>{ const sId=rentalSystems()[0]?.id||''; return {name:'Option '+(state.cyOpts.length+1),systemId:sId,sqm:100,months:3,from:'',to:'',rate:avgRate(sId)||0,cycle:30,workDays:26,transport:0,other:0}; },
+  rentDmg:()=>({date:todayStr(),systemId:rentalSystems()[0]?.id||'',challan:'',item:'',unit:'Sqm',dmg:0,miss:0,rate:0,vendor:0,party:'',recovered:0}),
+  acts:()=>({name:'',L:0,W:0,H:3,thk:150}),
   matProfit:()=>({mode:'own',name:'',material:'Aluminium',systemId:'',sqm:100,months:3,util:100,rate:0,buy:0,lifeUses:80,usesDone:0,repair:0,transport:0,loss:0,cons:0,labour:0,scrap:0}),
   pours:()=>({name:'',areaId:'',sqm:0,ready:'',due:''}),
   dehire:()=>({systemId:rentalSystems()[0]?.id||'',areaId:'',item:'',qty:0,returnBy:'',status:'Planned',returnedOn:'',remarks:''}),
@@ -1175,7 +1195,7 @@ function setField(arr,id,key,val,isNum){ const r=state[RA(arr)].find(x=>x.id===i
 const EDITS=[], REDO=[], UNDO_T0=Date.now();
 function tomb(id){ state.deleted=state.deleted||{}; state.deleted[id]=nowMs(); }
 /* ---------- undo / recently deleted ---------- */
-const SHEETN={matProfit:'Material Profit',cyOpts:'Cycle Planner',pours:'Cycle Planner',mapUnits:'Site Map',dehire:'De-hire Planner',execution:'Execution',labour:'Labour',ledger:'Received / Dispatch',consTx:'Consumables',storeTx:'Store',itemTx:'Item-wise Material',scope:'Scope',targets:'Targets',rates:'Rental Rates',invoices:'Vendor Bills',billLines:'Vendor bill lines',owned:'Owned Material',ownedTx:'Owned Material',prpo:'PR & PO',machines:'Machines',machineTx:'Machines',contractors:'Contractors',systems:'Systems',areas:'Areas',items:'Items',consItems:'Consumable items',storeItems:'Store items',practices:'Site Observation',notes:'Notes',calcs:'Calculations',plans:'Planning',sysCmp:'System compare',shifts:'Material shift',manAreas:'Summary Board',manSystems:'Summary Board','@photo':'Photo','@lock':'Meeting copy'};
+const SHEETN={rentDmg:'Damage & Missing',acts:'Material Requirement',matProfit:'Material Profit',cyOpts:'Cycle Planner',pours:'Cycle Planner',mapUnits:'Site Map',dehire:'De-hire Planner',execution:'Execution',labour:'Labour',ledger:'Received / Dispatch',consTx:'Consumables',storeTx:'Store',itemTx:'Item-wise Material',scope:'Scope',targets:'Targets',rates:'Rental Rates',invoices:'Vendor Bills',billLines:'Vendor bill lines',owned:'Owned Material',ownedTx:'Owned Material',prpo:'PR & PO',machines:'Machines',machineTx:'Machines',contractors:'Contractors',systems:'Systems',areas:'Areas',items:'Items',consItems:'Consumable items',storeItems:'Store items',practices:'Site Observation',notes:'Notes',calcs:'Calculations',plans:'Planning',sysCmp:'System compare',shifts:'Material shift',manAreas:'Summary Board',manSystems:'Summary Board','@photo':'Photo','@lock':'Meeting copy'};
 function binLabel(e){ const r=e.rows[0]||{}, bits=[];
   if(r.date) bits.push(fmtD(r.date));
   const nm=r.name||r.item||r.title||r.element||r.doc||r.challan||r.label||'';
@@ -1757,7 +1777,7 @@ PAGES.execution=()=>{
   const rows=state.execution.filter(e=>monthOf(e.date)===m).sort((a,b)=>(a.date||'').localeCompare(b.date||''));
   let h=monthBar()+`<p class="note hint">Log every shuttering/pour with system, area and element. Pick the element from the list so it matches your Scope rows.</p>`;
   h+=panel('Execution log – '+monthLabel(m),table('execution',[
-    {key:'date',label:'Date',type:'date'},{key:'systemId',label:'System',type:'system'},{key:'areaId',label:'Area',type:'area'},{key:'element',label:'Element',type:'element'},{key:'sqm',label:'Executed qty',type:'number',r:1},{label:'Unit',calc:e=>esc(sysUnit(e.systemId))},{key:'shutDate',label:'Shuttering start',type:'date'},{key:'deshutDate',label:'De-shuttered',type:'date'},{label:'Cycle days',r:1,calc:e=>{ const c=exCycle(e); if(c!=null) return `<b>${c}</b>`; if(e.date&&!e.deshutDate&&dayDiff(e.date,todayStr())>=(num(state.meta.deshutDays)||3)) return PILL('wn','not de-shuttered '+dayDiff(e.date,todayStr())+' d'); return '—'; }},{key:'remarks',label:'Remarks'},
+    {key:'date',label:'Date',type:'date'},{key:'systemId',label:'System',type:'system'},{key:'areaId',label:'Area',type:'area'},{key:'element',label:'Element',type:'element'},{key:'sqm',label:'Executed qty',type:'number',r:1},{label:'Unit',calc:e=>esc(sysUnit(e.systemId))},{key:'shutDate',label:'Shuttering start',type:'date'},{key:'deshutDate',label:'De-shuttered',type:'date'},{key:'delay',label:'Delay reason',type:'select',options:['','Material not arrived','Rebar late','Labour short','Crane / equipment','Drawing / design','Weather','Client hold','Concrete late','Other']},{label:'Cycle days',r:1,calc:e=>{ const c=exCycle(e); if(c!=null) return `<b>${c}</b>`; if(e.date&&!e.deshutDate&&dayDiff(e.date,todayStr())>=(num(state.meta.deshutDays)||3)) return PILL('wn','not de-shuttered '+dayDiff(e.date,todayStr())+' d'); return '—'; }},{key:'remarks',label:'Remarks'},
     {label:'Scope line',calc:e=>{ const sc=scopeOf(e); return sc?(num(sc.scopeSqm)?`${PILL('ok','in scope')} <small class="muted">${esc(sc.element||areaName(sc.areaId))}</small>`:PILL('na','scope not known')):PILL('na','no scope line'); }}],{rows,totals:['sqm'],unitOf:e=>sysUnit(e.systemId),qtyByUnit:1}),'entries dated in this month');
   { const A=avgCycles(); if(A.length) h+=panel('Actual cycle – shuttering start to de-shuttered',simpleTable([['System'],['Area'],['Pours',1],['Average days',1],['Fastest',1],['Slowest',1]],A.sort((x,y)=>x.avg-y.avg).map(g=>`<tr><td>${esc(sysName(g.s))}</td><td>${esc(areaName(g.a))}</td><td class="r">${g.n}</td><td class="r"><b>${fmtN(g.avg,1)}</b></td><td class="r">${g.min}</td><td class="r">${g.max}</td></tr>`)),'all months · used by the Cycle Planner'); }
   const trows=state.targets.filter(t=>t.month===m);
@@ -4151,7 +4171,7 @@ async function signKeyFrom(ownerKey){ const k=await crypto.subtle.importKey('raw
   const pk=new Uint8Array(48); pk.set([0x30,0x2e,0x02,0x01,0x00,0x30,0x05,0x06,0x03,0x2b,0x65,0x70,0x04,0x22,0x04,0x20]); pk.set(seed,16);
   const priv=await crypto.subtle.importKey('pkcs8',pk,{name:'Ed25519'},true,['sign']); const pub=(await crypto.subtle.exportKey('jwk',priv)).x; return {priv,pub}; }
 async function ownerKeyOk(v){ for(const k of OWNER_KEYS){ const [,salt,hash]=String(k).split('.'); if(salt&&hash&&await lockHash(v,unb64(salt),150000)===hash) return true; } return false; }
-function accessParse(tok){ try{ const [a,b]=String(tok).trim().split('.'); const pl=unb64u(a), sig=unb64u(b); if(pl[0]!==1) return null; const dv=new DataView(pl.buffer);
+function accessParse(tok){ try{ const [a,b]=String(tok).trim().split('.'); const pl=unb64u(a), sig=unb64u(b); if(pl[0]!==1&&pl[0]!==2) return null; const dv=new DataView(pl.buffer); if(pl[0]===2){ const cl=pl[10]; return {pl,sig,id:b64u(pl.slice(1,5)),exp:dv.getUint32(5)*60000,co:pl[9],site:new TextDecoder().decode(pl.slice(11,11+cl)),name:new TextDecoder().decode(pl.slice(11+cl))}; }
   return {pl,sig,id:b64u(pl.slice(1,5)),exp:dv.getUint32(5)*60000,name:new TextDecoder().decode(pl.slice(9))}; }catch(e){ return null; } }
 async function accessVerify(tok){ const t=accessParse(tok); if(!t||!ACCESS_PUB) return {ok:false,msg:'This access code is not valid.'};
   try{ const pub=await crypto.subtle.importKey('raw',unb64u(ACCESS_PUB),{name:'Ed25519'},false,['verify']); if(!await crypto.subtle.verify({name:'Ed25519'},pub,t.sig,t.pl)) return {ok:false,msg:'This access code is not valid.'}; }
@@ -4163,7 +4183,7 @@ async function accessVerify(tok){ const t=accessParse(tok); if(!t||!ACCESS_PUB) 
 async function accessCheck(fresh){ let tok=null; try{ const m=location.hash.match(/access=([A-Za-z0-9_\-\.]+)/); if(m){ tok=m[1]; localStorage.setItem('ft_access',tok); history.replaceState(null,'',location.pathname+location.search); } }catch(e){}
   if(!tok) try{ tok=localStorage.getItem('ft_access'); }catch(e){}
   if(!tok){ ACC=null; ACC_MSG=''; TRIAL_END=true; render(); return; }
-  const v=await accessVerify(tok); if(v.ok){ ACC={name:v.t.name,exp:v.t.exp,id:v.t.id}; TRIAL_END=false; ACC_MSG=''; document.body.classList.remove('locked'); const d=document.getElementById('lockscr'); if(d) d.remove(); render(); if(fresh) toast('Welcome '+v.t.name); }
+  const v=await accessVerify(tok); if(v.ok){ ACC={name:v.t.name,exp:v.t.exp,id:v.t.id,co:v.t.co||0,site:v.t.site||''}; TRIAL_END=false; ACC_MSG=''; document.body.classList.remove('locked'); const d=document.getElementById('lockscr'); if(d) d.remove(); render(); if(fresh) toast('Welcome '+v.t.name); }
   else { ACC=null; ACC_MSG=v.msg; TRIAL_END=true; render(); } }
 setInterval(()=>{ if(ACC&&Date.now()>ACC.exp){ ACC=null; ACC_MSG='Your access period has ended. Contact the owner.'; TRIAL_END=true; render(); } },60000);
 async function accessTry(){ const v=((document.getElementById('acode')||{}).value||'').trim(); if(!v) return; const m=v.match(/access=([A-Za-z0-9_\-\.]+)/), tok=m?m[1]:v; try{ localStorage.setItem('ft_access',tok); }catch(e){} await accessCheck(true); }
@@ -4202,9 +4222,9 @@ function trialPanel(){ if(!PWA) return ''; const own=isOwnerDev(), L=(state.meta
   if(!own) return panel('Access',h+`<div class="frm"><label>Owner key<input id="ouk" type="password" autocomplete="off"></label></div><button class="btn" onclick="ownerUnlockHere()">Unlock this device as owner</button>
     <details style="margin-top:10px"><summary>Forgot the owner key? Make a new one</summary><p class="note">Type a new key twice and send the code to Claude. It works after the next version.</p><div class="frm"><label>New owner key (min 8)<input id="mk1" type="password" autocomplete="new-password"></label><label>Type it again<input id="mk2" type="password" autocomplete="new-password"></label></div><button class="btn" onclick="makeOwnerKey()">Make code</button><p class="note" id="mkout"></p></details>`);
   if(!ACCESS_PUB) h+=`<p class="note"><b>Access links are not switched on yet.</b> Type your owner key and send the setup code to Claude once. Until then, other devices get 2 days.</p><div class="frm"><label>Owner key<input id="aks" type="password" autocomplete="off"></label></div><button class="btn p" onclick="makeAccessSetup()">Make setup code</button><p class="note" id="aksout"></p>`;
-  else h+=`<p class="note">Give someone access: type their name and the number of days, then your owner key. Send them the link – it opens the app with their name until the last day.</p>
-    <div class="frm"><label>Name<input id="ac_n" placeholder="e.g. Ravi – site engineer"></label><label>Days<input id="ac_d" type="number" inputmode="numeric" value="2"></label><label>Owner key<input id="ac_k" type="password" autocomplete="off"></label></div><button class="btn p" onclick="makeAccess()">Make access link</button><p class="note" id="ac_out"></p>`;
-  if(L.length) h+=simpleTable([['Name'],['Until'],['Made'],['Status'],['Code no.']],L.map(x=>`<tr><td class="v"><b>${esc(x.name)}</b></td><td class="v">${fmtD(x.until)}</td><td class="v">${fmtD(x.made)}</td><td class="v">${ACC_BLOCKED.includes(x.id)?PILL('bd','Stopped'):x.until<todayStr()?PILL('na','Ended'):PILL('ok','Active')}</td><td class="v"><small>${esc(x.id)}</small></td></tr>`))+`<p class="note">To stop someone before their end date, send Claude: <b>STOP</b> and their code no.</p>`;
+  else h+=`<p class="note"><b>Site formwork engineer</b> → only the chosen site. <b>Formwork in-charge</b> → all sites, Company section with edit. <b>Head of department</b> → all sites, Company section view only. <b>Full access cover</b> → Site + Company with edit, for leave cover (default 7 days). No link making, no owner PIN actions. The link stops working after the last day.</p>
+    <div class="frm"><label>Name<input id="ac_n" placeholder="e.g. Ravi"></label><label>Role<select id="ac_r" onchange="document.getElementById('ac_sw').style.display=this.value==='site'?'':'none';document.getElementById('ac_d').value=this.value==='full'?7:90"><option value="site">Site formwork engineer · one site</option><option value="full">Full access · 7-day cover (Site + Company)</option><option value="inch">Formwork in-charge · all sites (edit)</option><option value="hod">Head of department · all sites (view)</option></select></label><label id="ac_sw">Site<select id="ac_s">${PRJ.list.map(p=>`<option value="${p.id}" ${p.id===PRJ.cur?'selected':''}>${esc((siteCode(p.id)?siteCode(p.id)+' · ':'')+p.name)}</option>`).join('')}</select></label><label>Days<input id="ac_d" type="number" inputmode="numeric" value="90"></label><label>Owner key<input id="ac_k" type="password" autocomplete="off"></label></div><button class="btn p" onclick="makeAccess2()">Make access link</button><p class="note" id="ac_out"></p>`;
+  if(L.length) h+=simpleTable([['Name'],['Role'],['Site'],['Until'],['Made'],['Status'],['Code no.']],L.map(x=>`<tr><td class="v"><b>${esc(x.name)}</b></td><td class="v">${esc(x.role||'—')}</td><td class="v">${esc(x.site||'—')}</td><td class="v">${fmtD(x.until)}</td><td class="v">${fmtD(x.made)}</td><td class="v">${ACC_BLOCKED.includes(x.id)?PILL('bd','Stopped'):x.until<todayStr()?PILL('na','Ended'):PILL('ok','Active')}</td><td class="v"><small>${esc(x.id)}</small></td></tr>`))+`<p class="note">To stop someone before their end date, send Claude: <b>STOP</b> and their code no.</p>`;
   return panel('Access – people who can use this app',h); }
 /* ---------- shell ---------- */
 function go(r){ NEWROW.clear(); if(r!=='dashboard'&&document.body.classList.contains('dfull')) dashFull(false); state.route=r; persist(); render(); document.getElementById('main').scrollTop=0; }
@@ -4869,7 +4889,8 @@ const NAV_CO=[
  {g:'Asset Management',items:[['coAssets','Company Asset Register']]},
  {g:'Administration',items:[['coMaster','Material Master'],['coSites','Sites & Stores'],['coUsers','Users & Permissions']]},
  {g:'File',items:[['data','Backup & Settings']]}];
-const coAllowed=()=>{ try{ return !TRIAL_ON||isOwnerDev(); }catch(e){ return false; } };
+const coAllowed=()=>{ try{ return !TRIAL_ON||isOwnerDev()||!!(ACC&&ACC.co>0); }catch(e){ return false; } };
+const coReadOnly=()=>{ try{ return TRIAL_ON&&!isOwnerDev()&&!!(ACC&&ACC.co===1); }catch(e){ return false; } };
 const wsGet=()=>{ try{ return localStorage.getItem('ft_ws')==='company'&&coAllowed()?'company':'site'; }catch(e){ return 'site'; } };
 function setNav(){ const L=wsGet()==='company'?NAV_CO:NAV_SITE; NAV.length=0; L.forEach(x=>NAV.push(x)); document.body.classList.toggle('cows',wsGet()==='company'); }
 function wsSet(w){ try{ localStorage.setItem('ft_ws',w); }catch(e){} state.route=w==='company'?'portfolio':'dashboard'; persist(); render(); document.getElementById('main').scrollTop=0; }
@@ -4887,7 +4908,7 @@ function coNorm(c){ c=c&&typeof c==='object'?c:{}; c.name=c.name||''; c.sites=c.
   c.items=Array.isArray(c.items)?c.items:[]; ['batches','moves','reqs'].forEach(k=>{ if(!Array.isArray(c[k])) c[k]=[]; }); c.goLive=c.goLive||''; return c; }
 const CO={ get(){ try{ const c=JSON.parse(localStorage.getItem(CO_KEY)||'null'); if(c) return coNorm(c); }catch(e){} return coNorm({}); },
   set(c,keepTime){ if(!keepTime){ c.savedAt=Date.now(); coStamp(c); } try{ localStorage.setItem(CO_KEY,JSON.stringify(c)); }catch(e){} } };
-function coSave(c){ CO.set(c); try{ persist(); }catch(e){} render(); }
+function coSave(c){ if(coReadOnly()&&wsGet()==='company'){ toast('View only access.'); render(); return; } CO.set(c); try{ persist(); }catch(e){} render(); }
 function coHist(c,what,from,to){ c.hist.unshift({t:new Date().toISOString().slice(0,16).replace('T',' '),who:state.meta.user||'',what,from:String(from??''),to:String(to??'')}); c.hist=c.hist.slice(0,300); }
 const matOpts=()=>{ const n=CO.get().types.filter(t=>t.active!==false).map(t=>t.name); (state.matProfit||[]).forEach(r=>{ if(r.material&&!n.includes(r.material)) n.push(r.material); }); return n; };
 const matLife=n=>{ const t=CO.get().types.find(x=>x.name===n); return t?num(t.life):(LIFE_USES[n]||0); };
@@ -5146,6 +5167,226 @@ PAGES.coDep=()=>{ const c=CO.get(), m=state.ui.month||thisMonth(), CH=depCharges
   const n=M.filter(m=>(m.from===PRJ.cur&&m.status==='Planned')||(m.to===PRJ.cur&&m.status==='Dispatched')).length; if(n) b.siTr=[n,'wn'];
   const rq=R.filter(r=>r.site===PRJ.cur&&r.status==='Approved').length; if(rq) b.siReq=[rq,'ok'];
   const cr=R.filter(r=>r.status==='Raised').length; if(cr) b.coReq=[cr,'wn']; const ct=M.filter(m=>m.status==='Dispatched').length; if(ct) b.coTr=[ct,'wn']; }catch(e){} return b; }; }
+
+/* ================= STAGE 2B ================= */
+{ const _a=coAddSite; coAddSite=function(){ if(coReadOnly()){ toast('View only access.'); return; } return _a(); }; }
+const sysByName=(st,n)=>st.systems.find(x=>norm(x.name)===norm(n));
+const daysBetween=(a,b)=>Math.max(0,dayDiff(a,b));
+function monthsIn(a,b){ const out=[]; for(let m=a.slice(0,7);m<=b.slice(0,7);m=mAddC(m,1)) out.push(m); return out; }
+
+/* ---------- Damage & Missing (site) ---------- */
+PAGES.siDmg=()=>{ const R=state.rentDmg, T=k=>R.reduce((a,r)=>a+num(r[k]),0), est=R.reduce((a,r)=>a+(num(r.dmg)+num(r.miss))*num(r.rate),0);
+  let h=`<div class="kpis">${kpi('Damaged',fmtN(T('dmg')))}${kpi('Missing',fmtN(T('miss')))}${kpi('Our estimate',money(est))}${kpi('Vendor charged',money(T('vendor')),T('vendor')>est+1?'+'+money(T('vendor')-est)+' over estimate':'',T('vendor')>est+1?'bad':'good')}${kpi('Recovered from contractors',money(T('recovered')))}</div>`;
+  h+=panel('Damage & missing on return',table('rentDmg',[{key:'date',label:'Date',type:'date'},{key:'systemId',label:'System',type:'system'},{key:'challan',label:'Return challan'},{key:'item',label:'Item',w:150},{key:'unit',label:'Unit',type:'unit'},{key:'dmg',label:'Damaged',type:'number',r:1},{key:'miss',label:'Missing',type:'number',r:1},{key:'rate',label:`Rate (${cur()})`,type:'number',r:1,noSum:1},{label:'Our estimate',r:1,calc:r=>money((num(r.dmg)+num(r.miss))*num(r.rate))},{key:'vendor',label:'Vendor charged',type:'number',r:1},{label:'Difference',r:1,calc:r=>{ const d=num(r.vendor)-(num(r.dmg)+num(r.miss))*num(r.rate); return Math.abs(d)<1?'—':`<b class="${d>0?'neg':''}">${d>0?'+':'−'}${money(Math.abs(d))}</b>`; }},{key:'party',label:'Responsible',w:130},{key:'recovered',label:'Recovered',type:'number',r:1}]));
+  return h; };
+
+/* ---------- Rental Asset Register & Idle (company) ---------- */
+PAGES.coRent=()=>{ const rows=[]; coAll().forEach(({p,st})=>withState(st,()=>{ rentalSystems().forEach(s=>{ const L=state.ledger.filter(t=>t.systemId===s.id), rec=L.filter(t=>t.type==='Received').reduce((a,t)=>a+num(t.sqm),0), dis=L.filter(t=>t.type==='Dispatched').reduce((a,t)=>a+num(t.sqm),0), claim=L.filter(t=>t.type==='Damage claim').reduce((a,t)=>a+num(t.amount),0);
+    const D=(state.rentDmg||[]).filter(r=>r.systemId===s.id), dq=D.reduce((a,r)=>a+num(r.dmg),0), mq=D.reduce((a,r)=>a+num(r.miss),0), est=D.reduce((a,r)=>a+(num(r.dmg)+num(r.miss))*num(r.rate),0), vc=D.reduce((a,r)=>a+num(r.vendor),0), recv=D.reduce((a,r)=>a+num(r.recovered),0);
+    const bills=state.invoices.filter(i=>i.systemId===s.id&&num(i.amount)>0), bill=bills.reduce((a,i)=>a+num(i.amount),0), app=bills.reduce((a,i)=>a+num(systemMonthRent(s.id,i.month).rent),0);
+    if(rec||dis||D.length||bills.length) rows.push({site:siteCode(p.id)||st.meta.project,s:s.name,vendor:s.vendor||'',rec,dis,on:rec-dis,dq,mq,est,vc:vc+claim,recv,bill,app,pct:rec?(dq+mq)/rec*100:0}); }); }));
+  const S=k=>rows.reduce((a,r)=>a+r[k],0);
+  let h=`<div class="kpis">${kpi('On hire now',fmtN(S('on'))+' sqm')}${kpi('Damage + missing charged',money(S('vc')))}${kpi('Bills vs app rent',(S('bill')-S('app')>=0?'+':'−')+money(Math.abs(S('bill')-S('app'))),'months with a bill',S('bill')-S('app')>1?'bad':'good')}${kpi('Recovered',money(S('recv')))}</div>`;
+  h+=panel('Rental asset register · all sites',simpleTable([['Site'],['System'],['Vendor'],['Received',1],['Returned',1],['On hire',1],['Damaged',1],['Missing',1],['Damage %',1],['Our estimate',1],['Charged',1],['Bills',1],['App rent',1],['Bill − app',1]],rows.map(r=>`<tr><td class="calc">${esc(r.site)}</td><td class="calc"><b>${esc(r.s)}</b></td><td class="calc">${esc(r.vendor)}</td><td class="calc r">${fmtN(r.rec)}</td><td class="calc r">${fmtN(r.dis)}</td><td class="calc r"><b>${fmtN(r.on)}</b></td><td class="calc r">${r.dq?fmtN(r.dq):'—'}</td><td class="calc r">${r.mq?fmtN(r.mq):'—'}</td><td class="calc r">${r.pct?`<span class="${r.pct>3?'neg':''}">${fmtN(r.pct,1)}%</span>`:'—'}</td><td class="calc r">${r.est?money(r.est):'—'}</td><td class="calc r">${r.vc?money(r.vc):'—'}</td><td class="calc r">${r.bill?money(r.bill):'—'}</td><td class="calc r">${r.bill?money(r.app):'—'}</td><td class="calc r">${r.bill?`<b class="${r.bill-r.app>1?'neg':''}">${r.bill-r.app>=0?'+':'−'}${money(Math.abs(r.bill-r.app))}</b>`:'—'}</td></tr>`)));
+  return h; };
+PAGES.coIdle=()=>{ const rows=[]; coAll().forEach(({p,st})=>withState(st,()=>idleList().forEach(x=>rows.push({site:siteCode(p.id)||st.meta.project,s:x.s.name,a:x.a?areaName(x.a):'—',on:x.onSite,idle:x.idle,cost:x.cost,why:x.reasons.join(' · '),own:x.owned}))));
+  rows.sort((a,b)=>b.cost-a.cost);
+  let h=`<div class="kpis">${kpi('Idle quantity',fmtN(rows.reduce((a,r)=>a+r.idle,0)))}${kpi('Idle rent / month',money(rows.reduce((a,r)=>a+r.cost,0)),'',rows.some(r=>r.cost>0)?'bad':'good')}${kpi('Sites with idle material',new Set(rows.map(r=>r.site)).size)}</div>`;
+  h+=panel('Idle material · all sites',simpleTable([['Site'],['System'],['Area'],['On site',1],['Idle',1],['Reason'],['Rent / month',1]],rows.map(r=>`<tr><td class="calc">${esc(r.site)}</td><td class="calc"><b>${esc(r.s)}</b>${r.own?' <small class="muted">company</small>':''}</td><td class="calc">${esc(r.a)}</td><td class="calc r">${fmtN(r.on,1)}</td><td class="calc r"><b>${fmtN(r.idle,1)}</b></td><td class="calc">${esc(r.why)}</td><td class="calc r">${r.cost?money(r.cost):'—'}</td></tr>`)));
+  return h; };
+
+/* ---------- Work orders ---------- */
+const woList=c=>(c.wos||[]).filter(w=>!w.del);
+function woAdd(){ const c=CO.get(); c.wos=c.wos||[]; const site=v$('woSite'), sys=v$('woSys'), qty=num(v$('woQty')), start=v$('woStart'), days=num(v$('woDays')), rate=num(v$('woRate')), area=num(v$('woArea'));
+  if(!site||!sys||!qty||!start||!days||!area){ toast('Fill site, system, quantity, start, days and area to cast.'); return; }
+  c.wos.push({id:'wo'+Date.now().toString(36),no:v$('woNo')||nextNo(c.wos,'WO-'),site,sys,qty,start,days,rate,area,cycle:num(v$('woCyc'))||Math.round(days/(area/qty)),lab:num(v$('woLab')),cons:num(v$('woCons')),adds:[],rev:[{d:todayStr(),what:'Created',why:''}],status:'Open'});
+  coHist(c,'Work order created',' ',sys+' · '+fmtN(qty)); coSave(c); }
+function woCalc(c,w){ const t=todayStr(), end=addDays(w.start,num(w.days)), upto=t<end?t:end, el=Math.max(0,Math.min(num(w.days),dayDiff(w.start,t))), P=PRJ.list.find(p=>p.id===w.site), st=P?(P.id===PRJ.cur?state:readProject(P.id)):null;
+  const addRent=(w.adds||[]).reduce((a,x)=>a+num(x.q)*num(w.rate)*daysBetween(x.from,x.to||end)/30,0), planRent=num(w.qty)*num(w.rate)*num(w.days)/30+addRent;
+  const r={end,el,planCast:num(w.area)*el/Math.max(1,num(w.days)),planRent,planRps:planRent/Math.max(1,num(w.area)),planReps:num(w.area)/num(w.qty),cast:0,rent:0,lab:0,cons:0,cyc:null};
+  if(st&&el>0) withState(st,()=>{ const s=sysByName(state,w.sys); if(!s) return; r.cast=state.execution.filter(e=>e.systemId===s.id&&e.date>=w.start&&e.date<=upto).reduce((a,e)=>a+num(e.sqm),0);
+    monthsIn(w.start,upto).forEach(m=>monthBuckets(m).filter(b=>b.s===s.id).forEach(b=>{ r.rent+=num(b.rent)+num(b.xs); r.lab+=num(b.lab); r.cons+=num(b.cons); }));
+    const cy=state.execution.filter(e=>e.systemId===s.id&&e.date>=w.start).map(exCycle).filter(x=>x!=null); if(cy.length) r.cyc=cy.reduce((a,x)=>a+x,0)/cy.length; });
+  const qNow=num(w.qty)+(w.adds||[]).filter(x=>x.from<=t).reduce((a,x)=>a+num(x.q),0);
+  r.cycA=r.cyc||(r.cast>0?el/(r.cast/qNow):null); r.reps=r.cast/num(w.qty); r.planRepsNow=r.planCast/num(w.qty);
+  const pace=el>0?r.cast/el:0, left=Math.max(0,num(w.area)-r.cast), need=pace>0?Math.ceil(left/pace):null; r.left=left; r.finish=need==null?null:addDays(upto,need); r.late=r.finish&&r.finish>end?dayDiff(end,r.finish):0;
+  r.extraRent=r.late*num(w.qty)*num(w.rate)/30; const R=Math.max(1,dayDiff(t,end)), cyc=r.cycA||num(w.cycle), usesLeft=R/cyc;
+  r.addQ=left>0?Math.max(0,Math.ceil(left/usesLeft-qNow)):0; r.addCost=r.addQ*num(w.rate)*R/30; r.needCyc=left>0?Math.floor(R*qNow/left):null; r.R=R;
+  r.rps=r.cast?r.rent/r.cast:0; r.lps=r.cast?r.lab/r.cast:0; r.cps=r.cast?r.cons/r.cast:0; return r; }
+function woAmend(id,kind){ const c=CO.get(), w=(c.wos||[]).find(x=>x.id===id); if(!w) return; const r=woCalc(c,w), why=v$('woWhy_'+id)||'';
+  if(kind==='extend'){ if(!r.late) return; w.days=num(w.days)+r.late; w.rev.push({d:todayStr(),what:'Extended '+r.late+' days',why}); }
+  else if(kind==='add'){ if(!r.addQ) return; w.adds=w.adds||[]; w.adds.push({q:r.addQ,from:todayStr(),to:r.end}); w.rev.push({d:todayStr(),what:'+'+r.addQ+' till '+fmtD(r.end),why}); }
+  else if(kind==='cycle'){ w.cycle=r.needCyc; w.rev.push({d:todayStr(),what:'Target cycle '+r.needCyc+' days',why}); }
+  else if(kind==='close'){ w.status='Closed'; w.rev.push({d:todayStr(),what:'Closed',why}); }
+  coHist(c,'Work order '+w.no,'',w.rev[w.rev.length-1].what); coSave(c); }
+PAGES.coWO=()=>{ const c=CO.get(), W=woList(c), sel=state.ui.coWo||(W[0]||{}).id, w=W.find(x=>x.id===sel);
+  const sysOpts=[...new Set(coAll().flatMap(({st})=>st.systems.map(s=>s.name)))];
+  let h=panel('New work order',`<div class="frm"><label>WO no.<input id="woNo" class="coi" placeholder="${esc(nextNo(c.wos||[],'WO-'))}"></label><label>Site<select id="woSite" class="coi">${PRJ.list.map(p=>`<option value="${p.id}">${esc(locNm(c,p.id))}</option>`).join('')}</select></label><label>System<input id="woSys" list="woSysDL" class="coi"><datalist id="woSysDL">${sysOpts.map(n=>`<option value="${esc(n)}">`).join('')}</datalist></label><label>Hired qty (sqm)<input id="woQty" type="number" class="coi"></label><label>Start<input id="woStart" type="date" class="coi" value="${todayStr()}"></label><label>Days<input id="woDays" type="number" class="coi" value="90"></label><label>Rate (${cur()}/sqm/month)<input id="woRate" type="number" class="coi"></label><label>Area to cast (sqm)<input id="woArea" type="number" class="coi"></label><label>Planned cycle (days)<input id="woCyc" type="number" class="coi"></label><label>Labour norm (${cur()}/sqm)<input id="woLab" type="number" class="coi"></label><label>Consumables norm (${cur()}/sqm)<input id="woCons" type="number" class="coi"></label></div><div class="acts"><button class="btn p" onclick="woAdd()">+ Create work order</button></div>`);
+  h+=panel('Work orders',simpleTable([['WO'],['Site'],['System'],['Hired',1],['Period'],['Area to cast',1],['Cycle',1],['Status'],['']],W.map(x=>{ const r=woCalc(c,x); return `<tr${x.id===sel?' class="tkrow"':''}><td class="calc"><b>${esc(x.no)}</b></td><td class="calc">${esc(locSh(c,x.site))}</td><td class="calc">${esc(x.sys)}</td><td class="calc r">${fmtN(x.qty)}${(x.adds||[]).length?' +'+fmtN(x.adds.reduce((a,y)=>a+num(y.q),0)):''}</td><td class="calc">${fmtD(x.start)} → ${fmtD(r.end)}</td><td class="calc r">${fmtN(x.area)}</td><td class="calc r">${fmtN(x.cycle)} d</td><td class="calc">${x.status==='Closed'?PILL('na','Closed'):r.late?PILL('bd',r.late+' days late'):PILL('ok','On plan')}</td><td class="calc"><button class="btn sm" onclick="setUI('coWo','${x.id}');go('coPvA')">Plan vs actual</button></td></tr>`; })));
+  return h; };
+PAGES.coPvA=()=>{ const c=CO.get(), W=woList(c), sel=state.ui.coWo||(W[0]||{}).id, w=W.find(x=>x.id===sel);
+  let h=`<div class="chips">${W.map(x=>`<button class="btn sm ${x.id===sel?'p':''}" onclick="setUI('coWo','${x.id}')">${esc(x.no)} · ${esc(x.sys)}</button>`).join('')||'<span class="muted">—</span>'}</div>`; if(!w) return h;
+  const r=woCalc(c,w), pc=v=>money(v), dl_=(a,p,lowGood)=>{ if(!p) return ''; const d=(a-p)/p*100; return Math.abs(d)<0.5?PILL('ok','on plan'):PILL((lowGood?d<0:d>0)?'ok':'bd',(d>0?'+':'')+fmtN(d,0)+'%'); };
+  const planTotal=r.planRps+num(w.lab)+num(w.cons), actTotal=r.rps+(r.lab?r.lps:num(w.lab))+(r.cons?r.cps:num(w.cons)), mix=!r.lab||!r.cons;
+  h+=`<div class="kpis">${kpi('Work order',esc(w.no),esc(locSh(c,w.site))+' · '+esc(w.sys))}${kpi('Hired',fmtN(w.qty)+' sqm',fmtD(w.start)+' → '+fmtD(r.end))}${kpi('Day',r.el+' of '+w.days)}${kpi('Forecast finish',r.finish?fmtD(r.finish):'—',r.late?r.late+' days after work order':'',r.late?'bad':'good')}</div>`;
+  h+=panel('Plan vs actual',simpleTable([['Measure'],['Planned (full)',1],['Planned by today',1],['Achieved',1],['Status']],[
+   `<tr><td class="calc"><b>Area cast</b></td><td class="calc r">${fmtN(w.area)} sqm</td><td class="calc r">${fmtN(r.planCast)}</td><td class="calc r"><b>${fmtN(r.cast)}</b></td><td class="calc">${dl_(r.cast,r.planCast,false)==''?'':(r.cast+0.5<r.planCast?PILL('bd','−'+fmtN(r.planCast-r.cast)+' sqm'):PILL('ok','on plan'))}</td></tr>`,
+   `<tr><td class="calc"><b>Cycle</b></td><td class="calc r">${fmtN(w.cycle)} days</td><td class="calc r">${fmtN(w.cycle)} days</td><td class="calc r"><b>${r.cycA?fmtN(r.cycA,1)+' days':'—'}</b></td><td class="calc">${r.cycA?(r.cycA>num(w.cycle)+0.5?PILL('bd','+'+fmtN(r.cycA-num(w.cycle),1)+' days'):PILL('ok','on plan')):''}</td></tr>`,
+   `<tr><td class="calc"><b>Repetitions</b></td><td class="calc r">${fmtN(r.planReps,1)}</td><td class="calc r">${fmtN(r.planRepsNow,1)}</td><td class="calc r"><b>${fmtN(r.reps,1)}</b></td><td class="calc">${r.reps+0.05<r.planRepsNow?PILL('bd','−'+fmtN(r.planRepsNow-r.reps,1)):PILL('ok','on plan')}</td></tr>`,
+   `<tr><td class="calc"><b>Rent</b></td><td class="calc r">${pc(r.planRent)}</td><td class="calc r">${pc(r.planRent*r.el/Math.max(1,num(w.days)))}</td><td class="calc r"><b>${pc(r.rent)}</b></td><td class="calc"></td></tr>`,
+   `<tr><td class="calc">Rent per sqm cast</td><td class="calc r">${pc(r.planRps)}</td><td class="calc r">${pc(r.planRps)}</td><td class="calc r"><b>${r.cast?pc(r.rps):'—'}</b></td><td class="calc">${r.cast?dl_(r.rps,r.planRps,true):''}</td></tr>`,
+   `<tr><td class="calc">Labour per sqm</td><td class="calc r">${pc(num(w.lab))}</td><td class="calc r">${pc(num(w.lab))}</td><td class="calc r"><b>${r.cast&&r.lab?pc(r.lps):'—'}</b></td><td class="calc">${!r.lab?PILL('na','not entered'):r.cast&&num(w.lab)?dl_(r.lps,num(w.lab),true):''}</td></tr>`,
+   `<tr><td class="calc">Consumables per sqm</td><td class="calc r">${pc(num(w.cons))}</td><td class="calc r">${pc(num(w.cons))}</td><td class="calc r"><b>${r.cast&&r.cons?pc(r.cps):'—'}</b></td><td class="calc">${!r.cons?PILL('na','not entered'):r.cast&&num(w.cons)?dl_(r.cps,num(w.cons),true):''}</td></tr>`,
+   `<tr class="tot"><td class="calc"><b>System cost per sqm</b></td><td class="calc r"><b>${pc(planTotal)}</b></td><td class="calc r">${pc(planTotal)}</td><td class="calc r"><b>${r.cast?pc(actTotal):'—'}</b>${mix&&r.cast?'<br><small class="muted">plan norm used where not entered</small>':''}</td><td class="calc">${r.cast?dl_(actTotal,planTotal,true):''}</td></tr>`,
+   `<tr class="tot"><td class="calc"><b>Total formwork cost</b></td><td class="calc r"><b>${pc(planTotal*num(w.area))}</b></td><td class="calc r">—</td><td class="calc r">${pc(r.rent+r.lab+r.cons)}</td><td class="calc">${r.cast?'forecast '+pc(actTotal*num(w.area)):''}</td></tr>`]));
+  if(w.status!=='Closed'&&r.left>0&&(r.late||r.cycA>num(w.cycle)+0.5)) h+=panel('Options to finish · '+fmtN(r.left)+' sqm in '+r.R+' days',simpleTable([['Option'],['Finish',1],['Extra',1],['Extra cost',1],['']],[
+   `<tr><td class="calc"><b>Extend work order</b> by ${r.late} days</td><td class="calc r">${r.finish?fmtD(r.finish):'—'}</td><td class="calc r">${r.late} days</td><td class="calc r">${pc(r.extraRent)}</td><td class="calc"><button class="btn sm p" onclick="woAmend('${w.id}','extend')">Choose</button></td></tr>`,
+   `<tr><td class="calc"><b>Add ${fmtN(r.addQ)} sqm</b> till ${fmtD(r.end)}</td><td class="calc r">${fmtD(r.end)}</td><td class="calc r">+${fmtN(r.addQ)} sqm</td><td class="calc r">${pc(r.addCost)}</td><td class="calc"><button class="btn sm p" onclick="woAmend('${w.id}','add')">Choose</button></td></tr>`,
+   `<tr><td class="calc"><b>Cycle ${r.needCyc} days</b></td><td class="calc r">${fmtD(r.end)}</td><td class="calc r">—</td><td class="calc r">—</td><td class="calc"><button class="btn sm p" onclick="woAmend('${w.id}','cycle')">Choose</button></td></tr>`])+`<div class="frm" style="margin-top:8px"><label>Reason<input id="woWhy_${w.id}" class="coi" style="min-width:320px"></label></div>`);
+  h+=panel('Work order history',simpleTable([['Date'],['Change'],['Reason']],w.rev.map(x=>`<tr><td class="calc">${fmtD(x.d)}</td><td class="calc"><b>${esc(x.what)}</b></td><td class="calc">${esc(x.why||'')}</td></tr>`))+(w.status!=='Closed'?`<div class="acts"><button class="btn sm" onclick="woAmend('${w.id}','close')">Close work order</button></div>`:''));
+  return h; };
+
+/* ---------- Height rules & requirement ---------- */
+const HR_DEF={pri:0.100,sec:0.050,ply:0.018,rows:[[2.5,'2.0'],[3.0,'2.5'],[3.5,'3.0'],[4.0,'3.0+0.5'],[4.5,'3.0+1.0'],[5.0,'3.0+1.5']],sp:[[200,1.2,1.2,0.3],[300,0.9,0.9,0.3]],lev:1.5,plyA:2.977,names:{vert:'Cuplock vertical {L} m',led:'Cuplock ledger 1.2 m',uj:'U-jack',bj:'Base jack',pri:'ISMC 100',sec:'SQ tube 50x50',ply:'Plywood 18 mm'}};
+const hrGet=()=>{ const c=CO.get(); return Object.assign(JSON.parse(JSON.stringify(HR_DEF)),c.hr||{}); };
+function hrSet(path,v){ const c=CO.get(), h=c.hr=Object.assign(JSON.parse(JSON.stringify(HR_DEF)),c.hr||{}); const k=path.split('.'); let o=h; for(let i=0;i<k.length-1;i++) o=o[k[i]]; o[k[k.length-1]]=v; coHist(c,'Height rules · '+path,'',String(v)); coSave(c); }
+function hrRow(op,i){ const c=CO.get(), h=c.hr=Object.assign(JSON.parse(JSON.stringify(HR_DEF)),c.hr||{}); if(op==='add') h.rows.push([5.5,'3.0+2.0']); else h.rows.splice(i,1); coSave(c); }
+const vLen=s=>String(s).split('+').reduce((a,x)=>a+num(x),0), stk=H=>num(H.pri)+num(H.sec)+num(H.ply);
+PAGES.coHR=()=>{ const H=hrGet(), S=stk(H);
+  let h=panel('Slab stack',`<div class="frm"><label>Primary depth (m)<input class="coi" type="number" step="0.001" value="${H.pri}" onchange="hrSet('pri',num(this.value))"></label><label>Secondary depth (m)<input class="coi" type="number" step="0.001" value="${H.sec}" onchange="hrSet('sec',num(this.value))"></label><label>Ply (m)<input class="coi" type="number" step="0.001" value="${H.ply}" onchange="hrSet('ply',num(this.value))"></label><label>Ledger level every (m)<input class="coi" type="number" step="0.1" value="${H.lev}" onchange="hrSet('lev',num(this.value))"></label><label>Ply sheet area (sqm)<input class="coi" type="number" step="0.001" value="${H.plyA}" onchange="hrSet('plyA',num(this.value))"></label></div>`);
+  h+=panel('Height rules',simpleTable([['Slab soffit height (m)',1],['Verticals (m)'],['Vertical length',1],['Base + U-jack',1],['Ledger levels',1],['Check'],['']],H.rows.map((r,i)=>{ const vl=vLen(r[1]), j=num(r[0])-S-vl; return `<tr><td class="calc r"><input class="coi" type="number" step="0.05" value="${r[0]}" style="width:80px;text-align:right" onchange="hrSet('rows.${i}.0',num(this.value))"></td><td class="calc"><input class="coi" value="${esc(r[1])}" style="width:110px" onchange="hrSet('rows.${i}.1',this.value)"></td><td class="calc r">${fmtN(vl,2)} m</td><td class="calc r">${fmtN(j*1000,0)} mm</td><td class="calc r">${Math.ceil(vl/num(H.lev))+1}</td><td class="calc">${j>=0.05&&j<=0.6?PILL('ok','Jacks in range'):PILL('bd','Check jack range')}</td><td class="calc"><button class="btn sm d" onclick="hrRow('del',${i})">✕</button></td></tr>`; }))+`<div class="acts"><button class="btn" onclick="hrRow('add')">+ Add height</button></div>`);
+  h+=panel('Spacing by slab thickness',simpleTable([['Up to thickness (mm)',1],['Vertical spacing X (m)',1],['Y (m)',1],['Secondary spacing (m)',1]],H.sp.map((r,i)=>`<tr>${r.map((v,k)=>`<td class="calc r"><input class="coi" type="number" step="0.05" value="${v}" style="width:90px;text-align:right" onchange="hrSet('sp.${i}.${k}',num(this.value))"></td>`).join('')}</tr>`)));
+  h+=panel('Item names used for stock check',`<div class="frm">${Object.entries(H.names).map(([k,v])=>`<label>${{vert:'Vertical ({L} = length)',led:'Ledger',uj:'U-jack',bj:'Base jack',pri:'Primary',sec:'Secondary',ply:'Ply'}[k]}<input class="coi" value="${esc(v)}" onchange="hrSet('names.${k}',this.value)"></label>`).join('')}</div>`);
+  return h; };
+function actCalc(a,H){ const S=stk(H), Hh=num(a.H), r=H.rows.slice().sort((x,y)=>Math.abs(num(x[0])-Hh)-Math.abs(num(y[0])-Hh))[0]||[Hh,'3.0'], vl=vLen(r[1]), jack=Hh-S-vl, sp=H.sp.slice().sort((x,y)=>num(x[0])-num(y[0])).find(x=>num(a.thk)<=num(x[0]))||H.sp[H.sp.length-1]||[0,1.2,1.2,0.3];
+  const L=num(a.L), W=num(a.W), nx=Math.ceil(L/num(sp[1]))+1, ny=Math.ceil(W/num(sp[2]))+1, V=L&&W?nx*ny:0, lev=Math.ceil(vl/num(H.lev))+1;
+  return {vs:r[1],jack,sp,V,led:L&&W?(nx*(ny-1)+ny*(nx-1))*lev:0,pri:L&&W?ny*L:0,sec:L&&W?(Math.ceil(L/num(sp[3]))+1)*W:0,ply:L&&W?Math.ceil(L*W/num(H.plyA)*1.05):0}; }
+function actNeeds(H){ const N=new Map(), add=(n,u,q)=>{ if(!q) return; const k=n+'|'+u; N.set(k,{n,u,q:(N.get(k)||{q:0}).q+q}); };
+  (state.acts||[]).forEach(a=>{ const r=actCalc(a,H); String(r.vs).split('+').forEach(x=>add(H.names.vert.replace('{L}',fmtN(num(x),1)),'nos',r.V)); add(H.names.led,'nos',r.led); add(H.names.uj,'nos',r.V); add(H.names.bj,'nos',r.V); add(H.names.pri,'rmt',Math.ceil(r.pri)); add(H.names.sec,'rmt',Math.ceil(r.sec)); add(H.names.ply,'sheet',r.ply); }); return [...N.values()]; }
+function actRequest(){ const c=CO.get(), H=hrGet(), code=(c.sites[PRJ.cur]||{}).code||'S', N=actNeeds(H); let n=0;
+  N.forEach(x=>{ const av=stockAt(c,PRJ.cur,x.n,x.u).good+stockAt(c,PRJ.cur,x.n,x.u).tin, sh=Math.max(0,Math.ceil(x.q-av)); if(!sh) return; c.reqs.push({id:'rq'+Date.now().toString(36)+n,no:nextNo(c.reqs,'REQ-'+code+'-'),site:PRJ.cur,area:'Material requirement',item:x.n,unit:x.u,qty:sh,needBy:'',note:'From requirement',date:todayStr(),by:state.meta.user||'',status:'Raised'}); n++; });
+  if(!n){ toast('Nothing short.'); return; } coSave(c); toast(n+' requisitions sent.'); }
+PAGES.siReqm=()=>{ const H=hrGet(), c=CO.get();
+  let h=panel('Activities',table('acts',[{key:'name',label:'Activity / area',w:180},{key:'L',label:'L (m)',type:'number',r:1,noSum:1},{key:'W',label:'W (m)',type:'number',r:1,noSum:1},{key:'H',label:'Height (m)',type:'number',r:1,noSum:1},{key:'thk',label:'Slab thk (mm)',type:'number',r:1,noSum:1},
+    {label:'Area',r:1,calc:a=>fmtN(num(a.L)*num(a.W))},{label:'Vertical',calc:a=>actCalc(a,H).vs+' m'},{label:'Jacks',r:1,calc:a=>{ const j=actCalc(a,H).jack; return `<span class="${j<0.05||j>0.6?'neg':''}">${fmtN(j*1000,0)} mm</span>`; }},{label:'Spacing',calc:a=>{ const s=actCalc(a,H).sp; return s[1]+' × '+s[2]; }},
+    {label:'Verticals',r:1,calc:a=>fmtN(actCalc(a,H).V)},{label:'Ledgers',r:1,calc:a=>fmtN(actCalc(a,H).led)},{label:'Primary (rmt)',r:1,calc:a=>fmtN(actCalc(a,H).pri)},{label:'Secondary (rmt)',r:1,calc:a=>fmtN(actCalc(a,H).sec)},{label:'Ply',r:1,calc:a=>fmtN(actCalc(a,H).ply)}]));
+  const N=actNeeds(H), yards=c.stores.filter(s=>!s.del);
+  h+=panel('Required vs available',simpleTable([['Item'],['Unit'],['Required',1],['At this site',1],['Incoming',1],['Free in stores',1],['Short / extra',1]],N.map(x=>{ const a=stockAt(c,PRJ.cur,x.n,x.u), y=yards.reduce((s,st)=>s+stockAt(c,st.id,x.n,x.u).good,0), d=a.good+a.tin-x.q;
+    return `<tr><td class="calc"><b>${esc(x.n)}</b></td><td class="calc">${esc(x.u)}</td><td class="calc r">${fmtN(x.q)}</td><td class="calc r">${fmtN(a.good)}</td><td class="calc r">${a.tin?fmtN(a.tin):'—'}</td><td class="calc r">${y?fmtN(y):'—'}</td><td class="calc r"><b class="${d<0?'neg':''}">${d<0?'short '+fmtN(-d):'extra '+fmtN(d)}</b></td></tr>`; }))+(N.length?`<div class="acts"><button class="btn p" onclick="actRequest()">Request shortfall</button></div>`:''));
+  return h; };
+
+/* ---------- personal access links with role ---------- */
+async function coMakeLink(i){ const c=CO.get(), u=c.users[i], key=v$('coOK'), out=document.getElementById('coLinkOut'); if(!u||!out) return;
+  if(!u.name){ out.textContent='Type the name first.'; return; } if(!await ownerKeyOk(key)){ out.textContent='Wrong owner key.'; return; }
+  try{ const {priv,pub}=await signKeyFrom(key); if(ACCESS_PUB&&pub!==ACCESS_PUB){ out.textContent='This owner key does not match the access set-up.'; return; }
+    const end=new Date(u.till?u.till+'T23:59:00':Date.now()+90*864e5); end.setHours(23,59,0,0); const co={None:0,View:1,Edit:2}[u.co||'None']||0, sc=new TextEncoder().encode(String(u.site||'').split(' · ')[0].slice(0,20)), nm=new TextEncoder().encode(u.name.slice(0,40)), id=crypto.getRandomValues(new Uint8Array(4)), pl=new Uint8Array(11+sc.length+nm.length);
+    pl[0]=2; pl.set(id,1); new DataView(pl.buffer).setUint32(5,Math.floor(end.getTime()/60000)); pl[9]=co; pl[10]=sc.length; pl.set(sc,11); pl.set(nm,11+sc.length);
+    const sig=new Uint8Array(await crypto.subtle.sign({name:'Ed25519'},priv,pl)), link=location.origin+location.pathname+'#access='+b64u(pl)+'.'+b64u(sig);
+    u.linkId=b64u(id); u.linkUntil=end.toISOString().slice(0,10); coSave(c);
+    setTimeout(()=>{ const o=document.getElementById('coLinkOut'); if(o) o.innerHTML=`<b>${esc(u.name)} · ${esc(u.role)} · Company: ${esc(u.co||'None')} · until ${fmtD(u.linkUntil)}</b><br><code style="user-select:all;word-break:break-all">${esc(link)}</code><br><a class="btn sm p" target="_blank" href="https://wa.me/?text=${encodeURIComponent('FormTrack access for '+u.name+': '+link)}">Send on WhatsApp</a> <button class="btn sm" onclick="navigator.clipboard&&navigator.clipboard.writeText('${link}').then(()=>toast('Link copied'))">Copy link</button>`; },80);
+  }catch(e){ out.textContent='This browser cannot make access links – update Chrome.'; } }
+{ const _u=PAGES.coUsers; PAGES.coUsers=()=>{ let h=_u(); if(!PWA||!isOwnerDev()) return h; const C=CO.get();
+  return h+panel('Access links',`<div class="frm"><label>Owner key<input id="coOK" type="password" class="coi" autocomplete="off"></label><label>User<select id="coLU" class="coi">${C.users.map((u,i)=>u.del||u.status==='Revoked'?'':`<option value="${i}">${esc(u.name||'—')} · ${esc(u.role)}</option>`).join('')}</select></label></div><div class="acts"><button class="btn p" onclick="coMakeLink(num(document.getElementById('coLU').value))">Make link</button></div><p class="note" id="coLinkOut"></p>`); }; }
+
+/* ---------- menus ---------- */
+(()=>{ const set=(arr,g,items,pos)=>{ const G=arr.find(x=>x.g===g); if(G) items.forEach((it,i)=>pos==null?G.items.push(it):G.items.splice(pos+i,0,it)); };
+  set(NAV_SITE,'Rental',[['siDmg','Damage & Missing']]); set(NAV_SITE,'Setup',[['siReqm','Material Requirement']]);
+  set(NAV_CO,'Planning',[['coWO','Work Order Planning'],['coPvA','Plan vs Actual']],0);
+  const am=NAV_CO.findIndex(g=>g.g==='Asset Management'); NAV_CO.splice(am+1,0,{g:'Rental Management',items:[['coRent','Rental Asset Register'],['coIdle','Idle Asset Monitor']]});
+  set(NAV_CO,'Administration',[['coHR','Height Rules']],1); })();
+
+/* ================= COMPANY REPORT · add-site button · Quick hidden in Company ================= */
+function coAddSiteDlg(){ if(coReadOnly()){ toast('View only access.'); return; } const old=document.getElementById('cfm'); if(old) old.remove(); const d=document.createElement('div'); d.id='cfm'; d.className='cfm';
+  d.innerHTML=`<div class="cfm-box" role="dialog" aria-modal="true"><p><b>Add site</b></p><div class="frm"><label>Code<input id="coNewCode" class="coi" style="text-transform:uppercase"></label><label>Site name<input id="coNewName" class="coi"></label></div><div class="acts"><button class="btn" onclick="document.getElementById('cfm').remove()">Cancel</button><button class="btn p" onclick="coAddSite();const x=document.getElementById('cfm');if(x&&PRJ.list.some(p=>p.name===(document.getElementById('coNewName')||{}).value))x.remove();">+ Add site</button></div></div>`;
+  d.onclick=e=>{ if(e.target===d) d.remove(); }; document.body.appendChild(d); setTimeout(()=>{ const i=document.getElementById('coNewCode'); if(i) i.focus(); },50); }
+{ const _a=coAddSite; coAddSite=function(){ const n=((document.getElementById('coNewName')||{}).value||'').trim(), before=PRJ.list.length; _a(); if(PRJ.list.length>before){ const x=document.getElementById('cfm'); if(x) x.remove(); } }; }
+{ const _s=sideHTML; sideHTML=function(){ let h=_s(); if(wsGet()==='company'&&coAllowed()&&!coReadOnly()) h=h.replace('<div class="pcard cocard">','<div class="pcard cocard"><button class="coadd" onclick="coAddSiteDlg()" title="Add site">+ Site</button>'); return h; }; }
+{ const _r=render; render=function(){ const out=_r(); const q=document.getElementById('qkb'); if(q) q.style.display=wsGet()==='company'?'none':''; return out; }; }
+
+function repRows(m,todate){ const out=[]; coAll().forEach(({p,st})=>withState(st,()=>{ const keep={m:state.ui.month,pd:state.ui.period,ss:state.ui.sysSel}; state.ui.month=m; state.ui.period=todate?'todate':'month'; state.ui.sysSel=[]; clearCaches();
+    const first=(state.ledger.map(t=>t.date).filter(Boolean).sort()[0]||m+'-01').slice(0,7), m0=todate?first:m, cyc=avgCycles();
+    state.systems.forEach(s=>{ const q=qsQty(s.id,m0,m); if(!q.ex&&!q.cost&&!q.rec) return; const cy=cyc.filter(x=>x.s===s.id), ca=cy.length?cy.reduce((a,x)=>a+x.t,0)/cy.reduce((a,x)=>a+x.n,0):null;
+      out.push({pid:p.id,site:siteCode(p.id)||st.meta.project,siteN:st.meta.project,sys:s.name,own:s.ownership!=='Rental',ex:q.ex,eu:q.eu,cost:q.cost,cpu:q.ex?q.cost/q.ex:null,rep:q.rep,onsite:q.onsite,unit:q.unit,cyc:ca}); });
+    Object.assign(state.ui,{month:keep.m,period:keep.pd,sysSel:keep.ss}); })); return out; }
+PAGES.coReport=()=>{ const m=state.ui.month||thisMonth(), td=state.ui.repTD!==false, SEL=(state.ui.repSites||[]).filter(id=>PRJ.list.some(p=>p.id===id)), on=id=>!SEL.length||SEL.includes(id), R=repRows(m,td).filter(r=>on(r.pid)), pl=(td?'project to date ('+monthLabel(m)+')':monthLabel(m))+(SEL.length?' · '+SEL.length+' of '+PRJ.list.length+' sites':' · all sites');
+  const ALLS=coAll().map(({p,st})=>({pid:p.id,site:siteCode(p.id)||st.meta.project,siteN:st.meta.project})), sites=ALLS.filter(x=>on(x.pid)), S=(L,k)=>L.reduce((a,r)=>a+num(r[k]),0), sq=L=>L.filter(r=>/sqm/i.test(r.eu||'sqm')), cpu=L=>{ const x=sq(L); const e=S(x,'ex'); return e?S(x,'cost')/e:null; };
+  let h=monthBar()+`<div class="chips noprint"><button class="btn sm ${td?'p':''}" onclick="setUI('repTD',true)">Project to date</button><button class="btn sm ${!td?'p':''}" onclick="setUI('repTD',false)">This month</button><span style="width:12px"></span><button class="btn sm ${state.ui.repCharts?'p':''}" onclick="setUI('repCharts',!state.ui.repCharts)">📊 Charts</button><button class="btn sm" onclick="window.print()">Print / PDF</button></div>`+`<div class="chips noprint"><label>Sites</label><button class="btn sm ${!SEL.length?'p':''}" onclick="setUI('repSites',[])">All sites</button>${ALLS.map(x=>`<button class="btn sm ${SEL.includes(x.pid)?'p':''}" onclick="repPick('${x.pid}')" title="${esc(x.siteN)}">${esc(x.site)}</button>`).join('')}</div>`;
+  h+=`<div class="kpis">${kpi('Sites',sites.length)}${kpi('Executed',fmtN(S(sq(R),'ex'))+' sqm',pl)}${kpi('Formwork cost',money(S(R,'cost')),pl)}${kpi('Cost per sqm',cpu(R)?money(cpu(R)):'—','all formwork cost ÷ sqm executed')}</div>`;
+  { const sc=sites.map(x=>{ const L=R.filter(r=>r.pid===x.pid); return [x.site,cpu(L)||0,S(L,'cost'),S(sq(L),'ex')]; }).filter(x=>x[2]||x[3]);
+    const SY=new Map(); R.filter(r=>r.ex&&/sqm/i.test(r.eu||'')).forEach(r=>{ const k=r.sys.trim().toLowerCase(), g=SY.get(k)||{n:r.sys,ex:0,cost:0,rep:[]}; g.ex+=num(r.ex); g.cost+=num(r.cost); if(r.rep) g.rep.push(r.rep); SY.set(k,g); }); const sy=[...SY.values()].sort((a,b)=>b.cost/b.ex-a.cost/a.ex).map(g=>[g.n,g.cost/g.ex,g.rep.length?g.rep.reduce((a,x)=>a+x,0)/g.rep.length:0]);
+    const ch=(t,b)=>`<div class="repch"><h4>${t}</h4>${b}</div>`;
+    if(state.ui.repCharts) h+=panel('Charts · '+pl,`<div class="repgrid">${ch('Cost per sqm by site',chartSVG('bar',{labels:sc.map(x=>x[0]),series:[{name:'₹ / sqm',values:sc.map(x=>Math.round(x[1]))}],unit:'₹'},{pal:'Site'}))}${ch('Formwork cost share by site',chartSVG('donut',{labels:sc.map(x=>x[0]),series:[{name:'Cost',values:sc.map(x=>Math.round(x[2]))}],unit:'₹'},{pal:'Cool'}))}${ch('Cost per sqm by system',chartSVG('bar',{labels:sy.map(x=>x[0]),series:[{name:'₹ / sqm',values:sy.map(x=>Math.round(x[1]))}],unit:'₹'},{pal:'Warm'}))}${ch('Average repetitions by system',chartSVG('bar',{labels:sy.map(x=>x[0]),series:[{name:'Repetitions',values:sy.map(x=>+x[2].toFixed(1))}]},{pal:'Bright'}))}</div>`); }
+  h+=panel('Site summary · '+pl,simpleTable([['Site'],['Executed (sqm)',1],['Formwork cost',1],['Cost / sqm',1],['Systems',1]],sites.map(x=>{ const L=R.filter(r=>r.pid===x.pid); return `<tr><td class="calc"><b>${esc(x.site)}</b> <small class="muted">${esc(x.siteN)}</small></td><td class="calc r">${fmtN(S(sq(L),'ex'))}</td><td class="calc r">${money(S(L,'cost'))}</td><td class="calc r"><b>${cpu(L)?money(cpu(L)):'—'}</b></td><td class="calc r">${L.length}</td></tr>`; }),`<tr><td>Company</td><td class="r">${fmtN(S(sq(R),'ex'))}</td><td class="r">${money(S(R,'cost'))}</td><td class="r"><b>${cpu(R)?money(cpu(R)):'—'}</b></td><td class="r">${R.length}</td></tr>`));
+  h+=panel('Site × system · '+pl,simpleTable([['Site'],['System'],['Type'],['Executed',1],['Formwork cost',1],['Cost / unit',1],['Repetitions',1],['Avg cycle',1],['On site',1]],R.map(r=>`<tr><td class="calc">${esc(r.site)}</td><td class="calc"><b>${esc(r.sys)}</b></td><td class="calc">${r.own?'Company asset':'Rental'}</td><td class="calc r">${fmtN(r.ex)} <small class="muted">${esc(r.eu||'')}</small></td><td class="calc r">${money(r.cost)}</td><td class="calc r"><b>${r.cpu?money(r.cpu):'—'}</b></td><td class="calc r">${r.rep?fmtN(r.rep,1):'—'}</td><td class="calc r">${r.cyc?fmtN(r.cyc,1)+' d':'—'}</td><td class="calc r">${r.onsite?fmtN(r.onsite)+' '+esc(r.unit||''):'—'}</td></tr>`)));
+  const G=new Map(); R.forEach(r=>{ const k=r.sys.trim().toLowerCase(), g=G.get(k)||{sys:r.sys,eu:r.eu,ex:0,cost:0,rep:[],cyc:[],n:0}; g.ex+=num(r.ex); g.cost+=num(r.cost); if(r.rep) g.rep.push(r.rep); if(r.cyc) g.cyc.push(r.cyc); g.n++; G.set(k,g); });
+  h+=panel('System comparison · '+(SEL.length?'selected sites':'all sites'),simpleTable([['System'],['Sites',1],['Executed',1],['Formwork cost',1],['Cost / unit',1],['Avg repetitions',1],['Avg cycle',1]],[...G.values()].sort((a,b)=>b.cost-a.cost).map(g=>`<tr><td class="calc"><b>${esc(g.sys)}</b></td><td class="calc r">${g.n}</td><td class="calc r">${fmtN(g.ex)} <small class="muted">${esc(g.eu||'')}</small></td><td class="calc r">${money(g.cost)}</td><td class="calc r"><b>${g.ex?money(g.cost/g.ex):'—'}</b></td><td class="calc r">${g.rep.length?fmtN(g.rep.reduce((a,x)=>a+x,0)/g.rep.length,1):'—'}</td><td class="calc r">${g.cyc.length?fmtN(g.cyc.reduce((a,x)=>a+x,0)/g.cyc.length,1)+' d':'—'}</td></tr>`)));
+  return h; };
+(()=>{ const ov=NAV_CO.find(g=>g.g==='Overview'); ov.items.splice(1,0,['coReport','Performance Report']); })();
+
+function repPick(id){ const S=new Set(state.ui.repSites||[]); S.has(id)?S.delete(id):S.add(id); setUI('repSites',[...S]); }
+
+/* ================= start screen · plan vs actual chart · change system ================= */
+function startScreen(force){ if(!coAllowed()) return; try{ if(!force&&sessionStorage.getItem('ft_start')) return; sessionStorage.setItem('ft_start','1'); }catch(e){ return; }
+  const old=document.getElementById('wsStart'); if(old) old.remove(); const d=document.createElement('div'); d.id='wsStart'; d.className='wsst';
+  const opts=PRJ.list.map(p=>`<option value="${p.id}" ${p.id===PRJ.cur?'selected':''}>${esc((siteCode(p.id)?siteCode(p.id)+' · ':'')+p.name)}</option>`).join('');
+  d.innerHTML=`<div class="box"><div class="lk-logo" style="margin:0 auto 14px">F</div><h2>FormTrack</h2><div class="cards">
+   <div class="cd s"><div class="ic">🏗</div><h3>Site workspace</h3>${PRJ.list.length>1?`<select id="wsSite" class="coi" style="width:100%;margin:6px 0 10px">${opts}</select>`:'<div style="height:12px"></div>'}<button class="go" onclick="wsStartGo('site')">Open</button></div>
+   <div class="cd c"><div class="ic">🏢</div><h3>Company workspace</h3><div style="height:12px"></div><button class="go" onclick="wsStartGo('company')">Open</button></div></div></div>`;
+  document.body.appendChild(d); }
+function wsStartGo(w){ const d=document.getElementById('wsStart'), sel=(document.getElementById('wsSite')||{}).value; if(d) d.remove();
+  try{ localStorage.setItem('ft_ws',w); }catch(e){} window.__WSPICK=w;
+  if(w==='site'&&sel&&sel!==PRJ.cur){ switchProject(sel,true); }
+  if(LOCKED){ document.body.classList.add('locked'); drawLock(); return; } wsSet(w); }
+{ const _dl=drawLock; drawLock=function(msg){ let seen=false; try{ seen=!!sessionStorage.getItem('ft_start'); }catch(e){}
+  if(!seen&&coAllowed()){ const x=document.getElementById('lockscr'); if(x) x.remove(); startScreen(true); return; }
+  _dl(msg); const h=document.querySelector('#lockscr .lk-box p'); if(h&&window.__WSPICK) h.innerHTML=`${window.__WSPICK==='company'?'Company workspace':'Site workspace'} · <a href="#" style="color:#94a3b8" onclick="sessionStorage.removeItem('ft_start');document.getElementById('lockscr').remove();startScreen(true);return false">change</a>`; }; }
+setTimeout(()=>{ try{ if(!TRIAL_END&&!LOCKED) startScreen(); }catch(e){} },900);
+
+function woSeries(c,w){ const P=PRJ.list.find(p=>p.id===w.site), st=P?(P.id===PRJ.cur?state:readProject(P.id)):null, end=addDays(w.start,num(w.days)), t=todayStr(), upto=t<end?t:end; let E=[];
+  if(st) withState(st,()=>{ const s=sysByName(state,w.sys); if(s) E=state.execution.filter(e=>e.systemId===s.id&&e.date>=w.start&&e.date<=upto).map(e=>({d:e.date,q:num(e.sqm),cy:exCycle(e),why:e.delay||''})); });
+  return E.sort((a,b)=>a.d.localeCompare(b.d)); }
+function woChart(c,w,r){ const W=760,H=250,P=46, end=addDays(w.start,num(w.days)), fin=r.finish&&r.finish>end?r.finish:end, span=Math.max(1,dayDiff(w.start,fin)), top=Math.max(num(w.area),r.cast)*1.05||1;
+  const X=d=>P+dayDiff(w.start,d)/span*(W-2*P), Y=v=>H-30-v/top*(H-60), E=woSeries(c,w); let cum=0; const pts=[[w.start,0]]; E.forEach(e=>{ cum+=e.q; pts.push([e.d,cum]); });
+  const t=todayStr()<end?todayStr():end; pts.push([t,cum]);
+  const pl=(a,col,dash,wd)=>`<polyline points="${a.map(([d,v])=>X(d).toFixed(1)+','+Y(v).toFixed(1)).join(' ')}" fill="none" stroke="${col}" stroke-width="${wd||3}" ${dash?'stroke-dasharray="7 6"':''}/>`;
+  const ticks=[0,.25,.5,.75,1].map(f=>Math.round(num(w.area)*f));
+  return `<svg viewBox="0 0 ${W} ${H}" width="100%" class="wochart">${ticks.map(v=>`<line x1="${P}" x2="${W-P}" y1="${Y(v)}" y2="${Y(v)}" stroke="currentColor" opacity=".12"/><text x="${P-6}" y="${Y(v)+4}" font-size="11" text-anchor="end" fill="currentColor" opacity=".6">${fmtN(v)}</text>`).join('')}
+   <text x="${P}" y="${H-10}" font-size="11" fill="currentColor" opacity=".6">${fmtD(w.start)}</text><text x="${X(end)}" y="${H-10}" font-size="11" text-anchor="middle" fill="#c2462a">${fmtD(end)}</text>${fin>end?`<text x="${W-P}" y="${H-10}" font-size="11" text-anchor="end" fill="currentColor" opacity=".6">${fmtD(fin)}</text>`:''}
+   <line x1="${X(end)}" x2="${X(end)}" y1="14" y2="${H-30}" stroke="#c2462a" stroke-dasharray="4 4"/><text x="${X(end)+4}" y="22" font-size="11" fill="#c2462a" font-weight="700">work order ends</text>
+   <line x1="${X(t)}" x2="${X(t)}" y1="14" y2="${H-30}" stroke="currentColor" opacity=".5"/><text x="${X(t)+4}" y="36" font-size="11" font-weight="700" fill="currentColor">today</text>
+   ${pl([[w.start,0],[end,num(w.area)]],'#0d6e74')}${pl(pts,'#d08a1b')}${r.finish&&r.left>0?pl([[t,cum],[r.finish,num(w.area)]],'#d08a1b',1,2):''}<circle cx="${X(t)}" cy="${Y(cum)}" r="5" fill="#d08a1b"/></svg>
+   <div class="wolg"><span><i style="background:#0d6e74"></i>Plan</span><span><i style="background:#d08a1b"></i>Actual</span><span><i style="background:repeating-linear-gradient(90deg,#d08a1b 0 5px,transparent 5px 9px)"></i>At current pace</span></div>`; }
+function woMonths(c,w){ const E=woSeries(c,w), end=addDays(w.start,num(w.days)), t=todayStr(), ms=monthsIn(w.start,(t<end?t:end)), per=num(w.area)/Math.max(1,num(w.days));
+  return ms.map(m=>{ const a=m===w.start.slice(0,7)?w.start:m+'-01', b0=mEnd(m), b=b0>end?end:(b0>t?t:b0), days=Math.max(0,dayDiff(a,b)+1), L=E.filter(e=>e.d.slice(0,7)===m), cy=L.map(e=>e.cy).filter(x=>x!=null), R={}; L.forEach(e=>{ if(e.why) R[e.why]=(R[e.why]||0)+1; });
+    return {m,plan:per*days,act:L.reduce((x,e)=>x+e.q,0),cy:cy.length?cy.reduce((x,y)=>x+y,0)/cy.length:null,why:Object.entries(R).sort((x,y)=>y[1]-x[1]).map(([k,n])=>k+' ('+n+')').join(', ')}; }); }
+function woSwap(id){ const c=CO.get(), w=(c.wos||[]).find(x=>x.id===id); if(!w) return; const sys=v$('swS_'+id), q=num(v$('swQ_'+id)), cy=num(v$('swC_'+id)), rate=num(v$('swR_'+id)), mob=num(v$('swM_'+id)), why=v$('woWhy_'+id);
+  if(!sys||!q||!cy||!rate){ toast('Fill system, quantity, cycle and rate.'); return; } const r=woCalc(c,w), t=todayStr();
+  w.days=Math.max(1,dayDiff(w.start,t)); w.status='Closed'; w.rev.push({d:t,what:'Closed · changed to '+sys,why});
+  const left=r.left, nd=Math.ceil(mob+left/q*cy); c.wos.push({id:'wo'+Date.now().toString(36),no:nextNo(c.wos,'WO-'),site:w.site,sys,qty:q,start:addDays(t,mob),days:nd,rate,area:Math.round(left),cycle:cy,lab:w.lab,cons:w.cons,adds:[],rev:[{d:t,what:'Created · replaces '+w.no,why}],status:'Open'});
+  coHist(c,'System changed · '+w.no,w.sys,sys); state.ui.coWo=c.wos[c.wos.length-1].id; coSave(c); }
+{ const _p=PAGES.coPvA; PAGES.coPvA=()=>{ let h=_p(); const c=CO.get(), W=woList(c), sel=state.ui.coWo||(W[0]||{}).id, w=W.find(x=>x.id===sel); if(!w) return h; const r=woCalc(c,w), M=woMonths(c,w);
+  const chart=panel('Plan vs actual · by month',`<div class="chips noprint"><button class="btn sm ${state.ui.pvaChart?'p':''}" onclick="setUI('pvaChart',!state.ui.pvaChart)">📊 Graph</button></div>`+(state.ui.pvaChart?woChart(c,w,r):'')+simpleTable([['Month'],['Plan',1],['Actual',1],['Gap',1],['Actual cycle',1],['Delay reasons (site)']],M.map(x=>{ const g=x.act-x.plan; return `<tr><td class="calc">${monthLabel(x.m)}</td><td class="calc r">${fmtN(x.plan)}</td><td class="calc r">${fmtN(x.act)}</td><td class="calc r"><b class="${g<-0.5?'neg':''}">${g>=0?'+':'−'}${fmtN(Math.abs(g))}</b></td><td class="calc r">${x.cy?fmtN(x.cy,1)+' d':'—'}</td><td class="calc">${esc(x.why)||'—'}</td></tr>`; }))+(r.late&&r.left>0?`<div class="banner" style="margin-top:8px">${PILL('bd','BEHIND')} <span>At the current pace ${fmtN(w.area)} sqm finishes on <b>${fmtD(r.finish)}</b>, ${r.late} days after the work order. Extra rent if nothing changes ≈ <b>${money(r.extraRent)}</b>. Still to cast ${fmtN(r.left)} sqm in ${r.R} days.</span></div>`:''));
+  const sysOpts=[...new Set(coAll().flatMap(({st})=>st.systems.map(s=>s.name)))].filter(n=>norm(n)!==norm(w.sys));
+  const swap=w.status!=='Closed'&&r.left>0?panel('Change system',`<div class="frm"><label>New system<input id="swS_${w.id}" list="swDL" class="coi"><datalist id="swDL">${sysOpts.map(n=>`<option value="${esc(n)}">`).join('')}</datalist></label><label>Quantity (sqm)<input id="swQ_${w.id}" type="number" class="coi" oninput="swCalc('${w.id}')"></label><label>Cycle (days)<input id="swC_${w.id}" type="number" class="coi" oninput="swCalc('${w.id}')"></label><label>Rate (${cur()}/sqm/month)<input id="swR_${w.id}" type="number" class="coi" oninput="swCalc('${w.id}')"></label><label>Mobilise (days)<input id="swM_${w.id}" type="number" class="coi" value="7" oninput="swCalc('${w.id}')"></label></div><p id="swOut_${w.id}" class="note"></p><div class="acts"><button class="btn p" onclick="woSwap('${w.id}')">Change system &amp; create new work order</button></div>`):'';
+  const i1=h.indexOf('<div class="panel">'); if(i1>=0) h=h.slice(0,i1)+chart+h.slice(i1); const k='<div class="panel"><div class="ph"><span>Work order history', i2=h.indexOf(k); if(i2>=0) h=h.slice(0,i2)+swap+h.slice(i2); return h; }; }
+function swCalc(id){ const c=CO.get(), w=(c.wos||[]).find(x=>x.id===id), o=document.getElementById('swOut_'+id); if(!w||!o) return; const r=woCalc(c,w), q=num(v$('swQ_'+id)), cy=num(v$('swC_'+id)), rate=num(v$('swR_'+id)), mob=num(v$('swM_'+id));
+  if(!q||!cy){ o.textContent=''; return; } const d=Math.ceil(mob+r.left/q*cy), fin=addDays(todayStr(),d), cost=q*rate*(d-mob)/30, keep=r.extraRent+num(w.qty)*num(w.rate)*r.R/30;
+  o.innerHTML=`Finish <b>${fmtD(fin)}</b> (${fin<=r.end?'on time':dayDiff(r.end,fin)+' days after work order'}) · new rent ≈ <b>${money(cost)}</b> · current system to finish ≈ ${money(keep)} · ${cost<keep?PILL('ok','saves '+money(keep-cost)):PILL('wn','costs '+money(cost-keep)+' more')}`; }
+
+async function makeAccess2(){ const name=v$('ac_n').slice(0,40), role=v$('ac_r'), pid=v$('ac_s'), days=Math.max(1,Math.min(365,Math.round(num(v$('ac_d'))||90))), key=(document.getElementById('ac_k')||{}).value||'', out=document.getElementById('ac_out');
+  if(!name){ out.textContent='Type the name.'; return; } if(!await ownerKeyOk(key)){ out.textContent='Wrong owner key.'; return; }
+  try{ const {priv,pub}=await signKeyFrom(key); if(ACCESS_PUB&&pub!==ACCESS_PUB){ out.textContent='This owner key does not match the access set-up.'; return; }
+    const co=role==='inch'||role==='full'?2:role==='hod'?1:0, site=role==='site'?(siteCode(pid)||(PRJ.list.find(p=>p.id===pid)||{}).name||''):'', RN={site:'Site formwork engineer',inch:'Formwork in-charge',hod:'Head of department',full:'Full access cover'}[role];
+    const end=new Date(); end.setDate(end.getDate()+days); end.setHours(23,59,0,0); const sc=new TextEncoder().encode(site.slice(0,20)), nm=new TextEncoder().encode(name), id=crypto.getRandomValues(new Uint8Array(4)), pl=new Uint8Array(11+sc.length+nm.length);
+    pl[0]=2; pl.set(id,1); new DataView(pl.buffer).setUint32(5,Math.floor(end.getTime()/60000)); pl[9]=co; pl[10]=sc.length; pl.set(sc,11); pl.set(nm,11+sc.length);
+    const sig=new Uint8Array(await crypto.subtle.sign({name:'Ed25519'},priv,pl)), link=location.origin+location.pathname+'#access='+b64u(pl)+'.'+b64u(sig), until=end.toISOString().slice(0,10);
+    state.meta.accessList=(state.meta.accessList||[]).concat([{id:b64u(id),name,role:RN,site:site||'All sites',until,made:todayStr()}]); touchMeta('accessList'); save();
+    try{ const c=CO.get(); let u=c.users.find(x=>!x.del&&norm(x.name)===norm(name)); if(!u){ u={id:'u'+Date.now(),name,consLimit:25000,asset:'Needs approval',assetLimit:0,status:'Active'}; c.users.push(u); } Object.assign(u,{role:RN,site:site||'All',co:['None','View','Edit'][co],till:until,linkId:b64u(id),linkUntil:until}); CO.set(c); }catch(e){}
+    setTimeout(()=>{ const o=document.getElementById('ac_out'); if(o) o.innerHTML=`<b>${esc(name)} · ${esc(RN)}${site?' · '+esc(site):''} · until ${fmtD(until)}</b><br><code style="user-select:all;word-break:break-all">${esc(link)}</code><br><a class="btn sm p" target="_blank" href="https://wa.me/?text=${encodeURIComponent('FormTrack access for '+name+' ('+RN+', until '+fmtD(until)+'): '+link)}">Send on WhatsApp</a> <button class="btn sm" onclick="navigator.clipboard&&navigator.clipboard.writeText('${link}').then(()=>toast('Link copied'))">Copy link</button>`; },80);
+  }catch(e){ out.textContent='This browser cannot make access links – update Chrome.'; } }
+/* a site-engineer link opens only its own site */
+{ const _r=render; render=function(){ try{ if(ACC&&!ACC.co&&ACC.site&&!isOwnerDev()){ const p=PRJ.list.find(x=>siteCode(x.id)===ACC.site||x.name===ACC.site); if(p&&p.id!==PRJ.cur&&!window.__accSw){ window.__accSw=1; switchProject(p.id,true); return; } } }catch(e){} return _r(); }; }
+{ const _o=openProjects; openProjects=function(){ if(ACC&&!ACC.co&&ACC.site&&!isOwnerDev()){ toast('This access is for '+ACC.site+' only.'); return; } return _o(); }; }
 
 </script>
 </body>
