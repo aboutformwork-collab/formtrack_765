@@ -546,6 +546,19 @@ body:not(.mac):not(.sheet):not(.studio) #main .mh .psrch{order:6;flex-basis:100%
 .mpnow{margin:0;font-size:13.5px}.mpnow .pos{color:#1e7a45}
 @media(max-width:820px){.mpcards{grid-template-columns:1fr}.mps{flex-wrap:wrap}.mps .ar{display:none}.mps>div{min-width:40%}}
 .mpuse{margin:0 0 10px;font-size:12.5px;color:var(--muted)}.mpuse b{color:var(--ink)}.mpub{height:7px;border-radius:4px;background:var(--calc);border:1px solid var(--line);margin:4px 0;overflow:hidden}.mpub i{display:block;height:100%;background:#7a8a96}
+/* STAGE1 workspace */
+.wsw{display:flex;margin:2px 12px 8px;background:#ffffff14;border-radius:10px;padding:3px;gap:2px}
+.wsw button{flex:1;border:0;background:none;color:#b9c3c6;font:700 12.5px/1 inherit;padding:8px 0;border-radius:8px;cursor:pointer}
+.wsw button.on{background:var(--accent2,#e0a526);color:#15232d}
+#side.mini .wsw{flex-direction:column}
+body.cows #side{background:#1d2440!important}
+body.cows #side .nl.on{background:#ffffff1c}
+.pcard.cocard{cursor:default;display:flex;align-items:center;gap:10px}
+.cocard .cic{width:40px;height:40px;border-radius:10px;display:grid;place-items:center;background:#2b3459;color:#fff;font-size:18px;flex:none}
+.coi{font:inherit;font-size:13.5px;padding:5px 7px;border:1px solid var(--line);border-radius:6px;background:var(--in,#fff);color:var(--ink);max-width:100%}
+.coT td{vertical-align:middle}
+body.cows .mh .projname,body.cows .mh .prjsw,body.cows .mh .pcode,body.cows .mh .loc{display:none!important}
+.coT select.coi{max-width:200px}
 </style>
 </head>
 <body>
@@ -555,7 +568,7 @@ body:not(.mac):not(.sheet):not(.studio) #main .mh .psrch{order:6;flex-basis:100%
 <input type="file" id="restoreFile" accept=".json" style="display:none" onchange="if(this.files[0])restoreBackup(this.files[0]);this.value=''">
 <input type="file" id="fsPick" style="display:none" onchange="fsOpenFile(this.files[0]);this.value=''">
 
-<script>window.__FORMTRACK_PWA=true; window.__FORMTRACK_VER="2026.11.09-2333"; window.__FORMTRACK_VERNAME="09 Nov 23:33"; window.__FT_TRIAL_FROM=1793358725887; window.__FT_OWNER_KEYS=["FTK1.KFWlfr8L9B9vCV5zDqch0g==.dbjdxh8PZxOLP1CNQ2z3RabZkTuh7AORMJY1xre+tWo=", "FTK1.Osl5ooyWCagTRuMdk06Obg==.rchABMlUZsicdxq192DnzmUcdgRXTqVE0LzUln8iqDY="]; window.__FT_ACCESS_PUB="SC1QzgBryXETIvpdPX-L1vNG0PfXbclYD1uqU4rGGy0"; window.__FT_BLOCKED=[];</script>
+<script>window.__FORMTRACK_PWA=true; window.__FORMTRACK_VER="2026.11.12-2150"; window.__FORMTRACK_VERNAME="12 Nov 21:50"; window.__FT_TRIAL_FROM=1793358725887; window.__FT_OWNER_KEYS=["FTK1.KFWlfr8L9B9vCV5zDqch0g==.dbjdxh8PZxOLP1CNQ2z3RabZkTuh7AORMJY1xre+tWo=", "FTK1.Osl5ooyWCagTRuMdk06Obg==.rchABMlUZsicdxq192DnzmUcdgRXTqVE0LzUln8iqDY="]; window.__FT_ACCESS_PUB="SC1QzgBryXETIvpdPX-L1vNG0PfXbclYD1uqU4rGGy0"; window.__FT_BLOCKED=[];</script>
 <script>
 /* FormTrack */
 const STORE_KEY = 'formtrack_data_v2';
@@ -3168,7 +3181,7 @@ PAGES.prpo=()=>{
     .concat(csugg.map(c=>{const s=consStock(c.id), q=num(c.minStock)*2-s-openPOQty(c.item); return `<tr><td class="v">${esc(c.item)}</td><td class="calc r">${fmtN(s)} ${esc(c.unit)}</td><td class="calc r">${fmtN(c.minStock)}</td><td class="calc r">${fmtN(openPOQty(c.item))}</td><td class="v"><button class="btn sm p" onclick="raisePR('${esc(c.item).replace(/'/g,"\\'")}',${q},'${esc(c.unit)}',${num(c.unitCost)},'Consumable')">Raise PR</button> ${tick('consItems',c)}</td></tr>`;})).concat(msugg.map(m=>{const st=machBal(m.id).store, q=Math.max(1,num(m.minStore)-st-openPOQty(m.name)); return `<tr><td class="v">${esc(m.name)} <small class="muted">(machine)</small></td><td class="calc r">${fmtN(st)} Nos</td><td class="calc r">${fmtN(m.minStore)}</td><td class="calc r">${fmtN(openPOQty(m.name))}</td><td class="v"><button class="btn sm p" onclick="raisePR('${esc(m.name).replace(/'/g,"\\'")}',${q},'Nos',${num(m.unitValue)},'Machinery')">Raise PR</button> ${tick('machines',m)}</td></tr>`;}))));
   h+=prChainPanel();
   h+=`<div class="chips"><label>Show</label>${['Open','Late','Received','All'].map(x=>`<button class="btn sm ${x===f?'p':''}" onclick="setUI('prFilter','${x}')">${x}</button>`).join('')}</div>`;
-  h+=panel('Purchase requests & orders',table('prpo',[{key:'category',label:'Category',type:'select',options:['Material','Consumable','Machinery','Service','Other']},{key:'item',label:'Item',w:160},{key:'qty',label:'PR qty',type:'number',r:1,noSum:1},{key:'poQty',label:'PO qty',type:'number',r:1},{key:'unit',label:'Unit',type:'unit'},{key:'value',label:`Value (${cur()})`,type:'number',r:1},{key:'vendor',label:'Vendor'},{key:'prNo',label:'PR no.'},{key:'prDate',label:'PR date',type:'date'},{key:'poNo',label:'PO no.'},{key:'poDate',label:'PO date',type:'date'},{key:'requiredBy',label:'Required by',type:'date'},{key:'receivedDate',label:'Received on',type:'date'},
+  h+=panel('Purchase requests & orders',table('prpo',[{key:'category',label:'Category',type:'select',options:['Consumable','Company Asset','Material','Machinery','Service','Other']},{key:'item',label:'Item',w:160},{key:'qty',label:'PR qty',type:'number',r:1,noSum:1},{key:'poQty',label:'PO qty',type:'number',r:1},{key:'unit',label:'Unit',type:'unit'},{key:'value',label:`Value (${cur()})`,type:'number',r:1},{key:'vendor',label:'Vendor'},{key:'prNo',label:'PR no.'},{key:'prDate',label:'PR date',type:'date'},{key:'poNo',label:'PO no.'},{key:'poDate',label:'PO date',type:'date'},{key:'requiredBy',label:'Required by',type:'date'},{key:'receivedDate',label:'Received on',type:'date'},
     {label:'Status',calc:p=>{const [c,t]=prStatus(p); return PILL(c,t);}},{label:'Received (good)',r:1,calc:p=>{ const g=poGood(p.poNo); return g?fmtN(g):'—'; }},{label:'Pending',r:1,calc:p=>{ if(!p.poNo||!poQ(p)) return '—'; const b=poQ(p)-poGood(p.poNo); return b>1e-9?`<b class="neg">${fmtN(b)}</b>`:PILL('ok','Complete'); }},{label:'PR balance',calc:p=>{ const g=prChains().find(x=>x.rows.includes(p)); return g&&g.toPO>1e-9?`<button class="btn sm" onclick="nextPO('${p.id}')" title="add another PO row for the rest of this PR">＋ PO ${fmtN(g.toPO)}</button>`:'—'; }},{label:'Received (machines)',r:1,calc:p=>{ if(!p.poNo) return '—'; const q=state.machineTx.filter(t=>t.type==='Received (purchase)'&&norm(t.poNo)===norm(p.poNo)).reduce((a,t)=>a+num(t.qty),0); return q?fmtN(q)+(num(p.qty)?' of '+fmtN(p.qty):''):'—'; }},{label:'Days open',r:1,calc:p=>p.prDate?fmtN(dayDiff(p.prDate,p.receivedDate||todayStr())):'—'},{key:'remarks',label:'Remarks'}],{rows,totals:['value']}),'showing: '+f);
   { const P=state.prpo.filter(p=>p.poNo); if(P.length) h+=panel('PO status – ordered, received, left',simpleTable([['PO no.'],['Item'],['PO qty',1],['Received (good)',1],['Damaged',1],['Short',1],['Left',1],['Status']],
       P.map(p=>{ const R=poRecs(p.poNo), g=R.reduce((a,t)=>a+goodQ(t),0), d=R.reduce((a,t)=>a+num(t.dmgQty),0), sh=R.reduce((a,t)=>a+num(t.shortQty),0), left=Math.max(0,poQ(p)-g);
@@ -3913,7 +3926,7 @@ function exportAll(){
   const projects=PRJ.list.map(p=>{ const st= p.id===PRJ.cur? state : readProject(p.id); return st?{id:p.id,name:p.name,company:p.company,state:stripState(st)}:null; }).filter(Boolean);
   const used=new Set(); projects.forEach(P=>(P.state.practices||[]).forEach(r=>(r.photos||[]).forEach(id=>used.add(id))));
   const photos={}; used.forEach(id=>{ if(PH[id]) photos[id]=PH[id]; });
-  return {format:'formtrack',version:2,savedAt:new Date().toISOString(),savedBy:navigator.userAgent.slice(0,60),current:PRJ.cur,projects,photos};
+  return {format:'formtrack',version:2,savedAt:new Date().toISOString(),savedBy:navigator.userAgent.slice(0,60),current:PRJ.cur,projects,photos,company:CO.get()};
 }
 function mergeInto(pid,inc,P){
   if(pid===PRJ.cur){ const r=mergeState(inc); state.meta.pid=pid; return r; }
@@ -3928,6 +3941,7 @@ function mergeFile(raw){
   if(raw&&raw.format==='formtrack'&&Array.isArray(raw.projects)){
     let a=0,u=0,rm=0; const newNames=[];
     if(raw.photos&&typeof raw.photos==='object') Object.entries(raw.photos).forEach(([id,d])=>{ if(!PH[id]&&typeof d==='string'&&d.startsWith('data:image/')) phPut(id,d); });
+    if(raw.company&&typeof raw.company==='object'){ try{ const c=CO.get(); if(num(raw.company.savedAt)>num(c.savedAt)) CO.set(raw.company,true); }catch(e){} }
     raw.projects.forEach(P=>{ if(!P||!P.id||!P.state) return; const r=mergeInto(P.id,P.state,P); a+=r.added; u+=r.updated; rm+=r.removed; if(r.isNew) newNames.push(P.name||'project'); });
     prjSync(); clearCaches();
     const txt=(a||u||rm||newNames.length)? `Merged from file: ${a} new, ${u} updated${rm?`, ${rm} removed`:''}${newNames.length?` · new project${newNames.length>1?'s':''}: ${newNames.join(', ')}`:''}. Your own entries were kept.` : 'Already up to date – nothing new in the file.';
@@ -4430,7 +4444,7 @@ function mpfCalc(r){ const mo=num(r.months), qty=num(r.sqm), util=(r.util===''||
   const rentVal=qty*num(r.rate)*mo*util, own=net*Math.min(1,used/lifeU), run=num(r.repair)+num(r.transport)+num(r.loss)+num(r.cons)+num(r.labour), cost=own+run, profit=rentVal-cost;
   const perMo=mo?(rentVal-run)/mo:0, payback=perMo>0?net/perMo:0, usesPerMo=mo?used/mo:0, left=Math.max(0,lifeU-used), monthsLeft=usesPerMo?left/usesPerMo:0, perUse=qty&&lifeU?net/lifeU/qty:0;
   return {mo,qty,util,lifeU,used,left,monthsLeft,usesPerMo,perUse,net,rentVal,own,run,cost,profit,perMo,payback,margin:rentVal?profit/rentVal:0}; }
-function mpfMat(){ (state.matProfit||[]).forEach(r=>{ if(r.material&&r._lm!==r.material){ if(!num(r.lifeUses)||r._lm) r.lifeUses=LIFE_USES[r.material]||r.lifeUses; r._lm=r.material; } }); }
+function mpfMat(){ (state.matProfit||[]).forEach(r=>{ if(r.material&&r._lm!==r.material){ if(!num(r.lifeUses)||r._lm) r.lifeUses=matLife(r.material)||r.lifeUses; r._lm=r.material; } }); }
 function mpfCurve(r){ const c=mpfCalc(r), N=Math.max(c.mo, Math.ceil(c.payback||0)+2, 6); const L=[],V=[]; for(let m=0;m<=Math.min(N,60);m++){ L.push(m+'m'); V.push(c.perMo*m-num(r.buy)); } return {labels:L,series:[{name:'Profit so far',values:V}]}; }
 function matProfitBody(){ mpfMat(); const R=state.matProfit, t=state.ui.mpfTab||'own', A=R.filter(r=>(r.mode||'own')===t), C=A.map(mpfCalc);
   const T=C.reduce((a,c)=>{ a.v+=c.rentVal; a.c+=c.cost; a.p+=c.profit; return a; },{v:0,c:0,p:0});
@@ -4441,7 +4455,7 @@ function matProfitBody(){ mpfMat(); const R=state.matProfit, t=state.ui.mpfTab||
     <div class="mpgbar"><i style="width:${pct}%"></i><span style="left:100%">paid back</span></div>
     <div class="mpuse"><span>Repetitions: <b>${fmtN(c.used)}</b> of <b>${fmtN(c.lifeU)}</b> done</span><div class="mpub"><i style="width:${Math.min(100,c.used/c.lifeU*100)}%"></i></div><span>${fmtN(c.left)} repetitions left${c.monthsLeft?' ≈ '+fmtN(c.monthsLeft,1)+' months':''} · material cost ₹${fmtN(c.perUse,1)} per sqm per repetition</span></div>${c.payback&&c.usesPerMo&&c.mo+c.monthsLeft<c.payback?`<p class="mpnow" style="margin-bottom:6px"><b class="neg">⚠ Wears out before it pays back:</b> repetitions finish at about ${fmtN(c.mo+c.monthsLeft,1)} months, payback needs ${fmtN(c.payback,1)} months.</p>`:''}<p class="mpnow">${c.mo?`After <b>${fmtN(c.mo,1)} months</b> of use: `:''}${!pb?'<b class="neg">Not paying back – running cost is more than the rent saved.</b>':left>0?`recovered <b>${money(gained)}</b> · still <b>${money(left)}</b> to recover`:`<b class="pos">purchase fully recovered ✓ · extra profit ${money(-left)}</b>`}</p></div>`; }).join('')}</div>`;
   h+=`<div class="chips"><button class="btn p sm" onclick="addRow('matProfit');setTimeout(()=>{ const r=state.matProfit[state.matProfit.length-1]; if(r){ r.mode='${t}'; save(); render(); } },0)">+ Add ${t==='own'?'own material':'rent-out'} row</button></div>`;
-  h+=panel(t==='own'?'Material you own – what it saves vs hiring':'Material you give on rent – what it earns',table('matProfit',[{key:'name',label:'Material / set',w:150},{key:'systemId',label:'System',type:'system',blank:'—'},{key:'sqm',label:'Qty (sqm)',type:'number',r:true},{key:'months',label:'Months',type:'number',r:true,dec:1},{key:'util',label:'In use %',type:'number',r:true},{key:'rate',label:t==='own'?'Vendor rate saved ₹/sqm/mo':'Rent charged ₹/sqm/mo',type:'number',r:true},{key:'buy',label:'Purchase cost ₹',type:'number',r:true},{key:'material',label:'Material',type:'select',options:Object.keys(LIFE_USES)},{key:'lifeUses',label:'Total repetitions',type:'number',r:true},{key:'usesDone',label:'Repetitions done',type:'number',r:true},{key:'repair',label:'Repair ₹',type:'number',r:true},{key:'cons',label:'Consumables ₹',type:'number',r:true},{key:'labour',label:'Labour ₹',type:'number',r:true},{key:'transport',label:'Transport ₹',type:'number',r:true},{key:'loss',label:'Damage / missing ₹',type:'number',r:true},{key:'scrap',label:'Scrap value ₹',type:'number',r:true},
+  h+=panel(t==='own'?'Material you own – what it saves vs hiring':'Material you give on rent – what it earns',table('matProfit',[{key:'name',label:'Material / set',w:150},{key:'systemId',label:'System',type:'system',blank:'—'},{key:'sqm',label:'Qty (sqm)',type:'number',r:true},{key:'months',label:'Months',type:'number',r:true,dec:1},{key:'util',label:'In use %',type:'number',r:true},{key:'rate',label:t==='own'?'Vendor rate saved ₹/sqm/mo':'Rent charged ₹/sqm/mo',type:'number',r:true},{key:'buy',label:'Purchase cost ₹',type:'number',r:true},{key:'material',label:'Material',type:'select',options:matOpts()},{key:'lifeUses',label:'Total repetitions',type:'number',r:true},{key:'usesDone',label:'Repetitions done',type:'number',r:true},{key:'repair',label:'Repair ₹',type:'number',r:true},{key:'cons',label:'Consumables ₹',type:'number',r:true},{key:'labour',label:'Labour ₹',type:'number',r:true},{key:'transport',label:'Transport ₹',type:'number',r:true},{key:'loss',label:'Damage / missing ₹',type:'number',r:true},{key:'scrap',label:'Scrap value ₹',type:'number',r:true},
     {label:t==='own'?'Rent saved':'Rent earned',r:1,calc:r=>money(mpfCalc(r).rentVal)},{label:'Cost',r:1,calc:r=>money(mpfCalc(r).cost)},{label:'Profit',r:1,calc:r=>{ const p=mpfCalc(r).profit; return `<b class="${p<0?'neg':''}">${money(p)}</b>`; }},{label:'Repetitions left',r:1,calc:r=>{ const c=mpfCalc(r); return `${fmtN(c.left)} <small class="muted">of ${fmtN(c.lifeU)}</small>`; }},{label:'Payback',r:1,calc:r=>{ const c=mpfCalc(r); return c.payback?fmtN(c.payback,1)+' mo '+(c.mo>=c.payback?PILL('ok','paid'):PILL('wn','not yet')):PILL('bd','never'); }}],{rows:A,noSum:true}),
     t==='own'?'rent saved = qty × vendor rate × months × in-use %':'rent earned = qty × rent × months × in-use %');
   if(A.length){ const pick=Math.min(num(state.ui.mpfPick)||0,A.length-1), r=A[pick], c=C[pick];
@@ -4531,7 +4545,7 @@ function studioOn(){ return !!(state&&state.meta&&state.meta.look==='studio'); }
 function studioShell(){ const tb=document.getElementById('ptb');
   if(!studioOn()){ document.body.classList.remove('studio'); if(tb) tb.remove(); return; }
   document.body.classList.add('studio'); document.body.classList.remove('mac','sheet');
-  const GI={Overview:'▦',Setup:'⚙','Daily entry':'⚒',Rental:'₹',Owned:'◆',Store:'▣',Analysis:'⚖',Site:'⌖',File:'🗂'};
+  const GI={Overview:'▦',Setup:'⚙','Daily entry':'⚒','Daily Entry':'⚒',Procurement:'🧾','Company Asset':'◆','Asset Management':'◆',Administration:'⚙',Rental:'₹',Owned:'◆',Store:'▣',Analysis:'⚖',Site:'⌖',File:'🗂'};
   const r=state.route,g=NAV.find(x=>x.items.some(([k])=>k===r))||NAV[0],B=sideBadges();
   document.getElementById('side').innerHTML='<div class="lg">F</div>'+NAV.filter(x=>x.g!=='File').map(x=>`<button class="${x===g?'on':''}" title="${esc(x.g)}" onclick="go('${x.items[0][0]}')">${GI[x.g]||'•'}${x.items.some(([k])=>B[k])?'<i></i>':''}</button>`).join('')+'<div class="sp"></div>'+`<button title="File" onclick="go('data')" class="${g.g==='File'?'on':''}">⚙</button>`;
   const ini=esc((state.meta.user||'').trim().split(/\s+/).filter(Boolean).map(w=>w[0]).join('').slice(0,2).toUpperCase());
@@ -4829,6 +4843,119 @@ if(lockOn()){ LOCKED=true; document.body.classList.add('locked'); }
     else if(state&&state.meta) idbQueue(PRJ.cur,stJSON(state));
   }catch(e){} try{ if(navigator.storage&&navigator.storage.persist) navigator.storage.persist(); }catch(e){} })();
 phLoad().then(()=>{ if(['practice'].includes(state.route)) render(); }); prjSync(); if(state.firstRun){ delete state.firstRun; if(!FILEMODE) loadDemoData(true); state.route='dashboard'; state.pending=true; persistLocal(); } render(); initSync(); fsInit();
+
+/* ================= STAGE 1 · SITE / COMPANY SECTIONS ================= */
+const SITE_NAV_DEF=[
+ ['Overview',[['dashboard','Site Dashboard'],['health','Data Check'],['mypages','My Pages'],['qsum','Site Summary'],['manual','Progress Board'],['meeting','Review Meeting']]],
+ ['Setup',[['setup','Formwork Systems & Areas'],['scope','Scope & Programme'],['rates','Rate Contracts']]],
+ ['Daily Entry',[['quick','Quick Entry'],['execution','Daily Progress'],['labour','Labour Deployment'],['consumables','Consumables Issue'],['ledger','Material Inward / Outward']]],
+ ['Procurement',[['prpo','PR & PO'],['storeRec','Goods Receipt (GRN)']]],
+ ['Rental',[['items','Rental Material Register'],['rent','Hire Charges'],['invoices','Vendor Bill Verification']]],
+ ['Company Asset',[['owned','Company Asset at Site']]],
+ ['Store',[['store','Store Inventory'],['storeVal','Stock Valuation'],['storeMove','Transfers & Returns'],['storeChk','Physical Verification'],['rentStore','Rental Store'],['machines','Tools & Equipment'],['contractors','Contractor Issue Register']]],
+ ['Analysis',[['cycle','Cycle Planning'],['planning','Formwork Scheduling'],['dehire','De-hire Planning'],['rentbuy','Material Earnings']]],
+ ['Site',[['sitemap','Site Layout'],['practice','Site Observations'],['notes','Site Notes']]],
+ ['File',[['bin','Recently Deleted'],['data','Backup & Settings']]]];
+const NAV_SITE=(()=>{ const used=new Set(SITE_NAV_DEF.flatMap(g=>g[1].map(x=>x[0]))), extra=NAV.flatMap(g=>g.items).filter(([k])=>!used.has(k)&&k!=='portfolio');
+  return SITE_NAV_DEF.map(([g,items])=>({g,items:g==='File'?[...extra,...items]:items.slice()})); })();
+const NAV_CO=[
+ {g:'Overview',items:[['portfolio','Portfolio Overview'],['coHealth','Data Integrity']]},
+ {g:'Procurement',items:[['coPR','PR & PO Register']]},
+ {g:'Asset Management',items:[['coAssets','Company Asset Register']]},
+ {g:'Administration',items:[['coMaster','Material Master'],['coSites','Sites & Stores'],['coUsers','Users & Permissions']]},
+ {g:'File',items:[['data','Backup & Settings']]}];
+const coAllowed=()=>{ try{ return !TRIAL_ON||isOwnerDev(); }catch(e){ return false; } };
+const wsGet=()=>{ try{ return localStorage.getItem('ft_ws')==='company'&&coAllowed()?'company':'site'; }catch(e){ return 'site'; } };
+function setNav(){ const L=wsGet()==='company'?NAV_CO:NAV_SITE; NAV.length=0; L.forEach(x=>NAV.push(x)); document.body.classList.toggle('cows',wsGet()==='company'); }
+function wsSet(w){ try{ localStorage.setItem('ft_ws',w); }catch(e){} state.route=w==='company'?'portfolio':'dashboard'; persist(); render(); document.getElementById('main').scrollTop=0; }
+{ const _r=render; render=function(){ setNav(); return _r(); }; }
+{ const _s=sideHTML; sideHTML=function(){ let h=_s(); if(!coAllowed()) return h; const w=wsGet(), C=CO.get();
+  const sw=`<div class="wsw" role="tablist"><button class="${w==='site'?'on':''}" onclick="wsSet('site')">Site</button><button class="${w==='company'?'on':''}" onclick="wsSet('company')">Company</button></div>`;
+  if(w==='company') h=h.replace(/<button class="pcard"[\s\S]*?<\/button>/,`<div class="pcard cocard"><span class="cic" aria-hidden="true">▦</span><span class="pt"><b>${esc(C.name||state.meta.company||'Company')}</b><em>${PRJ.list.length} site${PRJ.list.length===1?'':'s'}${C.stores.length?' · '+C.stores.length+' store'+(C.stores.length===1?'':'s'):''}</em></span></div>`);
+  return h.replace('<nav class="navw">',sw+'<nav class="navw">'); }; }
+
+/* ---------- company data ---------- */
+const CO_KEY=STORE_KEY+'__company';
+const MAT_DEF=[['Aluminium formwork','sqm',80,'SLM',15],['Steel / wall formwork','sqm',150,'SLM',15],['Table & slab forms','sqm',120,'SLM',15],['Plastic formwork','sqm',50,'SLM',20],['Plywood & timber','sheet',8,'SLM',100],['Shoring & props','nos',200,'SLM',20],['Cuplock & scaffolding','nos',250,'SLM',20],['ISMC / H-beam','rmt',150,'WDV',15],['SQ tube / MS pipe','rmt',120,'WDV',20],['Column forms','set',60,'SLM',20],['Climbing forms','set',100,'SLM',15],['Accessories','nos',40,'SLM',33.3]];
+function coNorm(c){ c=c&&typeof c==='object'?c:{}; c.name=c.name||''; c.sites=c.sites&&typeof c.sites==='object'?c.sites:{}; c.stores=Array.isArray(c.stores)?c.stores:[]; c.users=Array.isArray(c.users)?c.users:[]; c.hist=Array.isArray(c.hist)?c.hist:[];
+  if(!Array.isArray(c.types)||!c.types.length) c.types=MAT_DEF.map((m,i)=>({id:'mt'+i,name:m[0],unit:m[1],life:m[2],dep:m[3],rate:m[4],residual:5,kg:0,move:'Yes',active:true}));
+  c.items=Array.isArray(c.items)?c.items:[]; return c; }
+const CO={ get(){ try{ const c=JSON.parse(localStorage.getItem(CO_KEY)||'null'); if(c) return coNorm(c); }catch(e){} return coNorm({}); },
+  set(c,keepTime){ if(!keepTime) c.savedAt=Date.now(); try{ localStorage.setItem(CO_KEY,JSON.stringify(c)); }catch(e){} } };
+function coSave(c){ CO.set(c); try{ persist(); }catch(e){} render(); }
+function coHist(c,what,from,to){ c.hist.unshift({t:new Date().toISOString().slice(0,16).replace('T',' '),who:state.meta.user||'',what,from:String(from??''),to:String(to??'')}); c.hist=c.hist.slice(0,300); }
+const matOpts=()=>{ const n=CO.get().types.filter(t=>t.active!==false).map(t=>t.name); (state.matProfit||[]).forEach(r=>{ if(r.material&&!n.includes(r.material)) n.push(r.material); }); return n; };
+const matLife=n=>{ const t=CO.get().types.find(x=>x.name===n); return t?num(t.life):(LIFE_USES[n]||0); };
+const coAll=()=>{ prjSync(); return PRJ.list.map(p=>({p,st:p.id===PRJ.cur?state:readProject(p.id)})).filter(x=>x.st); };
+function withState(st,fn){ const keep=state; let r; try{ state=st; clearCaches(); r=fn(); }catch(e){ console.error(e); } state=keep; clearCaches(); return r; }
+const siteCode=pid=>(CO.get().sites[pid]||{}).code||'';
+const ci=(v,on,t,extra)=>`<input class="coi" ${t?`type="${t}"`:''} value="${esc(v??'')}" onchange="${on}" ${extra||''}>`;
+const cs=(v,opts,on)=>`<select class="coi" onchange="${on}">${opts.map(o=>`<option ${String(o)===String(v)?'selected':''}>${esc(o)}</option>`).join('')}</select>`;
+
+/* ---------- Sites & Stores ---------- */
+function coSiteSet(pid,k,v){ const c=CO.get(), r=c.sites[pid]=c.sites[pid]||{}; if((r[k]||'')===v) return; coHist(c,(k==='code'?'Site code':k==='start'?'Start date':k==='end'?'End date':k==='type'?'Type':'Status')+' · '+(PRJ.list.find(p=>p.id===pid)||{}).name,r[k],v); r[k]=v; coSave(c); }
+function coSiteName(pid,v){ v=String(v||'').trim(); if(!v) return render(); const c=CO.get(), P=PRJ.list.find(p=>p.id===pid);
+  if(pid===PRJ.cur){ if(state.meta.projectCode){ toast('🔒 Locked with the project code'); return render(); } coHist(c,'Site name',state.meta.project,v); CO.set(c); setMeta('project',v); return; }
+  const st=readProject(pid); if(!st) return; if(st.meta.projectCode){ toast('🔒 Locked with the project code'); return render(); }
+  coHist(c,'Site name',st.meta.project,v); withState(st,()=>{ state.meta.project=v; touchMeta('project'); }); st.savedAt=nowMs(); stWrite(pid,st); if(P) P.name=v; prjSave(); coSave(c); }
+function coCompanyName(v){ v=String(v||'').trim(); const c=CO.get(); coHist(c,'Company name',c.name,v); c.name=v;
+  coAll().forEach(({p,st})=>{ if(st.meta.projectCode) return; if(p.id===PRJ.cur){ state.meta.company=v; touchMeta('company'); } else { withState(st,()=>{ state.meta.company=v; touchMeta('company'); }); st.savedAt=nowMs(); stWrite(p.id,st); } p.company=v; });
+  prjSave(); save(); coSave(c); }
+function coStore(i,k,v){ const c=CO.get(); if(i<0){ c.stores.push({id:'st'+Date.now(),code:'',name:'New store',start:'',status:'Active'}); } else { const r=c.stores[i]; if(!r) return; coHist(c,'Store '+k+' · '+r.name,r[k],v); r[k]=v; } coSave(c); }
+function coStoreDel(i){ const c=CO.get(); const r=c.stores[i]; if(!r) return; coHist(c,'Store removed',r.name,''); c.stores.splice(i,1); coSave(c); }
+PAGES.coSites=()=>{ const C=CO.get(), A=coAll();
+  let h=panel('Company',`<div class="frm"><label>Company name<input value="${esc(C.name||state.meta.company||'')}" onchange="coCompanyName(this.value)"></label></div>`);
+  h+=panel('Sites',`<div class="tw"><table class="sheet coT"><thead><tr><th>Code</th><th>Site name</th><th>Start date</th><th>End date</th><th>Status</th><th class="r">Scope done</th><th></th></tr></thead><tbody>${A.map(({p,st})=>{ const r=C.sites[p.id]||{}, lk=!!st.meta.projectCode;
+    return `<tr><td>${ci(r.code,`coSiteSet('${p.id}','code',this.value.toUpperCase())`,'','style="width:110px;text-transform:uppercase"')}</td><td>${lk?`<b>${esc(st.meta.project)}</b> 🔒`:ci(st.meta.project,`coSiteName('${p.id}',this.value)`,'','style="min-width:220px"')}</td><td>${ci(r.start,`coSiteSet('${p.id}','start',this.value)`,'date')}</td><td>${ci(r.end,`coSiteSet('${p.id}','end',this.value)`,'date')}</td><td>${cs(r.status||'Active',['Active','Finishing','Closed'],`coSiteSet('${p.id}','status',this.value)`)}</td><td class="r">${(v=>v==null?'—':v+'%')(withState(st,()=>prjPct(st)))}</td><td>${p.id===PRJ.cur?PILL('ok','Open'):`<button class="btn sm" onclick="localStorage.setItem('ft_ws','site');switchProject('${p.id}',true)">Open</button>`}</td></tr>`; }).join('')}</tbody></table></div><div class="acts"><button class="btn" onclick="openProjects()">+ Add site</button></div>`);
+  h+=panel('Stores & yards',`<div class="tw"><table class="sheet coT"><thead><tr><th>Code</th><th>Name</th><th>Since</th><th>Status</th><th></th></tr></thead><tbody>${C.stores.map((r,i)=>`<tr><td>${ci(r.code,`coStore(${i},'code',this.value.toUpperCase())`,'','style="width:110px;text-transform:uppercase"')}</td><td>${ci(r.name,`coStore(${i},'name',this.value)`,'','style="min-width:220px"')}</td><td>${ci(r.start,`coStore(${i},'start',this.value)`,'date')}</td><td>${cs(r.status||'Active',['Active','Closed'],`coStore(${i},'status',this.value)`)}</td><td><button class="btn sm d" onclick="coStoreDel(${i})">Remove</button></td></tr>`).join('')||'<tr><td colspan="5" class="muted">—</td></tr>'}</tbody></table></div><div class="acts"><button class="btn" onclick="coStore(-1)">+ Add store / yard</button></div>`);
+  if(C.hist.length) h+=panel('Change history',simpleTable([['Date'],['By'],['Change'],['From'],['To']],C.hist.slice(0,40).map(x=>`<tr><td class="calc">${esc(x.t)}</td><td class="calc">${esc(x.who)}</td><td class="calc">${esc(x.what)}</td><td class="calc">${esc(x.from)}</td><td class="calc"><b>${esc(x.to)}</b></td></tr>`)));
+  return h; };
+
+/* ---------- Users & Permissions ---------- */
+const ROLES=['Formwork In-charge','Site Formwork Engineer','Head of Department','Store / Yard Keeper'];
+function coUser(i,k,v){ const c=CO.get(); if(i<0){ c.users.push({id:'u'+Date.now(),name:'',role:'Site Formwork Engineer',site:'',consLimit:25000,asset:'Needs approval',assetLimit:0,co:'None',till:'',status:'Active'}); } else { const u=c.users[i]; if(!u) return; coHist(c,'User '+(u.name||'')+' · '+k,u[k],v); u[k]=v; } coSave(c); }
+function coUserDel(i){ const c=CO.get(), u=c.users[i]; if(!u) return; coHist(c,'User removed',u.name,''); c.users.splice(i,1); coSave(c); }
+PAGES.coUsers=()=>{ const C=CO.get(), sites=['All',...PRJ.list.map(p=>(siteCode(p.id)?siteCode(p.id)+' · ':'')+p.name),...C.stores.map(s=>(s.code?s.code+' · ':'')+s.name)];
+  const act=C.users.filter(u=>u.status!=='Revoked'), exp=C.users.filter(u=>u.till&&u.till<todayStr()&&u.status!=='Revoked');
+  let h=`<div class="kpis">${kpi('Users',act.length)}${kpi('Site engineers',act.filter(u=>u.role==='Site Formwork Engineer').length)}${kpi('Direct asset purchase',act.filter(u=>u.asset==='Direct').length)}${kpi('Expired',exp.length,'',exp.length?'warn':'good')}</div>`;
+  h+=panel('Users & permissions',`<div class="tw"><table class="sheet coT"><thead><tr><th>Name</th><th>Role</th><th>Site</th><th class="r">Consumables auto-approve (${cur()})</th><th>Company asset purchase</th><th class="r">Direct limit / PO (${cur()})</th><th>Company section</th><th>Valid till</th><th>Status</th><th></th></tr></thead><tbody>${C.users.map((u,i)=>`<tr class="${u.status==='Revoked'?'muted-row':''}"><td>${ci(u.name,`coUser(${i},'name',this.value)`,'','style="min-width:150px"')}</td><td>${cs(u.role,ROLES,`coUser(${i},'role',this.value)`)}</td><td>${cs(u.site||'All',sites,`coUser(${i},'site',this.value)`)}</td><td>${ci(u.consLimit,`coUser(${i},'consLimit',num(this.value))`,'number','style="width:110px;text-align:right"')}</td><td>${cs(u.asset,['Needs approval','Direct'],`coUser(${i},'asset',this.value)`)}</td><td>${u.asset==='Direct'?ci(u.assetLimit,`coUser(${i},'assetLimit',num(this.value))`,'number','style="width:110px;text-align:right"'):'<span class="muted">—</span>'}</td><td>${cs(u.co||'None',['None','View','Edit'],`coUser(${i},'co',this.value)`)}</td><td>${ci(u.till,`coUser(${i},'till',this.value)`,'date')}</td><td>${u.status==='Revoked'?PILL('bd','Revoked'):u.till&&u.till<todayStr()?PILL('wn','Expired'):PILL('ok','Active')}</td><td style="white-space:nowrap">${u.status==='Revoked'?`<button class="btn sm" onclick="coUser(${i},'status','Active')">Restore</button>`:`<button class="btn sm" onclick="coUser(${i},'status','Revoked')">Revoke</button>`} <button class="btn sm d" onclick="coUserDel(${i})">✕</button></td></tr>`).join('')||'<tr><td colspan="10" class="muted">—</td></tr>'}</tbody></table></div><div class="acts"><button class="btn p" onclick="coUser(-1)">+ Add user</button></div>`);
+  return h; };
+
+/* ---------- Material Master ---------- */
+function coType(i,k,v){ const c=CO.get(); if(i<0){ c.types.push({id:'mt'+Date.now(),name:'New material type',unit:'nos',life:50,dep:'SLM',rate:20,residual:5,kg:0,move:'Yes',active:true}); } else { const t=c.types[i]; if(!t) return; coHist(c,'Material '+t.name+' · '+k,t[k],v); t[k]=v; } coSave(c); }
+function coItem(i,k,v){ const c=CO.get(); if(i<0){ c.items.push({id:'mi'+Date.now(),type:c.types[0]?.name||'',name:'',brand:'',unit:c.types[0]?.unit||'nos',kg:0,rate:0,active:true}); } else { const t=c.items[i]; if(!t) return; t[k]=v; } coSave(c); }
+PAGES.coMaster=()=>{ const C=CO.get(), tab=state.ui.mmTab||'types', T=C.types;
+  let h=`<div class="chips">${[['types','Material types'],['items','Items']].map(([k,l])=>`<button class="btn sm ${k===tab?'p':''}" onclick="setUI('mmTab','${k}')">${l}</button>`).join('')}</div>`;
+  if(tab==='types') h+=panel('Material types',`<div class="tw"><table class="sheet coT"><thead><tr><th>Material type</th><th>Unit</th><th class="r">Life (uses)</th><th>Depreciation</th><th class="r">Rate / year %</th><th class="r">Residual %</th><th>Moves between sites</th><th>Active</th></tr></thead><tbody>${T.map((t,i)=>`<tr class="${t.active===false?'muted-row':''}"><td>${ci(t.name,`coType(${i},'name',this.value)`,'','style="min-width:200px"')}</td><td>${cs(t.unit,['sqm','nos','rmt','sheet','set','kg','MT'],`coType(${i},'unit',this.value)`)}</td><td>${ci(t.life,`coType(${i},'life',num(this.value))`,'number','style="width:80px;text-align:right"')}</td><td>${cs(t.dep,['SLM','WDV'],`coType(${i},'dep',this.value)`)}</td><td>${ci(t.rate,`coType(${i},'rate',num(this.value))`,'number','style="width:80px;text-align:right"')}</td><td>${ci(t.residual,`coType(${i},'residual',num(this.value))`,'number','style="width:70px;text-align:right"')}</td><td>${cs(t.move||'Yes',['Yes','Same brand only','No'],`coType(${i},'move',this.value)`)}</td><td><input type="checkbox" ${t.active!==false?'checked':''} onchange="coType(${i},'active',this.checked)"></td></tr>`).join('')}</tbody></table></div><div class="acts"><button class="btn p" onclick="coType(-1)">+ Add material type</button></div>`);
+  else h+=panel('Items',`<div class="tw"><table class="sheet coT"><thead><tr><th>Material type</th><th>Item</th><th>Brand</th><th>Unit</th><th class="r">kg / unit</th><th class="r">Rate (${cur()})</th><th>Active</th><th></th></tr></thead><tbody>${C.items.map((t,i)=>`<tr class="${t.active===false?'muted-row':''}"><td>${cs(t.type,T.map(x=>x.name),`coItem(${i},'type',this.value)`)}</td><td>${ci(t.name,`coItem(${i},'name',this.value)`,'','style="min-width:200px"')}</td><td>${ci(t.brand,`coItem(${i},'brand',this.value)`)}</td><td>${cs(t.unit,['sqm','nos','rmt','sheet','set','kg','MT'],`coItem(${i},'unit',this.value)`)}</td><td>${ci(t.kg,`coItem(${i},'kg',num(this.value))`,'number','style="width:80px;text-align:right"')}</td><td>${ci(t.rate,`coItem(${i},'rate',num(this.value))`,'number','style="width:100px;text-align:right"')}</td><td><input type="checkbox" ${t.active!==false?'checked':''} onchange="coItem(${i},'active',this.checked)"></td><td><button class="btn sm d" onclick="(function(){const c=CO.get();c.items.splice(${i},1);coSave(c);})()">✕</button></td></tr>`).join('')||'<tr><td colspan="8" class="muted">—</td></tr>'}</tbody></table></div><div class="acts"><button class="btn p" onclick="coItem(-1)">+ Add item</button></div>`);
+  return h; };
+
+/* ---------- Data Integrity ---------- */
+PAGES.coHealth=()=>{ const R=coAll().map(({p,st})=>withState(st,()=>{ const H=healthChecks(); const d=[...state.execution,...state.ledger,...state.labour].map(x=>x.date||'').filter(Boolean).sort().pop()||''; return {p,st,H,score:healthScore(H),red:H.filter(x=>x.lvl==='bd').length,warn:H.filter(x=>x.lvl==='wn').length,last:d,age:d?dayDiff(d,todayStr()):null}; })).filter(Boolean);
+  const old=R.filter(r=>r.age==null||r.age>3);
+  let h=`<div class="kpis">${kpi('Sites',R.length)}${kpi('Average score',R.length?Math.round(R.reduce((a,r)=>a+r.score,0)/R.length):'—')}${kpi('Errors',R.reduce((a,r)=>a+r.red,0),'',R.some(r=>r.red)?'bad':'good')}${kpi('Data older than 3 days',old.length,'',old.length?'warn':'good')}</div>`;
+  h+=panel('Data integrity by site',simpleTable([['Code'],['Site'],['Score',1],['Errors',1],['Warnings',1],['Last entry'],['Data age',1],['']],R.map(r=>`<tr><td class="calc">${esc(siteCode(r.p.id))}</td><td class="calc"><b>${esc(r.st.meta.project||r.p.name)}</b></td><td class="calc r"><b>${r.score}</b></td><td class="calc r">${r.red?`<span class="neg">${r.red}</span>`:'0'}</td><td class="calc r">${r.warn}</td><td class="calc">${r.last?fmtD(r.last):'—'}</td><td class="calc r">${r.age==null?PILL('na','No data'):r.age>3?PILL('wn',r.age+' days'):PILL('ok',r.age+' days')}</td><td class="calc">${r.p.id===PRJ.cur?`<button class="btn sm" onclick="wsSet('site');go('health')">Open</button>`:''}</td></tr>`)));
+  return h; };
+
+/* ---------- PR & PO Register ---------- */
+const prGrp=c=>c==='Consumable'?'cons':(c==='Company Asset'||c==='Material'||c==='Machinery')?'asset':'other';
+PAGES.coPR=()=>{ const tab=state.ui.coPrTab||'all', f=state.ui.coPrF||'Open';
+  const rows=coAll().flatMap(({p,st})=>withState(st,()=>(state.prpo||[]).map(r=>({p,st,r,s:prStatus(r)})))||[]);
+  const inTab=rows.filter(x=>tab==='all'||prGrp(x.r.category)===tab), sh=inTab.filter(x=>f==='All'||(f==='Open'&&!x.r.receivedDate)||(f==='Late'&&x.s[0]==='bd')||(f==='Received'&&x.r.receivedDate)).sort((a,b)=>(b.r.prDate||'').localeCompare(a.r.prDate||''));
+  const val=L=>L.reduce((a,x)=>a+num(x.r.value),0);
+  let h=`<div class="kpis">${kpi('PR waiting for PO',inTab.filter(x=>x.r.prDate&&!x.r.poDate).length)}${kpi('PO waiting for delivery',inTab.filter(x=>x.r.poDate&&!x.r.receivedDate).length)}${kpi('Late',inTab.filter(x=>x.s[0]==='bd').length,'',inTab.some(x=>x.s[0]==='bd')?'bad':'good')}${kpi('Open value',money(val(inTab.filter(x=>!x.r.receivedDate))))}</div>`;
+  h+=`<div class="chips">${[['all','All'],['cons','Consumables'],['asset','Company Assets'],['other','Other']].map(([k,l])=>`<button class="btn sm ${k===tab?'p':''}" onclick="setUI('coPrTab','${k}')">${l}</button>`).join('')}<span style="width:14px"></span>${['Open','Late','Received','All'].map(x=>`<button class="btn sm ${x===f?'p':''}" onclick="setUI('coPrF','${x}')">${x}</button>`).join('')}</div>`;
+  h+=panel('Purchase requisitions & orders · all sites',simpleTable([['Site'],['Category'],['Item'],['PR qty',1],['Unit'],['Value',1],['PR no.'],['PR date'],['PO no.'],['PO date'],['Required by'],['Status']],sh.map(x=>`<tr><td class="calc">${esc(siteCode(x.p.id)||x.st.meta.project)}</td><td class="calc">${esc(x.r.category||'')}</td><td class="calc"><b>${esc(x.r.item||'')}</b></td><td class="calc r">${fmtN(num(x.r.qty))}</td><td class="calc">${esc(x.r.unit||'')}</td><td class="calc r">${num(x.r.value)?money(x.r.value):'—'}</td><td class="calc">${esc(x.r.prNo||'')}</td><td class="calc">${x.r.prDate?fmtD(x.r.prDate):''}</td><td class="calc">${esc(x.r.poNo||'')}</td><td class="calc">${x.r.poDate?fmtD(x.r.poDate):''}</td><td class="calc">${x.r.requiredBy?fmtD(x.r.requiredBy):''}</td><td class="calc">${PILL(x.s[0],x.s[1])}</td></tr>`),sh.length?`<tr><td>Total</td><td></td><td></td><td></td><td></td><td class="r">${money(val(sh))}</td><td colspan="6"></td></tr>`:''));
+  return h; };
+
+/* ---------- Company Asset Register ---------- */
+PAGES.coAssets=()=>{ const rows=coAll().flatMap(({p,st})=>withState(st,()=>(state.owned||[]).filter(o=>(o.item||'').trim()).map(o=>{ const has=state.ownedTx.some(t=>t.ownedId===o.id); const q=has?ownedBalRaw(o.id):num(o.qty); return {p,st,o,q,sys:sysName(o.systemId),val:num(o.totalCost),cpu:typeof ownedPerUse==='function'?ownedPerUse(o):0}; }))||[]);
+  const by=new Map(); rows.forEach(x=>{ const k=(x.o.item||'').trim().toLowerCase()+'|'+(x.o.unit||''); const g=by.get(k)||{item:x.o.item,unit:x.o.unit,q:0,val:0,sites:new Map()}; g.q+=x.q; g.val+=x.val; g.sites.set(siteCode(x.p.id)||x.st.meta.project,(g.sites.get(siteCode(x.p.id)||x.st.meta.project)||0)+x.q); by.set(k,g); });
+  const SN=[...new Set(rows.map(x=>siteCode(x.p.id)||x.st.meta.project))];
+  let h=`<div class="kpis">${kpi('Items',by.size)}${kpi('Purchase value',money(rows.reduce((a,x)=>a+x.val,0)))}${kpi('Sites holding assets',SN.length)}</div>`;
+  h+=panel('Company assets by item and site',simpleTable([['Item'],['Unit'],...SN.map(n=>[n,1]),['Total',1],['Purchase value',1]],[...by.values()].sort((a,b)=>b.val-a.val).map(g=>`<tr><td class="calc"><b>${esc(g.item||'')}</b></td><td class="calc">${esc(g.unit||'')}</td>${SN.map(n=>`<td class="calc r">${g.sites.get(n)?fmtN(g.sites.get(n)):'—'}</td>`).join('')}<td class="calc r"><b>${fmtN(g.q)}</b></td><td class="calc r">${money(g.val)}</td></tr>`)));
+  h+=panel('Register lines',simpleTable([['Site'],['System'],['Item'],['Qty now',1],['Unit'],['Purchase value',1],['Expected uses',1]],rows.map(x=>`<tr><td class="calc">${esc(siteCode(x.p.id)||x.st.meta.project)}</td><td class="calc">${esc(x.sys)}</td><td class="calc">${esc(x.o.item||'')}</td><td class="calc r">${fmtN(x.q)}</td><td class="calc">${esc(x.o.unit||'')}</td><td class="calc r">${money(x.val)}</td><td class="calc r">${fmtN(num(x.o.expectedReps))}</td></tr>`)));
+  return h; };
 
 </script>
 </body>
