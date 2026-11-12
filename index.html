@@ -582,6 +582,7 @@ label.bsrc{flex-direction:column}
 .wochart{display:block;color:var(--ink)}.wolg{display:flex;gap:16px;font-size:12px;margin:4px 0 10px}.wolg i{display:inline-block;width:18px;height:4px;border-radius:2px;margin-right:6px;vertical-align:middle}
 .wochart{max-width:980px;max-height:300px}
 .wsst h2{margin-bottom:26px!important}.wsst .cards{max-width:820px;margin:0 auto}
+.banner.bkbar{display:flex;justify-content:flex-start;align-items:center;gap:10px;flex-wrap:wrap}.banner.bkbar .btn:last-child{margin-left:auto}
 </style>
 </head>
 <body>
@@ -591,7 +592,7 @@ label.bsrc{flex-direction:column}
 <input type="file" id="restoreFile" accept=".json" style="display:none" onchange="if(this.files[0])restoreBackup(this.files[0]);this.value=''">
 <input type="file" id="fsPick" style="display:none" onchange="fsOpenFile(this.files[0]);this.value=''">
 
-<script>window.__FORMTRACK_PWA=true; window.__FORMTRACK_VER="2026.11.12-2331"; window.__FORMTRACK_VERNAME="12 Nov 23:31"; window.__FT_TRIAL_FROM=1793358725887; window.__FT_OWNER_KEYS=["FTK1.KFWlfr8L9B9vCV5zDqch0g==.dbjdxh8PZxOLP1CNQ2z3RabZkTuh7AORMJY1xre+tWo=", "FTK1.Osl5ooyWCagTRuMdk06Obg==.rchABMlUZsicdxq192DnzmUcdgRXTqVE0LzUln8iqDY="]; window.__FT_ACCESS_PUB="SC1QzgBryXETIvpdPX-L1vNG0PfXbclYD1uqU4rGGy0"; window.__FT_BLOCKED=[];</script>
+<script>window.__FORMTRACK_PWA=true; window.__FORMTRACK_VER="2026.11.13-0002"; window.__FORMTRACK_VERNAME="13 Nov 00:02"; window.__FT_TRIAL_FROM=1793358725887; window.__FT_OWNER_KEYS=["FTK1.KFWlfr8L9B9vCV5zDqch0g==.dbjdxh8PZxOLP1CNQ2z3RabZkTuh7AORMJY1xre+tWo=", "FTK1.Osl5ooyWCagTRuMdk06Obg==.rchABMlUZsicdxq192DnzmUcdgRXTqVE0LzUln8iqDY="]; window.__FT_ACCESS_PUB="SC1QzgBryXETIvpdPX-L1vNG0PfXbclYD1uqU4rGGy0"; window.__FT_BLOCKED=[];</script>
 <script>
 /* FormTrack */
 const STORE_KEY = 'formtrack_data_v2';
@@ -3743,15 +3744,16 @@ function mergeState(raw){
   const I=hydrate(JSON.parse(JSON.stringify(inc0)));
   let added=0, updated=0, removed=0;
   const del=Object.assign({},state.deleted||{}); Object.entries(I.deleted||{}).forEach(([id,t])=>{ del[id]=Math.max(del[id]||0,t); });
-  const keys=new Set([...Object.keys(state),...Object.keys(I)]);
+  const keys=new Set([...Object.keys(state),...Object.keys(I)]), CF=[], prevDel=state.deleted||{}, OUT=bkOut();
   keys.forEach(k=>{
     if(!Array.isArray(I[k]) && !Array.isArray(state[k])) return;
     const mine=Array.isArray(state[k])?state[k]:[], theirs=Array.isArray(I[k])?I[k]:[];
     const map=new Map(mine.map(r=>[r.id,r]));
-    theirs.forEach(r=>{ if(!r||!r.id) return; const m=map.get(r.id); if(!m){ if(!(del[r.id] && del[r.id]>=(r._u||0))){ map.set(r.id,r); added++; } } else if((r._u||0)>(m._u||0)){ map.set(r.id,r); updated++; } });
-    const before=map.size; const list=[...map.values()].filter(r=>!(r&&r.id&&del[r.id]&&del[r.id]>=(r._u||0)));
+    theirs.forEach(r=>{ if(!r||!r.id) return; const m=map.get(r.id); if(!m){ if(!(del[r.id] && del[r.id]>=(r._u||0))){ map.set(r.id,r); added++; } } else { const j=cfJudge(m,r,'_u'); if(j.cf&&!AUD_SKIP.has(k)) CF.push(Object.assign({arr:k},j.cf)); if(j.take){ map.set(r.id,r); updated++; } } });
+    const before=map.size; const list=[...map.values()].filter(r=>{ const gone=!!(r&&r.id&&del[r.id]&&del[r.id]>=(r._u||0)); if(gone&&!prevDel[r.id]&&r._d===DEV&&(r._u||0)>OUT&&!AUD_SKIP.has(k)) CF.push({arr:k,W:null,L:r,delT:del[r.id]}); return !gone; });
     removed+=before-list.length; state[k]=list;
   });
+  if(CF.length){ state.cflx=Array.isArray(state.cflx)?state.cflx:[]; cfAdd(state.cflx,CF); }
   const mu=state.meta._u||{}, iu=I.meta._u||{};
   Object.keys(I.meta).forEach(k=>{ if(k==='_u') return; if(PLOCK.includes(k)&&state.meta.projectCode) return;   /* a locked project code is never overwritten */ if((iu[k]||0)>(mu[k]||0)){ state.meta[k]=I.meta[k]; mu[k]=iu[k]; } });
   state.meta._u=mu;
@@ -4008,7 +4010,7 @@ async function download(filename,text,type){ /* text may be a string or an Array
 function downloadBackup(){ state.meta.lastBackup=todayStr(); persist(); download(`FormTrack-backup-${state.meta.projectCode?slug(state.meta.projectCode)+'-':''}${slug(state.meta.project)}-${todayStr()}.json`,JSON.stringify(state,null,1),'application/json'); render(); toast('Backup downloaded.'); }
 function restoreBackup(file){
   const rd=new FileReader();
-  rd.onload=()=>{ let p0; try{ p0=JSON.parse(rd.result); }catch(e){ toast('This file could not be read – it may not have downloaded fully. Download it again and retry.'); return; } try{ const p=p0; if(p&&p.format==='formtrack'){ const r=mergeFile(p); state.pwaFresh=false; save(); toast(r.text); return; } if(!p||!Array.isArray(p.systems)) throw 0; guard('Replace data','Replaces <b>all current data</b> of this project with the backup file you picked.',()=>{ state=hydrate(p); state.meta.pid=PRJ.cur; save(); prjSync(); toast('Backup restored.'); }); }catch(e){ toast('This is not a valid FormTrack backup.'); } };
+  rd.onload=()=>{ let p0; try{ p0=JSON.parse(rd.result); }catch(e){ toast('This file could not be read – it may not have downloaded fully. Download it again and retry.'); return; } try{ const p=p0; if(p&&p.format==='formtrack'){ const r=mergeFile(p); state.pwaFresh=false; save(); toast(r.text); return; } if(!p||!Array.isArray(p.systems)) throw 0; guard('Replace data','Replaces <b>all current data</b> of this project with the backup file you picked.',()=>{ state=hydrate(p); state.meta.pid=PRJ.cur; save(); prjSync(); try{ audNote('Project data replaced from backup file'); }catch(e){} toast('Backup restored.'); }); }catch(e){ toast('This is not a valid FormTrack backup.'); } };
   rd.readAsText(file);
 }
 function resetAll(){ guard('Reset all data','Removes every entry of <b>this project</b> on <b>this device</b>. Other projects are not touched. Your Drive storage file is <b>not</b> changed – loading it brings everything back.',()=>{ const nm=state.meta.project, co=state.meta.company; state=seed(); state.meta.pid=PRJ.cur; if(PRJ.cur!==MAIN_PID){ state.meta.project=nm; state.meta.company=co; } state.deleted={}; save(); toast('Reset done. A backup was downloaded.'); }); }
@@ -4905,9 +4907,9 @@ const CO_KEY=STORE_KEY+'__company';
 const MAT_DEF=[['Aluminium formwork','sqm',80,'SLM',15],['Steel / wall formwork','sqm',150,'SLM',15],['Table & slab forms','sqm',120,'SLM',15],['Plastic formwork','sqm',50,'SLM',20],['Plywood & timber','sheet',8,'SLM',100],['Shoring & props','nos',200,'SLM',20],['Cuplock & scaffolding','nos',250,'SLM',20],['ISMC / H-beam','rmt',150,'WDV',15],['SQ tube / MS pipe','rmt',120,'WDV',20],['Column forms','set',60,'SLM',20],['Climbing forms','set',100,'SLM',15],['Accessories','nos',40,'SLM',33.3]];
 function coNorm(c){ c=c&&typeof c==='object'?c:{}; c.name=c.name||''; c.sites=c.sites&&typeof c.sites==='object'?c.sites:{}; c.stores=Array.isArray(c.stores)?c.stores:[]; c.users=Array.isArray(c.users)?c.users:[]; c.hist=Array.isArray(c.hist)?c.hist:[];
   if(!Array.isArray(c.types)||!c.types.length) c.types=MAT_DEF.map((m,i)=>({id:'mt'+i,name:m[0],unit:m[1],life:m[2],dep:m[3],rate:m[4],residual:5,kg:0,move:'Yes',active:true}));
-  c.items=Array.isArray(c.items)?c.items:[]; ['batches','moves','reqs'].forEach(k=>{ if(!Array.isArray(c[k])) c[k]=[]; }); c.goLive=c.goLive||''; return c; }
+  c.items=Array.isArray(c.items)?c.items:[]; ['batches','moves','reqs','wos','log','cflx'].forEach(k=>{ if(!Array.isArray(c[k])) c[k]=[]; }); c.goLive=c.goLive||''; return c; }
 const CO={ get(){ try{ const c=JSON.parse(localStorage.getItem(CO_KEY)||'null'); if(c) return coNorm(c); }catch(e){} return coNorm({}); },
-  set(c,keepTime){ if(!keepTime){ c.savedAt=Date.now(); coStamp(c); } try{ localStorage.setItem(CO_KEY,JSON.stringify(c)); }catch(e){} } };
+  set(c,keepTime){ if(!keepTime){ c.savedAt=Date.now(); let old=null; try{ old=JSON.parse(localStorage.getItem(CO_KEY)||'null'); }catch(e){} coStamp(c); try{ coAudit(old?coNorm(old):coNorm({}),c); }catch(e){ console.warn(e); } } try{ localStorage.setItem(CO_KEY,JSON.stringify(c)); }catch(e){} } };
 function coSave(c){ if(coReadOnly()&&wsGet()==='company'){ toast('View only access.'); render(); return; } CO.set(c); try{ persist(); }catch(e){} render(); }
 function coHist(c,what,from,to){ c.hist.unshift({t:new Date().toISOString().slice(0,16).replace('T',' '),who:state.meta.user||'',what,from:String(from??''),to:String(to??'')}); c.hist=c.hist.slice(0,300); }
 const matOpts=()=>{ const n=CO.get().types.filter(t=>t.active!==false).map(t=>t.name); (state.matProfit||[]).forEach(r=>{ if(r.material&&!n.includes(r.material)) n.push(r.material); }); return n; };
@@ -5002,16 +5004,17 @@ function coAddSite(){ const n=(document.getElementById('coNewName')||{}).value||
 { const _r2=render; render=function(){ document.body.classList.toggle('oneprj',PRJ.list.length<2); return _r2(); }; }
 
 /* ================= STAGE 2A ================= */
-const CO_ARR=['stores','users','types','items','batches','moves','reqs'];
+const CO_ARR=['stores','users','types','items','batches','moves','reqs','wos','log','cflx'];
 const recJ=r=>{ const o={...r}; delete o._t; return JSON.stringify(o); };
 function coStamp(c){ let old={}; try{ old=JSON.parse(localStorage.getItem(CO_KEY)||'{}')||{}; }catch(e){} const now=Date.now();
   CO_ARR.forEach(k=>{ const M=new Map((old[k]||[]).map(r=>[r.id,r])); (c[k]||[]).forEach(r=>{ if(!r.id) r.id=k+Date.now().toString(36)+Math.random().toString(36).slice(2,5); const o=M.get(r.id); if(!o||recJ(o)!==recJ(r)) r._t=now; else r._t=o._t||r._t||0; }); });
   const os=old.sites||{}; Object.entries(c.sites||{}).forEach(([k,r])=>{ const o=os[k]; if(!o||recJ(o)!==recJ(r)) r._t=now; else r._t=o._t||0; });
-  ['name','goLive','openLock'].forEach(k=>{ if(JSON.stringify(old[k])!==JSON.stringify(c[k])) (c._ft=c._ft||{})[k]=now; }); }
+  ['name','goLive','openLock','hr'].forEach(k=>{ if(JSON.stringify(old[k])!==JSON.stringify(c[k])) (c._ft=c._ft||{})[k]=now; }); }
 function coMerge(a,b){ const o=coNorm(JSON.parse(JSON.stringify(a)));
-  CO_ARR.forEach(k=>{ const M=new Map(o[k].map(r=>[r.id,r])); (b[k]||[]).forEach(r=>{ const x=M.get(r.id); if(!x||num(r._t)>num(x._t)) M.set(r.id,r); }); o[k]=[...M.values()]; });
-  Object.entries(b.sites||{}).forEach(([k,r])=>{ const x=o.sites[k]; if(!x||num(r._t)>num(x._t)) o.sites[k]=r; });
-  ['name','goLive','openLock'].forEach(k=>{ if(num((b._ft||{})[k])>num((o._ft||{})[k])){ o[k]=b[k]; (o._ft=o._ft||{})[k]=b._ft[k]; } });
+  const CF=[]; CO_ARR.forEach(k=>{ const M=new Map((o[k]||[]).map(r=>[r.id,r])); (b[k]||[]).forEach(r=>{ const x=M.get(r.id); if(!x){ M.set(r.id,r); return; } const j=cfJudge(x,r,'_t'); if(j.cf&&k!=='log'&&k!=='cflx') CF.push(Object.assign({arr:k},j.cf)); if(j.take) M.set(r.id,r); }); o[k]=[...M.values()]; });
+  Object.entries(b.sites||{}).forEach(([k,r])=>{ const x=o.sites[k]; if(!x){ o.sites[k]=r; return; } const j=cfJudge(Object.assign({id:k},x),Object.assign({id:k},r),'_t'); if(j.cf){ CF.push(Object.assign({arr:'sites'},j.cf)); (j.take?r:x)._h=j.cf.W._h; } if(j.take) o.sites[k]=r; });
+  if(CF.length) cfAdd(o.cflx,CF);
+  ['name','goLive','openLock','hr'].forEach(k=>{ if(num((b._ft||{})[k])>num((o._ft||{})[k])){ o[k]=b[k]; (o._ft=o._ft||{})[k]=b._ft[k]; } });
   const H=new Map(); [...o.hist,...(b.hist||[])].forEach(h=>H.set(h.t+'|'+h.what+'|'+h.to,h)); o.hist=[...H.values()].sort((x,y)=>y.t.localeCompare(x.t)).slice(0,300);
   o.savedAt=Math.max(num(a.savedAt),num(b.savedAt)); return o; }
 
@@ -5337,9 +5340,10 @@ function wsStartGo(w){ const d=document.getElementById('wsStart'), sel=(document
   try{ localStorage.setItem('ft_ws',w); }catch(e){} window.__WSPICK=w;
   if(w==='site'&&sel&&sel!==PRJ.cur){ switchProject(sel,true); }
   if(LOCKED){ document.body.classList.add('locked'); drawLock(); return; } wsSet(w); }
-{ const _dl=drawLock; drawLock=function(msg){ let seen=false; try{ seen=!!sessionStorage.getItem('ft_start'); }catch(e){}
+{ const _dl=drawLock; drawLock=function(msg){ if(document.getElementById('wsStart')){ const x=document.getElementById('lockscr'); if(x) x.remove(); return; } let seen=false; try{ seen=!!sessionStorage.getItem('ft_start'); }catch(e){}
   if(!seen&&coAllowed()){ const x=document.getElementById('lockscr'); if(x) x.remove(); startScreen(true); return; }
   _dl(msg); const h=document.querySelector('#lockscr .lk-box p'); if(h&&window.__WSPICK) h.innerHTML=`${window.__WSPICK==='company'?'Company workspace':'Site workspace'} · <a href="#" style="color:#94a3b8" onclick="sessionStorage.removeItem('ft_start');document.getElementById('lockscr').remove();startScreen(true);return false">change</a>`; }; }
+try{ if(LOCKED&&document.getElementById('lockscr')) drawLock(); }catch(e){}
 setTimeout(()=>{ try{ if(!TRIAL_END&&!LOCKED) startScreen(); }catch(e){} },900);
 
 function woSeries(c,w){ const P=PRJ.list.find(p=>p.id===w.site), st=P?(P.id===PRJ.cur?state:readProject(P.id)):null, end=addDays(w.start,num(w.days)), t=todayStr(), upto=t<end?t:end; let E=[];
@@ -5387,6 +5391,136 @@ async function makeAccess2(){ const name=v$('ac_n').slice(0,40), role=v$('ac_r')
 /* a site-engineer link opens only its own site */
 { const _r=render; render=function(){ try{ if(ACC&&!ACC.co&&ACC.site&&!isOwnerDev()){ const p=PRJ.list.find(x=>siteCode(x.id)===ACC.site||x.name===ACC.site); if(p&&p.id!==PRJ.cur&&!window.__accSw){ window.__accSw=1; switchProject(p.id,true); return; } } }catch(e){} return _r(); }; }
 { const _o=openProjects; openProjects=function(){ if(ACC&&!ACC.co&&ACC.site&&!isOwnerDev()){ toast('This access is for '+ACC.site+' only.'); return; } return _o(); }; }
+
+/* ================= CHANGE LOG · SYNC CONFLICTS · BACKUP GUARD ================= */
+const DEV=(()=>{ try{ let d=localStorage.getItem('ft_dev'); if(!d){ d=Math.random().toString(36).slice(2,8); localStorage.setItem('ft_dev',d); } return d; }catch(e){ return 'dev'; } })();
+const AUD_SKIP=new Set(['audit','cflx']), AUD_META=['_u','_h','_d','_by','_t'], AUD={obj:null,snap:null,t:0};
+const recC=r=>{ if(!r||typeof r!=='object') return JSON.stringify(r); const o={}; Object.keys(r).sort().forEach(k=>{ if(!AUD_META.includes(k)) o[k]=r[k]; }); return JSON.stringify(o); };
+const audWho=()=>{ try{ return (ACC&&ACC.name)||(state&&state.meta.user)||'This device'; }catch(e){ return 'This device'; } };
+function hsh(s){ const f=seed=>{ let h1=0xdeadbeef^seed,h2=0x41c6ce57^seed; for(let i=0;i<s.length;i++){ const ch=s.charCodeAt(i); h1=Math.imul(h1^ch,2654435761); h2=Math.imul(h2^ch,1597334677); }
+  h1=Math.imul(h1^(h1>>>16),2246822507)^Math.imul(h2^(h2>>>13),3266489909); h2=Math.imul(h2^(h2>>>16),2246822507)^Math.imul(h1^(h1>>>13),3266489909); return (4294967296*(2097151&h2)+(h1>>>0)).toString(36); }; return f(1)+f(7); }
+const audBody=e=>JSON.stringify([e.id,e.dev,e.seq,e.t,e.by,e.act,e.arr,e.rid,e.lb,e.f||null,e.prev]);
+function audAppend(list,ents){ let last=null; list.forEach(e=>{ if(e.dev===DEV&&(!last||e.seq>last.seq)) last=e; }); let seq=last?last.seq:0, prev=last?last.h:'';
+  ents.forEach(x=>{ seq++; const e=Object.assign({id:'au-'+DEV+'-'+seq,dev:DEV,seq,t:Date.now(),by:audWho()},x,{prev}); e.h=hsh(audBody(e)); prev=e.h; list.push(e); }); }
+function audVerify(list){ const D={}; (list||[]).forEach(e=>{ (D[e.dev]=D[e.dev]||[]).push(e); }); const bad=[];
+  Object.entries(D).forEach(([d,L])=>{ L.sort((a,b)=>a.seq-b.seq); let p=null; L.forEach(e=>{ if(e.h!==hsh(audBody(e))) bad.push({e,why:'entry changed'}); if(!p&&e.seq!==1) bad.push({e,why:(e.seq-1)+' earlier entries missing'}); if(p){ if(e.seq!==p.seq+1) bad.push({e,why:(e.seq-p.seq-1)+' entries missing before this'}); else if(e.prev!==p.h) bad.push({e,why:'chain broken'}); } p=e; }); });
+  return {ok:!bad.length,n:(list||[]).length,devs:Object.keys(D).length,bad}; }
+function audLabel(r){ if(!r||typeof r!=='object') return ''; let v=['item','name','title','no','prNo','poNo','challan','doc','element','material','sys','desc','observation','note','text'].map(k=>r[k]).find(x=>x!=null&&typeof x!=='object'&&String(x).trim());
+  let s=''; try{ if(r.systemId&&sysObj(r.systemId)) s=sysName(r.systemId); }catch(e){} return [r.date||r.month||'',s,v].filter(x=>x!=null&&String(x).trim()).map(String).join(' · ').slice(0,90); }
+const audV=v=>v==null||v===''?'—':(typeof v==='object'?JSON.stringify(v):String(v)).slice(0,60);
+function audFields(o,n){ const K=[...new Set([...Object.keys(o||{}),...Object.keys(n||{})])].filter(k=>!AUD_META.includes(k)&&k!=='id'); const f=[];
+  K.forEach(k=>{ if(JSON.stringify(o[k])!==JSON.stringify(n[k])) f.push([k,audV(o[k]),audV(n[k])]); }); return f.slice(0,10); }
+function audSnap(s){ const S={}; Object.keys(s).forEach(k=>{ if(AUD_SKIP.has(k)||!Array.isArray(s[k])) return; const M=new Map(); s[k].forEach(r=>{ if(r&&r.id!=null) M.set(r.id,[recC(r),r._u||0,r._h||null]); }); S[k]=M; }); return S; }
+function audRebase(){ AUD.obj=state; AUD.snap=state?audSnap(state):null; }
+function audBulk(ents){ const by={}; ents.forEach(e=>{ const k=e.arr+'|'+e.act; by[k]=(by[k]||0)+1; }); return {act:'bulk',arr:'',rid:'',lb:Object.entries(by).map(([k,n])=>{ const [a,x]=k.split('|'); return n+' '+(x==='add'?'added':x==='del'?'deleted':'edited')+' · '+(SHEETN[a]||a); }).join('; ').slice(0,400)}; }
+function audFlush(){ clearTimeout(AUD.t); AUD.t=0; if(!state) return; if(AUD.obj!==state||!AUD.snap){ audRebase(); return; }
+  const S=AUD.snap, ents=[], now=Date.now(), who=audWho();
+  Object.keys(state).forEach(k=>{ if(AUD_SKIP.has(k)||!Array.isArray(state[k])) return; const M=S[k]||new Map(), seen=new Set();
+    state[k].forEach(r=>{ if(!r||typeof r!=='object'||r.id==null) return; seen.add(r.id); const o=M.get(r.id), c=recC(r);
+      if(!o){ r._d=DEV; r._by=who; if(!r._u) r._u=now; ents.push({act:'add',arr:k,rid:r.id,lb:audLabel(r)}); }
+      else if(o[0]!==c){ if((r._u||0)<=o[1]) r._u=now; r._h=[o[1],...(o[2]||[])].filter(Boolean).slice(0,12); r._d=DEV; r._by=who; let f=[]; try{ f=audFields(JSON.parse(o[0]),r); }catch(e){} ents.push({act:'edit',arr:k,rid:r.id,lb:audLabel(r),f}); } });
+    M.forEach((o,id)=>{ if(!seen.has(id)){ let lb=''; try{ lb=audLabel(JSON.parse(o[0])); }catch(e){} ents.push({act:'del',arr:k,rid:id,lb}); } }); });
+  if(ents.length){ state.audit=Array.isArray(state.audit)?state.audit:[]; audAppend(state.audit,ents.length>150?[audBulk(ents)]:ents); persistLocal(); }
+  audRebase(); }
+function audNote(lb){ audFlush(); state.audit=Array.isArray(state.audit)?state.audit:[]; audAppend(state.audit,[{act:'note',arr:'',rid:'',lb}]); persistLocal(); audRebase(); }
+function coAudit(old,c){ const ents=[], who=audWho(); old=old||{};
+  CO_ARR.filter(k=>k!=='log'&&k!=='cflx').forEach(k=>{ const M=new Map((old[k]||[]).map(r=>[r.id,r])), seen=new Set();
+    (c[k]||[]).forEach(r=>{ seen.add(r.id); const o=M.get(r.id); if(!o){ r._d=DEV; r._by=who; ents.push({act:'add',arr:k,rid:r.id,lb:audLabel(r)}); } else if(recC(o)!==recC(r)){ r._h=[num(o._t),...(o._h||[])].filter(Boolean).slice(0,12); r._d=DEV; r._by=who; ents.push({act:r.del&&!o.del?'del':'edit',arr:k,rid:r.id,lb:audLabel(r),f:audFields(o,r)}); } });
+    M.forEach((o,id)=>{ if(!seen.has(id)) ents.push({act:'del',arr:k,rid:id,lb:audLabel(o)}); }); });
+  const os=old.sites||{}; Object.entries(c.sites||{}).forEach(([k,r])=>{ const o=os[k]; const lb=(r.code?r.code+' · ':'')+((PRJ.list.find(p=>p.id===k)||{}).name||k);
+    if(!o){ r._d=DEV; r._by=who; ents.push({act:'add',arr:'sites',rid:k,lb}); } else if(recC(o)!==recC(r)){ r._h=[num(o._t),...(o._h||[])].filter(Boolean).slice(0,12); r._d=DEV; r._by=who; ents.push({act:'edit',arr:'sites',rid:k,lb,f:audFields(o,r)}); } });
+  ['name','goLive','openLock','hr'].forEach(k=>{ if(JSON.stringify(old[k])!==JSON.stringify(c[k])&&!(old[k]==null&&(c[k]===''||c[k]==null))) ents.push({act:'edit',arr:'company',rid:k,lb:{name:'Company name',goLive:'Go-live date',openLock:'Opening balances lock',hr:'Height rules'}[k],f:[[k,audV(old[k]),audV(c[k])]]}); });
+  if(ents.length){ c.log=Array.isArray(c.log)?c.log:[]; audAppend(c.log,ents.length>150?[audBulk(ents)]:ents); } }
+Object.assign(SHEETN,{stores:'Stores',users:'Users',types:'Material Master',batches:'Asset batches',moves:'Transfers',reqs:'Requisitions',wos:'Work orders',sites:'Sites',company:'Company',rentDmg:'Damage & Missing',acts:'Material Requirement'});
+
+/* --- sync conflicts --- */
+function cfJudge(m,r,f){ const mu=num(m[f]), ru=num(r[f]); if(mu===ru) return {take:false}; const take=ru>mu; if(recC(m)===recC(r)) return {take};
+  const desc=(a,b)=>Array.isArray(a._h)&&a._h.includes(num(b[f])); if(desc(r,m)) return {take:true}; if(desc(m,r)) return {take:false}; if(!r._d||!m._d||r._d===m._d) return {take};
+  const W=take?r:m, L=take?m:r; W._h=[num(L[f]),...(W._h||[])].slice(0,12); return {take,cf:{W,L}}; }
+function cfAdd(list,CF){ const ids=new Set(list.map(x=>x.id)), now=Date.now();
+  CF.forEach(x=>{ const W=x.W, L=x.L, lt=num(L._u||L._t), id='cf-'+x.arr+'-'+L.id+'-'+lt; if(ids.has(id)) return; ids.add(id);
+    list.push({id,_u:now,_t:now,t:now,arr:x.arr,rid:L.id,lb:x.arr==='sites'?((L.code?L.code+' · ':'')+((PRJ.list.find(p=>p.id===L.id)||{}).name||'')):audLabel(W||L),kept:W?{by:W._by||'',t:num(W._u||W._t)}:{by:'',t:num(x.delT),del:1},other:JSON.stringify(L),otherBy:L._by||'',otherT:lt,status:'Open'}); }); }
+const cfOpen=L=>(L||[]).filter(x=>x.status==='Open');
+function cfCur(co,x){ if(co){ const c=CO.get(); if(x.arr==='sites') return c.sites[x.rid]?Object.assign({id:x.rid},c.sites[x.rid]):null; return (c[x.arr]||[]).find(r=>r.id===x.rid)||null; } return (state[x.arr]||[]).find(r=>r.id===x.rid)||null; }
+function cfDecide(co,id,use){ const now=Date.now();
+  if(co){ const c=CO.get(), x=c.cflx.find(y=>y.id===id); if(!x) return; if(use){ const L=JSON.parse(x.other), cur=cfCur(true,x); L._h=[num(cur&&cur._t),num(L._t),...(L._h||[])].filter(Boolean).slice(0,12); L._d=DEV; L._by=audWho();
+      if(x.arr==='sites'){ delete L.id; c.sites[x.rid]=L; } else { c[x.arr]=(c[x.arr]||[]).filter(r=>r.id!==x.rid); c[x.arr].push(L); } }
+    x.status=use?'Other version used':'Kept'; x.by=audWho(); x.at=now; coSave(c); toast(use?'Other version restored.':'Marked as checked.'); return; }
+  const x=(state.cflx||[]).find(y=>y.id===id); if(!x) return; audFlush();
+  if(use){ const L=JSON.parse(x.other), cur=cfCur(false,x); L._u=Math.max(now,num(x.kept.del?x.kept.t:0)+1); L._h=[num(cur&&cur._u),num(x.otherT),...(L._h||[])].filter(Boolean).slice(0,12); state[x.arr]=(state[x.arr]||[]).filter(r=>r.id!==x.rid); state[x.arr].push(L); if(state.deleted) delete state.deleted[x.rid]; }
+  x.status=use?'Other version used':'Kept'; x.by=audWho(); x.at=now; x._u=now; clearCaches(); save(); toast(use?'Other version restored.':'Marked as checked.'); }
+function cfPage(co){ const L=co?CO.get().cflx:(state.cflx||[]), O=cfOpen(L).sort((a,b)=>b.t-a.t), D=L.filter(x=>x.status!=='Open').sort((a,b)=>(b.at||0)-(a.at||0)).slice(0,30), ro=co&&coReadOnly();
+  const tm=t=>t?new Date(t).toLocaleString('en-IN',{day:'2-digit',month:'short',hour:'2-digit',minute:'2-digit'}):'—';
+  let h=`<div class="kpis">${kpi('Open conflicts',O.length,'',O.length?'warn':'good')}${kpi('Resolved',L.length-O.length)}</div>`;
+  h+=O.length?O.map(x=>{ const cur=cfCur(co,x); let oth={}; try{ oth=JSON.parse(x.other); }catch(e){} const F=x.kept.del?[]:audFields(oth,cur||{});
+    return panel(`${esc(SHEETN[x.arr]||x.arr)} · ${esc(x.lb||x.rid)}`,`<p class="note">Kept: <b>${x.kept.del?'Deleted':'Version by '+esc(x.kept.by||'—')}</b> · ${tm(x.kept.t)} &nbsp;|&nbsp; Not kept: <b>version by ${esc(x.otherBy||'—')}</b> · ${tm(x.otherT)}</p>
+    ${F.length?simpleTable([['Field'],['Not kept'],['Kept (current)']],F.map(f=>`<tr><td class="calc">${esc(f[0])}</td><td class="calc">${esc(f[1])}</td><td class="calc"><b>${esc(f[2])}</b></td></tr>`)):x.kept.del?'<p class="note">This record was deleted on another device while it was being edited here.</p>':''}
+    ${ro?'':`<div class="acts"><button class="btn p" onclick="cfDecide(${co?1:0},'${x.id}',false)">Keep current</button><button class="btn" onclick="cfDecide(${co?1:0},'${x.id}',true)">${x.kept.del?'Restore record':'Use other version'}</button></div>`}`); }).join('')
+    :panel('Sync conflicts','<p class="note">No open conflicts.</p>');
+  if(D.length) h+=panel('Resolved',simpleTable([['Sheet'],['Record'],['Decision'],['By'],['When']],D.map(x=>`<tr><td class="calc">${esc(SHEETN[x.arr]||x.arr)}</td><td class="calc">${esc(x.lb||'')}</td><td class="calc">${esc(x.status)}</td><td class="calc">${esc(x.by||'')}</td><td class="calc">${tm(x.at)}</td></tr>`)));
+  return h; }
+PAGES.cflx=()=>cfPage(false); PAGES.coCflx=()=>cfPage(true);
+
+/* --- change log pages --- */
+function audRows(list,site){ return (list||[]).map(e=>Object.assign({site},e)); }
+function audPage(co){ const U=state.ui, q=norm(U.audQ||''), act=U.audA||'', who=U.audW||'', lim=U.audN||200;
+  let R=[], chk=[];
+  if(co){ const c=CO.get(); R=audRows(c.log,'Company'); chk.push(['Company',audVerify(c.log)]); coAll().forEach(({p,st})=>{ const nm=(siteCode(p.id)?siteCode(p.id)+' · ':'')+(st.meta.project||p.name); R=R.concat(audRows(st.audit,nm)); chk.push([nm,audVerify(st.audit)]); }); }
+  else { audFlush(); R=audRows(state.audit,''); chk.push(['This site',audVerify(state.audit)]); }
+  const people=[...new Set(R.map(e=>e.by).filter(Boolean))].sort();
+  const F=R.filter(e=>(!act||e.act===act)&&(!who||e.by===who)&&(!q||norm([e.site,e.by,SHEETN[e.arr]||e.arr,e.lb,JSON.stringify(e.f||'')].join(' ')).includes(q))).sort((a,b)=>b.t-a.t);
+  const bad=chk.filter(x=>!x[1].ok), AP={add:['ok','Added'],edit:['na','Edited'],del:['bd','Deleted'],bulk:['wn','Bulk'],note:['na','Note']};
+  let h=`<div class="kpis">${kpi('Entries',fmtN(R.length))}${kpi('People',people.length)}${kpi('Today',R.filter(e=>ymd(new Date(e.t))===todayStr()).length)}${kpi('Log check',bad.length?'Broken':'Intact','',bad.length?'bad':'good')}</div>`;
+  if(bad.length) h+=`<div class="banner">${PILL('bd','CHECK')} ${bad.map(([n,v])=>`<b>${esc(n)}</b>: ${v.bad.slice(0,3).map(b=>esc(b.why)+' ('+esc(b.e.by||'')+', '+new Date(b.e.t).toLocaleDateString('en-IN')+')').join('; ')}`).join(' · ')}</div>`;
+  h+=panel('Change log',`<div class="frm noprint" style="margin-bottom:8px"><label>Search<input class="coi" value="${esc(U.audQ||'')}" onchange="setUI('audQ',this.value)"></label>
+   <label>Action<select class="coi" onchange="setUI('audA',this.value)"><option value="">All</option>${Object.entries(AP).map(([k,v])=>`<option value="${k}" ${act===k?'selected':''}>${v[1]}</option>`).join('')}</select></label>
+   <label>Person<select class="coi" onchange="setUI('audW',this.value)"><option value="">All</option>${people.map(p=>`<option ${who===p?'selected':''}>${esc(p)}</option>`).join('')}</select></label>
+   <div class="acts" style="align-self:end"><button class="btn" onclick="audCsv(${co?1:0})">Download CSV</button></div></div>
+   ${simpleTable([['Time'],...(co?[['Site']]:[]),['By'],['Action'],['Sheet'],['Record'],['Change']],F.slice(0,lim).map(e=>`<tr><td class="calc" style="white-space:nowrap">${new Date(e.t).toLocaleString('en-IN',{day:'2-digit',month:'short',year:'2-digit',hour:'2-digit',minute:'2-digit'})}</td>${co?`<td class="calc">${esc(e.site)}</td>`:''}<td class="calc">${esc(e.by||'')}</td><td class="calc">${PILL(...(AP[e.act]||['na',e.act]))}</td><td class="calc">${esc(SHEETN[e.arr]||e.arr||'')}</td><td class="calc">${esc(e.lb||'')}</td><td class="calc">${(e.f||[]).map(f=>`${esc(f[0])}: ${esc(f[1])} → <b>${esc(f[2])}</b>`).join('<br>')}</td></tr>`))}
+   ${F.length>lim?`<div class="acts"><button class="btn sm" onclick="setUI('audN',${lim+300})">Show more (${fmtN(F.length-lim)})</button></div>`:''}`,`${fmtN(F.length)} shown`);
+  return h; }
+function audCsv(co){ let R=[]; if(co){ const c=CO.get(); R=audRows(c.log,'Company'); coAll().forEach(({p,st})=>{ R=R.concat(audRows(st.audit,(siteCode(p.id)||'')+' '+(st.meta.project||p.name))); }); } else { audFlush(); R=audRows(state.audit,state.meta.project); }
+  const q=v=>'"'+String(v??'').replace(/"/g,'""')+'"', rows=[['Time','Site','By','Action','Sheet','Record','Change','Device','Seq','Hash']].concat(R.sort((a,b)=>a.t-b.t).map(e=>[new Date(e.t).toLocaleString('en-IN'),e.site,e.by,e.act,SHEETN[e.arr]||e.arr,e.lb,(e.f||[]).map(f=>f[0]+': '+f[1]+' -> '+f[2]).join('; '),e.dev,e.seq,e.h]));
+  download(`FormTrack-change-log-${todayStr()}.csv`,'﻿'+rows.map(r=>r.map(q).join(',')).join('\r\n'),'text/csv'); }
+PAGES.audit=()=>audPage(false); PAGES.coLog=()=>audPage(true);
+
+/* --- backup guard --- */
+const bkOut=()=>{ try{ return num(localStorage.getItem('ft_out')); }catch(e){ return 0; } };
+function bkMark(){ try{ localStorage.setItem('ft_bk',String(Date.now())); }catch(e){} }
+function bkAge(){ let t=0; try{ t=num(localStorage.getItem('ft_bk')); }catch(e){} const m=state&&state.meta.lastBackup; if(m){ const d=new Date(m+'T12:00:00').getTime(); if(d>t) t=d; } if(!t) return null; return Math.max(0,dayDiff(ymd(new Date(t)),todayStr())); }
+const bkTxt=a=>a==null?'never':a===0?'today':a===1?'yesterday':a+' days ago';
+async function bkNow(){ const data=JSON.stringify(exportAll()); await download(`FormTrack-backup-${todayStr()}.json`,data,'application/json'); state.meta.lastBackup=todayStr(); bkMark(); persist(); render(); toast('Backup downloaded – all sites and company data. Keep it on Drive.'); }
+const SNAP_N=7;
+async function snapDaily(){ if(!HAS_IDB||!state) return; const t=todayStr(); let L=[]; try{ L=JSON.parse(localStorage.getItem('ft_snaps')||'[]'); }catch(e){} if(L.includes(t)) return;
+  try{ const x=exportAll(true); x.photos={}; await idbSet('snap:'+t,JSON.stringify(x)); L=[t,...L.filter(d=>d!==t)]; const drop=L.slice(SNAP_N); L=L.slice(0,SNAP_N); for(const d of drop) await idbSet('snap:'+d,null); localStorage.setItem('ft_snaps',JSON.stringify(L)); }catch(e){} }
+async function snapGet(d){ const j=await idbGet('snap:'+d); if(!j){ toast('This copy is no longer on the device.'); return; } await download(`FormTrack-safety-copy-${d}.json`,j,'application/json'); }
+function bkPanel(){ const a=bkAge(); let L=[]; try{ L=JSON.parse(localStorage.getItem('ft_snaps')||'[]'); }catch(e){}
+  return panel('Backup status',`<div class="kpis">${kpi('Last backup',bkTxt(a),'',a==null||a>=7?'bad':a>=2?'warn':'good')}${kpi('Storage file',FS&&FS.handle?(FS.status==='ok'?'Saving':'Needs permission'):'Not connected','',FS&&FS.handle&&FS.status==='ok'?'good':'')}${kpi('Safety copies',L.length+' of '+SNAP_N)}</div>
+   <div class="acts"><button class="btn p" onclick="bkNow()">Back up now (all sites + company)</button></div>
+   ${L.length?`<p class="note" style="margin-top:8px">Daily safety copies on this device (kept ${SNAP_N} days). They protect against wrong edits, not against losing the phone.</p><div class="chips">${L.map(d=>`<button class="btn sm" onclick="snapGet('${d}')">⤓ ${fmtD(d)}</button>`).join('')}</div>`:''}`); }
+{ const _p=PAGES.data; PAGES.data=()=>bkPanel()+_p(); }
+function bkBar(){ const m=document.getElementById('main'); if(!m||LOCKED||TRIAL_END) return; const a=bkAge(); let seen=''; try{ seen=localStorage.getItem('ft_bkrem')||''; }catch(e){}
+  if((a!=null&&a<1)||seen===todayStr()||state.route==='data') return; const hasData=['execution','ledger','labour','itemTx','storeTx','prpo'].some(k=>(state[k]||[]).length)||CO.get().batches.length; if(!hasData) return;
+  const b=document.createElement('div'); b.className='banner bkbar noprint'; b.innerHTML=`${PILL(a==null||a>=7?'bd':'wn','BACKUP')} <span>Last backup: <b>${bkTxt(a)}</b></span> <button class="btn sm p" onclick="bkNow()">Back up now</button> <button class="btn sm" onclick="try{localStorage.setItem('ft_bkrem','${todayStr()}')}catch(e){};this.parentNode.remove()">Later</button>`;
+  const mh=m.querySelector('.mh'); if(mh&&mh.nextSibling) m.insertBefore(b,mh.nextSibling); else m.prepend(b); }
+
+/* --- hooks --- */
+{ const _s=save; save=function(){ const r=_s.apply(this,arguments); clearTimeout(AUD.t); AUD.t=setTimeout(audFlush,1200); return r; }; }
+{ const _e=exportAll; exportAll=function(local){ audFlush(); const r=_e(); if(!local){ try{ localStorage.setItem('ft_out',String(Date.now())); }catch(e){} } return r; }; }
+{ const _m=mergeFile; mergeFile=function(raw){ audFlush(); const r=_m(raw); audRebase(); return r; }; }
+{ const _sw=switchProject; switchProject=function(){ audFlush(); return _sw.apply(this,arguments); }; }
+{ const _w=fsWrite; fsWrite=async function(){ const r=await _w(); if(FS.status==='ok') bkMark(); return r; }; }
+{ const _f=fsShareSave; fsShareSave=async function(){ const r=await _f(); if(!state.ui.fileDirty) bkMark(); return r; }; }
+{ const _d=downloadBackup; downloadBackup=function(){ bkMark(); return _d(); }; }
+{ const _r=render; render=function(){ const r=_r.apply(this,arguments); try{ bkBar(); }catch(e){} return r; }; }
+{ const _b=sideBadges; sideBadges=function(){ const b=_b(); try{ const a=bkAge(); if(a==null||a>=3) b.data=[a==null?'!':a+'d',a==null||a>=7?'bd':'wn']; const n=cfOpen(state.cflx).length; if(n) b.cflx=[n,'bd']; const m=cfOpen(CO.get().cflx).length; if(m) b.coCflx=[m,'bd']; }catch(e){} return b; }; }
+document.addEventListener('visibilitychange',()=>{ if(document.hidden){ try{ audFlush(); }catch(e){} } });
+(()=>{ const f=NAV_SITE.find(g=>g.g==='File'); if(f){ const i=f.items.findIndex(x=>x[0]==='data'); f.items.splice(i<0?f.items.length:i,0,['audit','Change Log'],['cflx','Sync Conflicts']); }
+  const a=NAV_CO.find(g=>g.g==='Administration'); if(a) a.items.push(['coLog','Change Log'],['coCflx','Sync Conflicts']);
+  ICONS.audit=ICONS.coLog='<path d="M8 6h12M8 12h12M8 18h12"/><circle cx="4" cy="6" r="1"/><circle cx="4" cy="12" r="1"/><circle cx="4" cy="18" r="1"/>';
+  ICONS.cflx=ICONS.coCflx='<path d="M7 4v13M7 17l-3-3M7 17l3-3M17 20V7M17 7l-3 3M17 7l3 3"/>'; })();
+setTimeout(()=>{ try{ snapDaily(); }catch(e){} },3000);
+try{ audRebase(); }catch(e){}
 
 </script>
 </body>
