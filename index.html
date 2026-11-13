@@ -583,6 +583,45 @@ label.bsrc{flex-direction:column}
 .wochart{max-width:980px;max-height:300px}
 .wsst h2{margin-bottom:26px!important}.wsst .cards{max-width:820px;margin:0 auto}
 .banner.bkbar{display:flex;justify-content:flex-start;align-items:center;gap:10px;flex-wrap:wrap}.banner.bkbar .btn:last-child{margin-left:auto}
+.dzcards{display:grid;grid-template-columns:repeat(3,1fr);gap:12px}.dzcard{border:1px solid var(--line);border-radius:10px;padding:14px;background:var(--paper)}.dzh{display:flex;justify-content:space-between;align-items:center;gap:8px}.dzd{margin:6px 0 10px;font-size:12.5px}
+@media (max-width:900px){.dzcards{grid-template-columns:1fr}}
+.dzin{width:110px;text-align:right;font-weight:700;background:#fff8e1!important;border:1.5px solid #e0a419!important;border-radius:6px}
+select.dzin{width:auto;max-width:230px;text-align:left}
+.dzin:disabled{background:transparent!important;border-color:var(--line)!important}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]) .dzin:not(:disabled){background:#3a3115!important;color:inherit}}
+.dzsig{display:none}
+@media print{
+ #askb,#qkb,#toast,.bkbar{display:none!important}
+ .dzin,.dzin:disabled{border:0!important;background:none!important;-webkit-appearance:none;appearance:none;box-shadow:none!important;padding:0!important;color:#000!important}
+ tr{break-inside:avoid}
+ .coi{border:0!important;background:none!important;-webkit-appearance:none;appearance:none;box-shadow:none!important;color:#000!important;font-weight:700}
+ .grid2{display:grid!important;grid-template-columns:1fr 1fr!important;gap:10px}
+ .dzsig{display:grid;grid-template-columns:repeat(3,1fr);gap:28px;margin:26px 4px 0;font-size:12px}
+ .dzsig div{border-top:1px solid #000;padding-top:6px}
+}
+#dzrep{position:fixed;inset:0;z-index:9000;background:#dfe4ea;overflow:auto;color:#111}
+.rp-bar{position:sticky;top:0;z-index:2;background:#1f3247;color:#fff;padding:10px 14px;display:flex;gap:12px;align-items:flex-end;flex-wrap:wrap;box-shadow:0 2px 8px rgba(0,0,0,.25)}
+.rp-fl{display:flex;flex-wrap:wrap;gap:8px;flex:1}.rp-fl label{display:flex;flex-direction:column;font-size:11px;gap:2px;color:#cfd8e3}
+.rp-fl input{font:inherit;font-size:13px;padding:4px 6px;border-radius:5px;border:1px solid #8aa;background:#fff;color:#111}.rp-act{display:flex;gap:8px}
+.rp-page{width:210mm;margin:16px auto 40px;background:#fff;padding:12mm 13mm;box-shadow:0 2px 14px rgba(0,0,0,.18);font-family:Arial,Helvetica,sans-serif;font-size:11.5px;color:#111}
+.rp-wrap{width:100%;border-collapse:collapse}.rp-wrap>thead td,.rp-wrap>tbody>tr>td{padding:0}
+.rp-top{display:flex;justify-content:space-between;align-items:flex-end;border-bottom:2px solid #1f6fa8;padding-bottom:6px;margin-bottom:10px}
+.rp-co{font-size:20px;font-weight:800;color:#14507d;letter-spacing:.2px}.rp-sub{font-size:10.5px;color:#555;text-transform:uppercase;letter-spacing:1px;margin-top:2px}.rp-meta{text-align:right;font-size:10.5px;color:#444;line-height:1.5}
+.rp-info{width:100%;border-collapse:collapse;margin:4px 0 10px}.rp-info td{border:1px solid #c9d2dc;padding:4px 7px;font-size:11px}.rp-info td:nth-child(odd){background:#f2f5f8;color:#555;width:16%}
+.rp-subj{font-weight:800;font-size:13.5px;text-decoration:underline;margin:10px 0 8px}
+#dzrep h3{font-size:12.5px;margin:12px 0 4px;color:#111}
+.rp-t{width:100%;border-collapse:collapse;margin-bottom:4px}.rp-t td{border:1px solid #d5dce4;padding:4px 7px;vertical-align:top}
+.rp-t td:nth-child(1){width:34%}.rp-t td:nth-child(2){width:33%;font-family:Consolas,monospace;font-size:10.5px;color:#333}.rp-t td:nth-child(3){width:3%;text-align:center}.rp-t td:nth-child(4){width:16%;text-align:right;font-family:Consolas,monospace;font-weight:700}.rp-t td:nth-child(5){width:14%;color:#555}
+.rp-h{background:#eef3f8;font-weight:800}.rp-h span{font-weight:400;color:#555;font-size:10.5px}.rp-b td{font-weight:700}.rp-ok{color:#11742f}.rp-bad{color:#b3261e}
+.rp-sig{display:grid;grid-template-columns:repeat(3,1fr);gap:24px;margin-top:34px;text-align:center}.rp-sig span{display:inline-block;min-width:150px;border-top:1px solid #333;margin-top:30px;padding-top:4px}
+@media print{
+ @page{size:A4;margin:10mm}
+ body.dzrep-on>*:not(#dzrep){display:none!important}
+ body.dzrep-on #dzrep{position:static;background:#fff;overflow:visible}
+ .rp-bar{display:none!important}
+ .rp-page{width:auto;margin:0;padding:0;box-shadow:none}
+ .rp-t tr,.rp-sig{break-inside:avoid} #dzrep h3{break-after:avoid}
+}
 </style>
 </head>
 <body>
@@ -592,7 +631,7 @@ label.bsrc{flex-direction:column}
 <input type="file" id="restoreFile" accept=".json" style="display:none" onchange="if(this.files[0])restoreBackup(this.files[0]);this.value=''">
 <input type="file" id="fsPick" style="display:none" onchange="fsOpenFile(this.files[0]);this.value=''">
 
-<script>window.__FORMTRACK_PWA=true; window.__FORMTRACK_VER="2026.11.13-0035"; window.__FORMTRACK_VERNAME="13 Nov 00:35"; window.__FT_TRIAL_FROM=1793358725887; window.__FT_OWNER_KEYS=["FTK1.KFWlfr8L9B9vCV5zDqch0g==.dbjdxh8PZxOLP1CNQ2z3RabZkTuh7AORMJY1xre+tWo=", "FTK1.Osl5ooyWCagTRuMdk06Obg==.rchABMlUZsicdxq192DnzmUcdgRXTqVE0LzUln8iqDY="]; window.__FT_ACCESS_PUB="SC1QzgBryXETIvpdPX-L1vNG0PfXbclYD1uqU4rGGy0"; window.__FT_BLOCKED=[];</script>
+<script>window.__FORMTRACK_PWA=true; window.__FORMTRACK_VER="2026.11.13-2030"; window.__FORMTRACK_VERNAME="13 Nov 20:30"; window.__FT_TRIAL_FROM=1793358725887; window.__FT_OWNER_KEYS=["FTK1.KFWlfr8L9B9vCV5zDqch0g==.dbjdxh8PZxOLP1CNQ2z3RabZkTuh7AORMJY1xre+tWo=", "FTK1.Osl5ooyWCagTRuMdk06Obg==.rchABMlUZsicdxq192DnzmUcdgRXTqVE0LzUln8iqDY="]; window.__FT_ACCESS_PUB="SC1QzgBryXETIvpdPX-L1vNG0PfXbclYD1uqU4rGGy0"; window.__FT_BLOCKED=[];</script>
 <script>
 /* FormTrack */
 const STORE_KEY = 'formtrack_data_v2';
@@ -4174,7 +4213,7 @@ async function signKeyFrom(ownerKey){ const k=await crypto.subtle.importKey('raw
   const pk=new Uint8Array(48); pk.set([0x30,0x2e,0x02,0x01,0x00,0x30,0x05,0x06,0x03,0x2b,0x65,0x70,0x04,0x22,0x04,0x20]); pk.set(seed,16);
   const priv=await crypto.subtle.importKey('pkcs8',pk,{name:'Ed25519'},true,['sign']); const pub=(await crypto.subtle.exportKey('jwk',priv)).x; return {priv,pub}; }
 async function ownerKeyOk(v){ for(const k of OWNER_KEYS){ const [,salt,hash]=String(k).split('.'); if(salt&&hash&&await lockHash(v,unb64(salt),150000)===hash) return true; } return false; }
-function accessParse(tok){ try{ const [a,b]=String(tok).trim().split('.'); const pl=unb64u(a), sig=unb64u(b); if(pl[0]!==1&&pl[0]!==2) return null; const dv=new DataView(pl.buffer); if(pl[0]===2){ const cl=pl[10]; return {pl,sig,id:b64u(pl.slice(1,5)),exp:dv.getUint32(5)*60000,co:pl[9],site:new TextDecoder().decode(pl.slice(11,11+cl)),name:new TextDecoder().decode(pl.slice(11+cl))}; }
+function accessParse(tok){ try{ const [a,b]=String(tok).trim().split('.'); const pl=unb64u(a), sig=unb64u(b); if(pl[0]!==1&&pl[0]!==2) return null; const dv=new DataView(pl.buffer); if(pl[0]===2){ const cl=pl[10]; return {pl,sig,id:b64u(pl.slice(1,5)),exp:dv.getUint32(5)*60000,co:pl[9]&15,dz:pl[9]>>4,site:new TextDecoder().decode(pl.slice(11,11+cl)),name:new TextDecoder().decode(pl.slice(11+cl))}; }
   return {pl,sig,id:b64u(pl.slice(1,5)),exp:dv.getUint32(5)*60000,name:new TextDecoder().decode(pl.slice(9))}; }catch(e){ return null; } }
 async function accessVerify(tok){ const t=accessParse(tok); if(!t||!ACCESS_PUB) return {ok:false,msg:'This access code is not valid.'};
   try{ const pub=await crypto.subtle.importKey('raw',unb64u(ACCESS_PUB),{name:'Ed25519'},false,['verify']); if(!await crypto.subtle.verify({name:'Ed25519'},pub,t.sig,t.pl)) return {ok:false,msg:'This access code is not valid.'}; }
@@ -4186,7 +4225,7 @@ async function accessVerify(tok){ const t=accessParse(tok); if(!t||!ACCESS_PUB) 
 async function accessCheck(fresh){ let tok=null; try{ const m=location.hash.match(/access=([A-Za-z0-9_\-\.]+)/); if(m){ tok=m[1]; localStorage.setItem('ft_access',tok); history.replaceState(null,'',location.pathname+location.search); } }catch(e){}
   if(!tok) try{ tok=localStorage.getItem('ft_access'); }catch(e){}
   if(!tok){ ACC=null; ACC_MSG=''; TRIAL_END=true; render(); return; }
-  const v=await accessVerify(tok); if(v.ok){ ACC={name:v.t.name,exp:v.t.exp,id:v.t.id,co:v.t.co||0,site:v.t.site||''}; TRIAL_END=false; ACC_MSG=''; document.body.classList.remove('locked'); const d=document.getElementById('lockscr'); if(d) d.remove(); render(); if(fresh) toast('Welcome '+v.t.name); }
+  const v=await accessVerify(tok); if(v.ok){ ACC={name:v.t.name,exp:v.t.exp,id:v.t.id,co:v.t.co||0,dz:v.t.dz||0,site:v.t.site||''}; TRIAL_END=false; ACC_MSG=''; document.body.classList.remove('locked'); const d=document.getElementById('lockscr'); if(d) d.remove(); render(); if(fresh) toast('Welcome '+v.t.name); }
   else { ACC=null; ACC_MSG=v.msg; TRIAL_END=true; render(); } }
 setInterval(()=>{ if(ACC&&Date.now()>ACC.exp){ ACC=null; ACC_MSG='Your access period has ended. Contact the owner.'; TRIAL_END=true; render(); } },60000);
 async function accessTry(){ const v=((document.getElementById('acode')||{}).value||'').trim(); if(!v) return; const m=v.match(/access=([A-Za-z0-9_\-\.]+)/), tok=m?m[1]:v; try{ localStorage.setItem('ft_access',tok); }catch(e){} await accessCheck(true); }
@@ -4226,7 +4265,7 @@ function trialPanel(){ if(!PWA) return ''; const own=isOwnerDev(), L=(state.meta
     <details style="margin-top:10px"><summary>Forgot the owner key? Make a new one</summary><p class="note">Type a new key twice and send the code to Claude. It works after the next version.</p><div class="frm"><label>New owner key (min 8)<input id="mk1" type="password" autocomplete="new-password"></label><label>Type it again<input id="mk2" type="password" autocomplete="new-password"></label></div><button class="btn" onclick="makeOwnerKey()">Make code</button><p class="note" id="mkout"></p></details>`);
   if(!ACCESS_PUB) h+=`<p class="note"><b>Access links are not switched on yet.</b> Type your owner key and send the setup code to Claude once. Until then, other devices get 2 days.</p><div class="frm"><label>Owner key<input id="aks" type="password" autocomplete="off"></label></div><button class="btn p" onclick="makeAccessSetup()">Make setup code</button><p class="note" id="aksout"></p>`;
   else h+=`<p class="note"><b>Site formwork engineer</b> → only the chosen site. <b>Formwork in-charge</b> → all sites, Company section with edit. <b>Head of department</b> → all sites, Company section view only. <b>Full access cover</b> → Site + Company with edit, for leave cover (default 7 days). No link making, no owner PIN actions. The link stops working after the last day.</p>
-    <div class="frm"><label>Name<input id="ac_n" placeholder="e.g. Ravi"></label><label>Role<select id="ac_r" onchange="document.getElementById('ac_sw').style.display=this.value==='site'?'':'none';document.getElementById('ac_d').value=this.value==='full'?7:90"><option value="site">Site formwork engineer · one site</option><option value="full">Full access · 7-day cover (Site + Company)</option><option value="inch">Formwork in-charge · all sites (edit)</option><option value="hod">Head of department · all sites (view)</option></select></label><label id="ac_sw">Site<select id="ac_s">${PRJ.list.map(p=>`<option value="${p.id}" ${p.id===PRJ.cur?'selected':''}>${esc((siteCode(p.id)?siteCode(p.id)+' · ':'')+p.name)}</option>`).join('')}</select></label><label>Days<input id="ac_d" type="number" inputmode="numeric" value="90"></label><label>Owner key<input id="ac_k" type="password" autocomplete="off"></label></div><button class="btn p" onclick="makeAccess2()">Make access link</button><p class="note" id="ac_out"></p>`;
+    <div class="frm"><label>Name<input id="ac_n" placeholder="e.g. Ravi"></label><label>Role<select id="ac_r" onchange="document.getElementById('ac_sw').style.display=this.value==='site'?'':'none';document.getElementById('ac_d').value=this.value==='full'?7:90"><option value="site">Site formwork engineer · one site</option><option value="full">Full access · 7-day cover (Site + Company)</option><option value="inch">Formwork in-charge · all sites (edit)</option><option value="hod">Head of department · all sites (view)</option></select></label><label id="ac_sw">Site<select id="ac_s">${PRJ.list.map(p=>`<option value="${p.id}" ${p.id===PRJ.cur?'selected':''}>${esc((siteCode(p.id)?siteCode(p.id)+' · ':'')+p.name)}</option>`).join('')}</select></label><label>Design<select id="ac_dz"><option value="0">None</option><option value="1">View</option><option value="2">Edit</option><option value="3">Approve</option></select></label><label>Days<input id="ac_d" type="number" inputmode="numeric" value="90"></label><label>Owner key<input id="ac_k" type="password" autocomplete="off"></label></div><button class="btn p" onclick="makeAccess2()">Make access link</button><p class="note" id="ac_out"></p>`;
   if(L.length) h+=simpleTable([['Name'],['Role'],['Site'],['Until'],['Made'],['Status'],['Code no.']],L.map(x=>`<tr><td class="v"><b>${esc(x.name)}</b></td><td class="v">${esc(x.role||'—')}</td><td class="v">${esc(x.site||'—')}</td><td class="v">${fmtD(x.until)}</td><td class="v">${fmtD(x.made)}</td><td class="v">${ACC_BLOCKED.includes(x.id)?PILL('bd','Stopped'):x.until<todayStr()?PILL('na','Ended'):PILL('ok','Active')}</td><td class="v"><small>${esc(x.id)}</small></td></tr>`))+`<p class="note">To stop someone before their end date, send Claude: <b>STOP</b> and their code no.</p>`;
   return panel('Access – people who can use this app',h); }
 /* ---------- shell ---------- */
@@ -4908,7 +4947,7 @@ const CO_KEY=STORE_KEY+'__company';
 const MAT_DEF=[['Aluminium formwork','sqm',80,'SLM',15],['Steel / wall formwork','sqm',150,'SLM',15],['Table & slab forms','sqm',120,'SLM',15],['Plastic formwork','sqm',50,'SLM',20],['Plywood & timber','sheet',8,'SLM',100],['Shoring & props','nos',200,'SLM',20],['Cuplock & scaffolding','nos',250,'SLM',20],['ISMC / H-beam','rmt',150,'WDV',15],['SQ tube / MS pipe','rmt',120,'WDV',20],['Column forms','set',60,'SLM',20],['Climbing forms','set',100,'SLM',15],['Accessories','nos',40,'SLM',33.3]];
 function coNorm(c){ c=c&&typeof c==='object'?c:{}; c.name=c.name||''; c.sites=c.sites&&typeof c.sites==='object'?c.sites:{}; c.stores=Array.isArray(c.stores)?c.stores:[]; c.users=Array.isArray(c.users)?c.users:[]; c.hist=Array.isArray(c.hist)?c.hist:[];
   if(!Array.isArray(c.types)||!c.types.length) c.types=MAT_DEF.map((m,i)=>({id:'mt'+i,name:m[0],unit:m[1],life:m[2],dep:m[3],rate:m[4],residual:5,kg:0,move:'Yes',active:true}));
-  c.items=Array.isArray(c.items)?c.items:[]; ['batches','moves','reqs','wos','log','cflx'].forEach(k=>{ if(!Array.isArray(c[k])) c[k]=[]; }); c.goLive=c.goLive||''; return c; }
+  c.items=Array.isArray(c.items)?c.items:[]; ['batches','moves','reqs','wos','log','cflx','dzMats','dzDes'].forEach(k=>{ if(!Array.isArray(c[k])) c[k]=[]; }); c.goLive=c.goLive||''; return c; }
 const CO={ get(){ try{ const c=JSON.parse(localStorage.getItem(CO_KEY)||'null'); if(c) return coNorm(c); }catch(e){} return coNorm({}); },
   set(c,keepTime){ if(!keepTime){ c.savedAt=Date.now(); let old=null; try{ old=JSON.parse(localStorage.getItem(CO_KEY)||'null'); }catch(e){} coStamp(c); try{ coAudit(old?coNorm(old):coNorm({}),c); }catch(e){ console.warn(e); } } try{ localStorage.setItem(CO_KEY,JSON.stringify(c)); }catch(e){} } };
 function coSave(c){ if(coReadOnly()&&wsGet()==='company'){ toast('View only access.'); render(); return; } CO.set(c); try{ persist(); }catch(e){} render(); }
@@ -4947,7 +4986,7 @@ function coUserDel(i){ const c=CO.get(), u=c.users[i]; if(!u) return; coHist(c,'
 PAGES.coUsers=()=>{ const C=CO.get(), sites=['All',...PRJ.list.map(p=>(siteCode(p.id)?siteCode(p.id)+' · ':'')+p.name),...C.stores.filter(s=>!s.del).map(s=>(s.code?s.code+' · ':'')+s.name)];
   const act=C.users.filter(u=>!u.del&&u.status!=='Revoked'), exp=C.users.filter(u=>!u.del&&u.till&&u.till<todayStr()&&u.status!=='Revoked');
   let h=`<div class="kpis">${kpi('Users',act.length)}${kpi('Site engineers',act.filter(u=>u.role==='Site Formwork Engineer').length)}${kpi('Direct asset purchase',act.filter(u=>u.asset==='Direct').length)}${kpi('Expired',exp.length,'',exp.length?'warn':'good')}</div>`;
-  h+=panel('Users & permissions',`<div class="tw"><table class="sheet coT"><thead><tr><th>Name</th><th>Role</th><th>Site</th><th class="r">Consumables auto-approve (${cur()})</th><th>Company asset purchase</th><th class="r">Direct limit / PO (${cur()})</th><th>Company section</th><th>Valid till</th><th>Status</th><th></th></tr></thead><tbody>${C.users.map((u,i)=>u.del?'':`<tr class="${u.status==='Revoked'?'muted-row':''}"><td>${ci(u.name,`coUser(${i},'name',this.value)`,'','style="min-width:150px"')}</td><td>${cs(u.role,ROLES,`coUser(${i},'role',this.value)`)}</td><td>${cs(u.site||'All',sites,`coUser(${i},'site',this.value)`)}</td><td>${ci(u.consLimit,`coUser(${i},'consLimit',num(this.value))`,'number','style="width:110px;text-align:right"')}</td><td>${cs(u.asset,['Needs approval','Direct'],`coUser(${i},'asset',this.value)`)}</td><td>${u.asset==='Direct'?ci(u.assetLimit,`coUser(${i},'assetLimit',num(this.value))`,'number','style="width:110px;text-align:right"'):'<span class="muted">—</span>'}</td><td>${cs(u.co||'None',['None','View','Edit'],`coUser(${i},'co',this.value)`)}</td><td>${ci(u.till,`coUser(${i},'till',this.value)`,'date')}</td><td>${u.status==='Revoked'?PILL('bd','Revoked'):u.till&&u.till<todayStr()?PILL('wn','Expired'):PILL('ok','Active')}</td><td style="white-space:nowrap">${u.status==='Revoked'?`<button class="btn sm" onclick="coUser(${i},'status','Active')">Restore</button>`:`<button class="btn sm" onclick="coUser(${i},'status','Revoked')">Revoke</button>`} <button class="btn sm d" onclick="coUserDel(${i})">✕</button></td></tr>`).join('')||'<tr><td colspan="10" class="muted">—</td></tr>'}</tbody></table></div><div class="acts"><button class="btn p" onclick="coUser(-1)">+ Add user</button></div>`);
+  h+=panel('Users & permissions',`<div class="tw"><table class="sheet coT"><thead><tr><th>Name</th><th>Role</th><th>Site</th><th class="r">Consumables auto-approve (${cur()})</th><th>Company asset purchase</th><th class="r">Direct limit / PO (${cur()})</th><th>Company section</th><th>Design</th><th>Valid till</th><th>Status</th><th></th></tr></thead><tbody>${C.users.map((u,i)=>u.del?'':`<tr class="${u.status==='Revoked'?'muted-row':''}"><td>${ci(u.name,`coUser(${i},'name',this.value)`,'','style="min-width:150px"')}</td><td>${cs(u.role,ROLES,`coUser(${i},'role',this.value)`)}</td><td>${cs(u.site||'All',sites,`coUser(${i},'site',this.value)`)}</td><td>${ci(u.consLimit,`coUser(${i},'consLimit',num(this.value))`,'number','style="width:110px;text-align:right"')}</td><td>${cs(u.asset,['Needs approval','Direct'],`coUser(${i},'asset',this.value)`)}</td><td>${u.asset==='Direct'?ci(u.assetLimit,`coUser(${i},'assetLimit',num(this.value))`,'number','style="width:110px;text-align:right"'):'<span class="muted">—</span>'}</td><td>${cs(u.co||'None',['None','View','Edit'],`coUser(${i},'co',this.value)`)}</td><td>${cs(u.dz||'None',['None','View','Edit','Approve'],`coUser(${i},'dz',this.value)`)}</td><td>${ci(u.till,`coUser(${i},'till',this.value)`,'date')}</td><td>${u.status==='Revoked'?PILL('bd','Revoked'):u.till&&u.till<todayStr()?PILL('wn','Expired'):PILL('ok','Active')}</td><td style="white-space:nowrap">${u.status==='Revoked'?`<button class="btn sm" onclick="coUser(${i},'status','Active')">Restore</button>`:`<button class="btn sm" onclick="coUser(${i},'status','Revoked')">Revoke</button>`} <button class="btn sm d" onclick="coUserDel(${i})">✕</button></td></tr>`).join('')||'<tr><td colspan="11" class="muted">—</td></tr>'}</tbody></table></div><div class="acts"><button class="btn p" onclick="coUser(-1)">+ Add user</button></div>`);
   return h; };
 
 /* ---------- Material Master ---------- */
@@ -5005,17 +5044,17 @@ function coAddSite(){ const n=(document.getElementById('coNewName')||{}).value||
 { const _r2=render; render=function(){ document.body.classList.toggle('oneprj',PRJ.list.length<2); return _r2(); }; }
 
 /* ================= STAGE 2A ================= */
-const CO_ARR=['stores','users','types','items','batches','moves','reqs','wos','log','cflx'];
+const CO_ARR=['stores','users','types','items','batches','moves','reqs','wos','log','cflx','dzMats','dzDes'];
 const recJ=r=>{ const o={...r}; delete o._t; return JSON.stringify(o); };
 function coStamp(c){ let old={}; try{ old=JSON.parse(localStorage.getItem(CO_KEY)||'{}')||{}; }catch(e){} const now=Date.now();
   CO_ARR.forEach(k=>{ const M=new Map((old[k]||[]).map(r=>[r.id,r])); (c[k]||[]).forEach(r=>{ if(!r.id) r.id=k+Date.now().toString(36)+Math.random().toString(36).slice(2,5); const o=M.get(r.id); if(!o||recJ(o)!==recJ(r)) r._t=now; else r._t=o._t||r._t||0; }); });
   const os=old.sites||{}; Object.entries(c.sites||{}).forEach(([k,r])=>{ const o=os[k]; if(!o||recJ(o)!==recJ(r)) r._t=now; else r._t=o._t||0; });
-  ['name','goLive','openLock','hr'].forEach(k=>{ if(JSON.stringify(old[k])!==JSON.stringify(c[k])) (c._ft=c._ft||{})[k]=now; }); }
+  ['name','goLive','openLock','hr','dzLoad','dzLock','dzDefl','dzDeflRef','dzTShear'].forEach(k=>{ if(JSON.stringify(old[k])!==JSON.stringify(c[k])) (c._ft=c._ft||{})[k]=now; }); }
 function coMerge(a,b){ const o=coNorm(JSON.parse(JSON.stringify(a)));
   const CF=[]; CO_ARR.forEach(k=>{ const M=new Map((o[k]||[]).map(r=>[r.id,r])); (b[k]||[]).forEach(r=>{ const x=M.get(r.id); if(!x){ M.set(r.id,r); return; } const j=cfJudge(x,r,'_t'); if(j.cf&&k!=='log'&&k!=='cflx') CF.push(Object.assign({arr:k},j.cf)); if(j.take) M.set(r.id,r); }); o[k]=[...M.values()]; });
   Object.entries(b.sites||{}).forEach(([k,r])=>{ const x=o.sites[k]; if(!x){ o.sites[k]=r; return; } const j=cfJudge(Object.assign({id:k},x),Object.assign({id:k},r),'_t'); if(j.cf){ CF.push(Object.assign({arr:'sites'},j.cf)); (j.take?r:x)._h=j.cf.W._h; } if(j.take) o.sites[k]=r; });
   if(CF.length) cfAdd(o.cflx,CF);
-  ['name','goLive','openLock','hr'].forEach(k=>{ if(num((b._ft||{})[k])>num((o._ft||{})[k])){ o[k]=b[k]; (o._ft=o._ft||{})[k]=b._ft[k]; } });
+  ['name','goLive','openLock','hr','dzLoad','dzLock','dzDefl','dzDeflRef','dzTShear'].forEach(k=>{ if(num((b._ft||{})[k])>num((o._ft||{})[k])){ o[k]=b[k]; (o._ft=o._ft||{})[k]=b._ft[k]; } });
   const H=new Map(); [...o.hist,...(b.hist||[])].forEach(h=>H.set(h.t+'|'+h.what+'|'+h.to,h)); o.hist=[...H.values()].sort((x,y)=>y.t.localeCompare(x.t)).slice(0,300);
   o.savedAt=Math.max(num(a.savedAt),num(b.savedAt)); return o; }
 
@@ -5067,7 +5106,7 @@ function reqAdd(){ const c=CO.get(), item=v$('rqItem'), qty=num(v$('rqQty')); if
 function reqDecide(id,act){ const c=CO.get(), r=c.reqs.find(x=>x.id===id); if(!r) return; const q=num(v$('ap_'+id))||num(r.qty), src=v$('src_'+id), rem=v$('rm_'+id);
   if(act==='reject'){ r.status='Rejected'; r.remark=rem; coHist(c,'Requisition rejected · '+r.no,'',rem); coSave(c); return; }
   r.appQty=q; r.remark=rem; r.status='Approved'; r.decided=todayStr();
-  if(src&&src!=='Rent'&&src!=='Purchase'){ if(src===r.site){ toast('Source is the same site.'); return; } const st=stockAt(c,src,r.item,r.unit); if(st.good+1e-9<q){ toast('Only '+fmtN(st.good)+' '+r.unit+' good at '+locSh(c,src)+'.'); return; }
+  if(src&&src!=='Rent'&&src!=='Purchase'){ if(src===r.site){ toast('Source is the same site.'); return; } const st=stockAt(c,src,r.item,r.unit); if(st.good+1e-9<q){ toast('Only '+fmtN(st.good)+' '+r.unit+' good at '+locSh(c,src)+'.'); return; } try{ const su=surplusAt(c,src,r.item,r.unit,needMaps()).sur; if(q>su+1e-9&&!confirm(locSh(c,src)+' surplus is '+fmtN(su)+' '+r.unit+'. Taking '+fmtN(q)+' uses that site\'s own requirement. Continue?')) return; }catch(e){}
     const mv={id:'mv'+Date.now().toString(36),no:nextNo(c.moves,'TR-'),from:src,to:r.site,item:r.item,unit:r.unit,qty:q,status:'Planned',planDate:todayStr(),needBy:r.needBy,reqId:r.id,note:rem}; c.moves.push(mv); r.source=src; r.moveId=mv.id; }
   else r.source=src||'Rent';
   coHist(c,'Requisition approved · '+r.no,fmtN(r.qty),fmtN(q)+' from '+(r.moveId?locSh(c,src):r.source)); coSave(c); }
@@ -5104,13 +5143,13 @@ PAGES.siTr=()=>{ const c=CO.get(), L=LIVE(c).m.filter(m=>m.from===PRJ.cur||m.to=
   return h; };
 
 /* ---------- company pages ---------- */
-PAGES.coReq=()=>{ const c=CO.get(), f=state.ui.coRqF||'Raised', R=LIVE(c).r.filter(r=>f==='All'||r.status===f).sort((a,b)=>(a.needBy||'9').localeCompare(b.needBy||'9')), L=coLocs(c);
+PAGES.coReq=()=>{ const NM=needMaps(), c=CO.get(), f=state.ui.coRqF||'Raised', R=LIVE(c).r.filter(r=>f==='All'||r.status===f).sort((a,b)=>(a.needBy||'9').localeCompare(b.needBy||'9')), L=coLocs(c);
   let h=`<div class="kpis">${kpi('Waiting for decision',LIVE(c).r.filter(r=>r.status==='Raised').length,'',LIVE(c).r.some(r=>r.status==='Raised')?'warn':'good')}${kpi('Approved',LIVE(c).r.filter(r=>r.status==='Approved').length)}${kpi('Closed',LIVE(c).r.filter(r=>r.status==='Closed').length)}</div>`;
   h+=`<div class="chips">${['Raised','Approved','Closed','Rejected','All'].map(x=>`<button class="btn sm ${x===f?'p':''}" onclick="setUI('coRqF','${x}')">${x}</button>`).join('')}</div>`;
-  h+=panel('Material requisitions',simpleTable([['No.'],['Site · area'],['Item'],['Asked',1],['Needed by'],['Good stock available'],['Decision']],R.map(r=>{ const av=L.filter(l=>l.id!==r.site).map(l=>[l,stockAt(c,l.id,r.item,r.unit).good]).filter(x=>x[1]>1e-9);
-    const dec=r.status==='Raised'?`<input id="ap_${r.id}" class="coi" type="number" value="${num(r.qty)}" style="width:90px"> <select id="src_${r.id}" class="coi">${av.map(([l,q])=>`<option value="${l.id}">${esc(l.code||l.name)} (${fmtN(q)})</option>`).join('')}<option value="Rent">Rent</option><option value="Purchase">Purchase</option></select> <input id="rm_${r.id}" class="coi" placeholder="Remark" style="width:150px"> <button class="btn sm p" onclick="reqDecide('${r.id}','ok')">Approve</button> <button class="btn sm d" onclick="reqDecide('${r.id}','reject')">Reject</button>`
-      :`${PILL(ST_P[r.status]||'na',r.status)} ${r.appQty!=null?fmtN(r.appQty)+' '+esc(r.unit):''} ${r.source?'· '+esc(r.moveId?locSh(c,r.source):r.source):''} ${r.remark?'· '+esc(r.remark):''}`;
-    return `<tr><td class="calc"><b>${esc(r.no)}</b><br><small class="muted">${fmtD(r.date)}${r.by?' · '+esc(r.by):''}</small></td><td class="calc">${esc(locSh(c,r.site))}${r.area?' · '+esc(r.area):''}</td><td class="calc"><b>${esc(r.item)}</b>${r.note?`<br><small class="muted">${esc(r.note)}</small>`:''}</td><td class="calc r">${fmtN(r.qty)} ${esc(r.unit)}</td><td class="calc">${r.needBy?fmtD(r.needBy):'—'}</td><td class="calc">${av.map(([l,q])=>`${esc(l.code||l.name)}: <b>${fmtN(q)}</b>`).join('<br>')||'<span class="muted">none</span>'}</td><td class="calc" style="white-space:nowrap">${dec}</td></tr>`; })));
+  h+=panel('Material requisitions',simpleTable([['No.'],['Site · area'],['Item'],['Asked',1],['Needed by'],['Good stock · surplus'],['Decision']],R.map(r=>{ const av=L.filter(l=>l.id!==r.site).map(l=>[l,stockAt(c,l.id,r.item,r.unit).good]).filter(x=>x[1]>1e-9);
+    const dec=r.status==='Raised'?`<input id="ap_${r.id}" class="coi" type="number" value="${num(r.qty)}" style="width:90px"> <select id="src_${r.id}" class="coi">${av.map(([l,q])=>`<option value="${l.id}">${esc(l.code||l.name)} · surplus ${fmtN(surplusAt(c,l.id,r.item,r.unit,NM).sur)}</option>`).join('')}<option value="Rent">Rent</option><option value="Purchase">Purchase</option></select> <input id="rm_${r.id}" class="coi" placeholder="Remark" style="width:150px"> <button class="btn sm p" onclick="reqDecide('${r.id}','ok')">Approve</button> <button class="btn sm d" onclick="reqDecide('${r.id}','reject')">Reject</button>`
+      :`${PILL(ST_P[r.status]||'na',r.status)} ${r.appQty!=null?fmtN(r.appQty)+' '+esc(r.unit):''} ${r.source?'· '+esc((r.moveIds||[]).length>1?r.moveIds.map(id=>{ const m=c.moves.find(x=>x.id===id); return m?locSh(c,m.from)+' '+fmtN(m.qty):''; }).join(' + '):r.moveId?locSh(c,r.source):r.source):''} ${r.remark?'· '+esc(r.remark):''}${r.status==='Approved'&&!coReadOnly()?` <button class="btn sm" onclick="reqRevoke('${r.id}')">Revoke</button>`:''}${r.revoked?`<br><small class="muted">revoked ${fmtD(r.revoked)}${r.revBy?' · '+esc(r.revBy):''}</small>`:''}`;
+    return `<tr><td class="calc"><b>${esc(r.no)}</b><br><small class="muted">${fmtD(r.date)}${r.by?' · '+esc(r.by):''}</small></td><td class="calc">${esc(locSh(c,r.site))}${r.area?' · '+esc(r.area):''}</td><td class="calc"><b>${esc(r.item)}</b>${r.note?`<br><small class="muted">${esc(r.note)}</small>`:''}</td><td class="calc r">${fmtN(r.qty)} ${esc(r.unit)}</td><td class="calc">${r.needBy?fmtD(r.needBy):'—'}</td><td class="calc">${av.map(([l,q])=>`${esc(l.code||l.name)}: ${fmtN(q)} · <b>${fmtN(surplusAt(c,l.id,r.item,r.unit,NM).sur)}</b>`).join('<br>')||'<span class="muted">none</span>'}</td><td class="calc" style="white-space:nowrap">${dec}</td></tr>`; })));
   return h; };
 PAGES.coTr=()=>{ const c=CO.get(), L=coLocs(c), M=LIVE(c).m, f=state.ui.coTrF||'Open', S=M.filter(m=>f==='All'||(f==='Open'?m.status!=='Received':m.status===f)).sort((a,b)=>(b.no||'').localeCompare(a.no||''));
   let h=dl(c)+`<div class="kpis">${kpi('Planned',M.filter(m=>m.status==='Planned').length)}${kpi('In transit',M.filter(m=>m.status==='Dispatched').length,'',M.some(m=>m.status==='Dispatched')?'warn':'good')}${kpi('Received',M.filter(m=>m.status==='Received').length)}</div>`;
@@ -5268,8 +5307,11 @@ PAGES.coHR=()=>{ const H=hrGet(), S=stk(H);
 function actCalc(a,H){ const S=stk(H), Hh=num(a.H), r=H.rows.slice().sort((x,y)=>Math.abs(num(x[0])-Hh)-Math.abs(num(y[0])-Hh))[0]||[Hh,'3.0'], vl=vLen(r[1]), jack=Hh-S-vl, sp=H.sp.slice().sort((x,y)=>num(x[0])-num(y[0])).find(x=>num(a.thk)<=num(x[0]))||H.sp[H.sp.length-1]||[0,1.2,1.2,0.3];
   const L=num(a.L), W=num(a.W), nx=Math.ceil(L/num(sp[1]))+1, ny=Math.ceil(W/num(sp[2]))+1, V=L&&W?nx*ny:0, lev=Math.ceil(vl/num(H.lev))+1;
   return {vs:r[1],jack,sp,V,led:L&&W?(nx*(ny-1)+ny*(nx-1))*lev:0,pri:L&&W?ny*L:0,sec:L&&W?(Math.ceil(L/num(sp[3]))+1)*W:0,ply:L&&W?Math.ceil(L*W/num(H.plyA)*1.05):0}; }
+function actAuto(a,H){ const r=actCalc(a,H), L=[]; String(r.vs).split('+').forEach(x=>L.push({n:H.names.vert.replace('{L}',fmtN(num(x),1)),u:'nos',q:r.V})); L.push({n:H.names.led,u:'nos',q:r.led},{n:H.names.uj,u:'nos',q:r.V},{n:H.names.bj,u:'nos',q:r.V},{n:H.names.pri,u:'rmt',q:Math.ceil(r.pri)},{n:H.names.sec,u:'rmt',q:Math.ceil(r.sec)},{n:H.names.ply,u:'sheet',q:r.ply}); return L.filter(x=>x.q); }
+const actSrc=a=>a.src==='Design'||a.src==='Manual'?a.src:'Auto';
+const actList=(a,H)=>actSrc(a)==='Auto'?actAuto(a,H):(a.mat||[]).filter(x=>x&&x.n&&num(x.q));
 function actNeeds(H){ const N=new Map(), add=(n,u,q)=>{ if(!q) return; const k=n+'|'+u; N.set(k,{n,u,q:(N.get(k)||{q:0}).q+q}); };
-  (state.acts||[]).forEach(a=>{ const r=actCalc(a,H); String(r.vs).split('+').forEach(x=>add(H.names.vert.replace('{L}',fmtN(num(x),1)),'nos',r.V)); add(H.names.led,'nos',r.led); add(H.names.uj,'nos',r.V); add(H.names.bj,'nos',r.V); add(H.names.pri,'rmt',Math.ceil(r.pri)); add(H.names.sec,'rmt',Math.ceil(r.sec)); add(H.names.ply,'sheet',r.ply); }); return [...N.values()]; }
+  (state.acts||[]).forEach(a=>{ if(actSrc(a)!=='Auto'){ actList(a,H).forEach(x=>add(String(x.n).trim(),String(x.u||'nos').trim(),num(x.q))); return; } const r=actCalc(a,H); String(r.vs).split('+').forEach(x=>add(H.names.vert.replace('{L}',fmtN(num(x),1)),'nos',r.V)); add(H.names.led,'nos',r.led); add(H.names.uj,'nos',r.V); add(H.names.bj,'nos',r.V); add(H.names.pri,'rmt',Math.ceil(r.pri)); add(H.names.sec,'rmt',Math.ceil(r.sec)); add(H.names.ply,'sheet',r.ply); }); return [...N.values()]; }
 function actRequest(){ const c=CO.get(), H=hrGet(), code=(c.sites[PRJ.cur]||{}).code||'S', N=actNeeds(H); let n=0;
   N.forEach(x=>{ const av=stockAt(c,PRJ.cur,x.n,x.u).good+stockAt(c,PRJ.cur,x.n,x.u).tin, sh=Math.max(0,Math.ceil(x.q-av)); if(!sh) return; c.reqs.push({id:'rq'+Date.now().toString(36)+n,no:nextNo(c.reqs,'REQ-'+code+'-'),site:PRJ.cur,area:'Material requirement',item:x.n,unit:x.u,qty:sh,needBy:'',note:'From requirement',date:todayStr(),by:state.meta.user||'',status:'Raised'}); n++; });
   if(!n){ toast('Nothing short.'); return; } coSave(c); toast(n+' requisitions sent.'); }
@@ -5286,8 +5328,8 @@ PAGES.siReqm=()=>{ const H=hrGet(), c=CO.get();
 async function coMakeLink(i){ const c=CO.get(), u=c.users[i], key=v$('coOK'), out=document.getElementById('coLinkOut'); if(!u||!out) return;
   if(!u.name){ out.textContent='Type the name first.'; return; } if(!await ownerKeyOk(key)){ out.textContent='Wrong owner key.'; return; }
   try{ const {priv,pub}=await signKeyFrom(key); if(ACCESS_PUB&&pub!==ACCESS_PUB){ out.textContent='This owner key does not match the access set-up.'; return; }
-    const end=new Date(u.till?u.till+'T23:59:00':Date.now()+90*864e5); end.setHours(23,59,0,0); const co={None:0,View:1,Edit:2}[u.co||'None']||0, sc=new TextEncoder().encode(String(u.site||'').split(' · ')[0].slice(0,20)), nm=new TextEncoder().encode(u.name.slice(0,40)), id=crypto.getRandomValues(new Uint8Array(4)), pl=new Uint8Array(11+sc.length+nm.length);
-    pl[0]=2; pl.set(id,1); new DataView(pl.buffer).setUint32(5,Math.floor(end.getTime()/60000)); pl[9]=co; pl[10]=sc.length; pl.set(sc,11); pl.set(nm,11+sc.length);
+    const end=new Date(u.till?u.till+'T23:59:00':Date.now()+90*864e5); end.setHours(23,59,0,0); const co={None:0,View:1,Edit:2}[u.co||'None']||0, dz={None:0,View:1,Edit:2,Approve:3}[u.dz||'None']||0, sc=new TextEncoder().encode(String(u.site||'').split(' · ')[0].slice(0,20)), nm=new TextEncoder().encode(u.name.slice(0,40)), id=crypto.getRandomValues(new Uint8Array(4)), pl=new Uint8Array(11+sc.length+nm.length);
+    pl[0]=2; pl.set(id,1); new DataView(pl.buffer).setUint32(5,Math.floor(end.getTime()/60000)); pl[9]=co|(dz<<4); pl[10]=sc.length; pl.set(sc,11); pl.set(nm,11+sc.length);
     const sig=new Uint8Array(await crypto.subtle.sign({name:'Ed25519'},priv,pl)), link=location.origin+location.pathname+'#access='+b64u(pl)+'.'+b64u(sig);
     u.linkId=b64u(id); u.linkUntil=end.toISOString().slice(0,10); coSave(c);
     setTimeout(()=>{ const o=document.getElementById('coLinkOut'); if(o) o.innerHTML=`<b>${esc(u.name)} · ${esc(u.role)} · Company: ${esc(u.co||'None')} · until ${fmtD(u.linkUntil)}</b><br><code style="user-select:all;word-break:break-all">${esc(link)}</code><br><a class="btn sm p" target="_blank" href="https://wa.me/?text=${encodeURIComponent('FormTrack access for '+u.name+': '+link)}">Send on WhatsApp</a> <button class="btn sm" onclick="navigator.clipboard&&navigator.clipboard.writeText('${link}').then(()=>toast('Link copied'))">Copy link</button>`; },80);
@@ -5387,10 +5429,10 @@ async function makeAccess2(){ const name=v$('ac_n').slice(0,40), role=v$('ac_r')
   try{ const {priv,pub}=await signKeyFrom(key); if(ACCESS_PUB&&pub!==ACCESS_PUB){ out.textContent='This owner key does not match the access set-up.'; return; }
     const co=role==='inch'||role==='full'?2:role==='hod'?1:0, site=role==='site'?(siteCode(pid)||(PRJ.list.find(p=>p.id===pid)||{}).name||''):'', RN={site:'Site formwork engineer',inch:'Formwork in-charge',hod:'Head of department',full:'Full access cover'}[role];
     const end=new Date(); end.setDate(end.getDate()+days); end.setHours(23,59,0,0); const sc=new TextEncoder().encode(site.slice(0,20)), nm=new TextEncoder().encode(name), id=crypto.getRandomValues(new Uint8Array(4)), pl=new Uint8Array(11+sc.length+nm.length);
-    pl[0]=2; pl.set(id,1); new DataView(pl.buffer).setUint32(5,Math.floor(end.getTime()/60000)); pl[9]=co; pl[10]=sc.length; pl.set(sc,11); pl.set(nm,11+sc.length);
+    pl[0]=2; pl.set(id,1); new DataView(pl.buffer).setUint32(5,Math.floor(end.getTime()/60000)); pl[9]=co|((Math.max(0,Math.min(3,num(v$('ac_dz'))))||0)<<4); pl[10]=sc.length; pl.set(sc,11); pl.set(nm,11+sc.length);
     const sig=new Uint8Array(await crypto.subtle.sign({name:'Ed25519'},priv,pl)), link=location.origin+location.pathname+'#access='+b64u(pl)+'.'+b64u(sig), until=end.toISOString().slice(0,10);
     state.meta.accessList=(state.meta.accessList||[]).concat([{id:b64u(id),name,role:RN,site:site||'All sites',until,made:todayStr()}]); touchMeta('accessList'); save();
-    try{ const c=CO.get(); let u=c.users.find(x=>!x.del&&norm(x.name)===norm(name)); if(!u){ u={id:'u'+Date.now(),name,consLimit:25000,asset:'Needs approval',assetLimit:0,status:'Active'}; c.users.push(u); } Object.assign(u,{role:RN,site:site||'All',co:['None','View','Edit'][co],till:until,linkId:b64u(id),linkUntil:until}); CO.set(c); }catch(e){}
+    try{ const c=CO.get(); let u=c.users.find(x=>!x.del&&norm(x.name)===norm(name)); if(!u){ u={id:'u'+Date.now(),name,consLimit:25000,asset:'Needs approval',assetLimit:0,status:'Active'}; c.users.push(u); } Object.assign(u,{role:RN,site:site||'All',co:['None','View','Edit'][co],dz:['None','View','Edit','Approve'][num(v$('ac_dz'))||0],till:until,linkId:b64u(id),linkUntil:until}); CO.set(c); }catch(e){}
     setTimeout(()=>{ const o=document.getElementById('ac_out'); if(o) o.innerHTML=`<b>${esc(name)} · ${esc(RN)}${site?' · '+esc(site):''} · until ${fmtD(until)}</b><br><code style="user-select:all;word-break:break-all">${esc(link)}</code><br><a class="btn sm p" target="_blank" href="https://wa.me/?text=${encodeURIComponent('FormTrack access for '+name+' ('+RN+', until '+fmtD(until)+'): '+link)}">Send on WhatsApp</a> <button class="btn sm" onclick="navigator.clipboard&&navigator.clipboard.writeText('${link}').then(()=>toast('Link copied'))">Copy link</button>`; },80);
   }catch(e){ out.textContent='This browser cannot make access links – update Chrome.'; } }
 /* a site-engineer link opens only its own site */
@@ -5410,7 +5452,7 @@ function audAppend(list,ents){ let last=null; list.forEach(e=>{ if(e.dev===DEV&&
 function audVerify(list){ const D={}; (list||[]).forEach(e=>{ (D[e.dev]=D[e.dev]||[]).push(e); }); const bad=[];
   Object.entries(D).forEach(([d,L])=>{ L.sort((a,b)=>a.seq-b.seq); let p=null; L.forEach(e=>{ if(e.h!==hsh(audBody(e))) bad.push({e,why:'entry changed'}); if(!p&&e.seq!==1) bad.push({e,why:(e.seq-1)+' earlier entries missing'}); if(p){ if(e.seq!==p.seq+1) bad.push({e,why:(e.seq-p.seq-1)+' entries missing before this'}); else if(e.prev!==p.h) bad.push({e,why:'chain broken'}); } p=e; }); });
   return {ok:!bad.length,n:(list||[]).length,devs:Object.keys(D).length,bad}; }
-function audLabel(r){ if(!r||typeof r!=='object') return ''; let v=['item','name','title','no','prNo','poNo','challan','doc','element','material','sys','desc','observation','note','text'].map(k=>r[k]).find(x=>x!=null&&typeof x!=='object'&&String(x).trim());
+function audLabel(r){ if(!r||typeof r!=='object') return ''; let v=['item','name','n','area','title','no','prNo','poNo','challan','doc','element','material','sys','desc','observation','note','text'].map(k=>r[k]).find(x=>x!=null&&typeof x!=='object'&&String(x).trim());
   let s=''; try{ if(r.systemId&&sysObj(r.systemId)) s=sysName(r.systemId); }catch(e){} return [r.date||r.month||'',s,v].filter(x=>x!=null&&String(x).trim()).map(String).join(' · ').slice(0,90); }
 const audV=v=>v==null||v===''?'—':(typeof v==='object'?JSON.stringify(v):String(v)).slice(0,60);
 function audFields(o,n){ const K=[...new Set([...Object.keys(o||{}),...Object.keys(n||{})])].filter(k=>!AUD_META.includes(k)&&k!=='id'); const f=[];
@@ -5434,7 +5476,7 @@ function coAudit(old,c){ const ents=[], who=audWho(); old=old||{};
     M.forEach((o,id)=>{ if(!seen.has(id)) ents.push({act:'del',arr:k,rid:id,lb:audLabel(o)}); }); });
   const os=old.sites||{}; Object.entries(c.sites||{}).forEach(([k,r])=>{ const o=os[k]; const lb=(r.code?r.code+' · ':'')+((PRJ.list.find(p=>p.id===k)||{}).name||r.name||k);
     if(!o){ r._d=DEV; r._by=who; ents.push({act:'add',arr:'sites',rid:k,lb}); } else if(recC(o)!==recC(r)){ r._h=[num(o._t),...(o._h||[])].filter(Boolean).slice(0,12); r._d=DEV; r._by=who; ents.push({act:'edit',arr:'sites',rid:k,lb,f:audFields(o,r)}); } });
-  ['name','goLive','openLock','hr'].forEach(k=>{ if(JSON.stringify(old[k])!==JSON.stringify(c[k])&&!(old[k]==null&&(c[k]===''||c[k]==null))) ents.push({act:'edit',arr:'company',rid:k,lb:{name:'Company name',goLive:'Go-live date',openLock:'Opening balances lock',hr:'Height rules'}[k],f:[[k,audV(old[k]),audV(c[k])]]}); });
+  ['name','goLive','openLock','hr','dzLoad','dzLock','dzDefl','dzDeflRef','dzTShear'].forEach(k=>{ if(JSON.stringify(old[k])!==JSON.stringify(c[k])&&!(old[k]==null&&(c[k]===''||c[k]==null))) ents.push({act:'edit',arr:'company',rid:k,lb:{name:'Company name',goLive:'Go-live date',openLock:'Opening balances lock',hr:'Height rules',dzLoad:'Design load criteria',dzLock:'Design criteria lock',dzDefl:'Deflection criterion',dzDeflRef:'Deflection reference',dzTShear:'Timber shear rule'}[k],f:[[k,audV(old[k]),audV(c[k])]]}); });
   if(ents.length){ c.log=Array.isArray(c.log)?c.log:[]; audAppend(c.log,ents.length>150?[audBulk(ents)]:ents); } }
 Object.assign(SHEETN,{stores:'Stores',users:'Users',types:'Material Master',batches:'Asset batches',moves:'Transfers',reqs:'Requisitions',wos:'Work orders',sites:'Sites',company:'Company',rentDmg:'Damage & Missing',acts:'Material Requirement'});
 
@@ -5559,6 +5601,543 @@ function prjKpiTD(pid,st,m){ return withState(st,()=>{ const P=sitePer(pid,st,m)
     `<tr><td>Company</td><td></td><td></td><td></td><td class="r">${fmtN(T.ex,1)}</td><td></td><td class="r">${money(T.rent)}</td><td class="r">${money(T.rpm)}</td><td class="r"><b>${T.ex?money(T.rent/T.ex):'—'}</b></td><td class="r">${fmtN(T.idle,1)}</td><td></td><td></td></tr>`));
   const L=rows.filter(x=>x.k.cpu), mx=Math.max(1,...L.map(x=>x.k.cpu)); if(L.length) h+=panel('Rent per sqm by site · till '+(m===thisMonth()?'today':monthLabel(m)),`<div class="pbars">${L.map(({p,st,k})=>`<div><span>${esc(siteCode(p.id)||st.meta.project||'')}</span><i style="width:${k.cpu/mx*100}%"></i><b>${money(k.cpu)}</b></div>`).join('')}</div>`);
   return h; }; }
+
+/* ================= MATERIAL LIST PER ACTIVITY · AUTO / DESIGN / MANUAL ================= */
+const actGet=id=>(state.acts||[]).find(a=>a.id===id);
+function actTouch(a){ a._u=nowMs(); clearCaches&&clearCaches(); save(); }
+function actSel(id){ setUI('actSel',state.ui.actSel===id?'':id); }
+function actSetSrc(id,v){ const a=actGet(id); if(!a) return; if(v!=='Auto'&&!(a.mat||[]).length) a.mat=actAuto(a,hrGet()).map(x=>({n:x.n,u:x.u,q:x.q})); a.src=v; state.ui.actSel=id; actTouch(a); }
+function matSet(id,i,k,v){ const a=actGet(id); if(!a||!a.mat||!a.mat[i]) return; a.mat[i]=Object.assign({},a.mat[i],{[k]:k==='q'?num(v):v}); if(actSrc(a)==='Auto') a.src='Manual'; actTouch(a); }
+function matAdd(id){ const a=actGet(id); if(!a) return; if(actSrc(a)==='Auto'){ a.mat=actAuto(a,hrGet()).map(x=>({n:x.n,u:x.u,q:x.q})); a.src='Manual'; } a.mat=(a.mat||[]).concat([{n:'',u:'nos',q:0}]); actTouch(a); }
+function matDel(id,i){ const a=actGet(id); if(!a||!a.mat) return; a.mat=a.mat.filter((x,j)=>j!==i); actTouch(a); }
+function matReset(id){ const a=actGet(id); if(!a) return; a.mat=actAuto(a,hrGet()).map(x=>({n:x.n,u:x.u,q:x.q})); a.src='Manual'; actTouch(a); toast('List copied from auto count. Edit as needed.'); }
+function matPaste(id){ const a=actGet(id), t=v$('mp_'+id); if(!a||!t.trim()) return; const L=[];
+  t.split(/\r?\n/).forEach(line=>{ const c=line.split(/\t|,(?=(?:[^"]*"[^"]*")*[^"]*$)|;/).map(x=>x.replace(/^"|"$/g,'').trim()); if(!c[0]) return; let q=num(c[c.length-1]), u=c.length>=3?c[c.length-2]:'nos'; if(!q&&c.length>=3){ q=num(c[1]); u=c[2]||'nos'; } if(!q||/^item$/i.test(c[0])) return; L.push({n:c[0],u:u||'nos',q}); });
+  if(!L.length){ toast('No rows found. Use: Item · Unit · Qty'); return; } a.mat=L; a.src='Design'; a.dBy=v$('mpBy_'+id)||a.dBy||''; a.dRef=v$('mpRef_'+id)||a.dRef||''; a.dDate=todayStr(); actTouch(a); toast(L.length+' items taken from design.'); }
+function actSetD(id,k,v){ const a=actGet(id); if(!a) return; a[k]=v; actTouch(a); }
+{ const _p=PAGES.siReqm; PAGES.siReqm=()=>{ const H=hrGet(), c=CO.get(), ro=typeof isRO==='function'&&isRO();
+  const SRC={Auto:['na','Auto'],Design:['ok','Design'],Manual:['wn','Manual']};
+  let h=panel('Activities',table('acts',[{key:'name',label:'Activity / area',w:180},{key:'L',label:'L (m)',type:'number',r:1,noSum:1},{key:'W',label:'W (m)',type:'number',r:1,noSum:1},{key:'H',label:'Height (m)',type:'number',r:1,noSum:1},{key:'thk',label:'Slab thk (mm)',type:'number',r:1,noSum:1},
+    {label:'Area',r:1,calc:a=>fmtN(num(a.L)*num(a.W))},
+    {label:'Material list',calc:a=>`<select class="coi" onchange="actSetSrc('${a.id}',this.value)">${['Auto','Design','Manual'].map(o=>`<option ${actSrc(a)===o?'selected':''}>${o}</option>`).join('')}</select>`},
+    {label:'Items',r:1,calc:a=>fmtN(actList(a,H).length)},
+    {label:'',calc:a=>`<button class="btn sm ${state.ui.actSel===a.id?'p':''}" onclick="actSel('${a.id}')">${state.ui.actSel===a.id?'Close':'Open list'}</button>`}]));
+  const a=actGet(state.ui.actSel);
+  if(a){ const src=actSrc(a), L=src==='Auto'?actAuto(a,H):(a.mat||[]), r=actCalc(a,H);
+    const items=[...new Set([...c.items.filter(x=>!x.del).map(x=>x.name),...Object.values(H.names).filter(x=>typeof x==='string'&&!x.includes('{'))])];
+    let b=`<p class="note">${PILL(...SRC[src])} ${src==='Auto'?`Planning quantity from Height Rules · vertical ${esc(r.vs)} m · jacks ${fmtN(r.jack*1000,0)} mm · spacing ${r.sp[1]} × ${r.sp[2]} m · <b>verify by design</b>`:src==='Design'?`Design list${a.dBy?' · by <b>'+esc(a.dBy)+'</b>':''}${a.dRef?' · '+esc(a.dRef):''}${a.dDate?' · '+fmtD(a.dDate):''}`:'Manual list'}</p>`;
+    b+=`<datalist id="matItems">${items.map(x=>`<option value="${esc(x)}">`).join('')}</datalist>`;
+    b+=simpleTable([['Item'],['Unit'],['Quantity',1],['']],L.map((x,i)=>src==='Auto'?`<tr><td class="calc">${esc(x.n)}</td><td class="calc">${esc(x.u)}</td><td class="calc r">${fmtN(x.q)}</td><td></td></tr>`
+      :`<tr><td><input class="coi" list="matItems" style="min-width:260px" value="${esc(x.n||'')}" onchange="matSet('${a.id}',${i},'n',this.value)"></td><td><input class="coi" style="width:80px" value="${esc(x.u||'')}" onchange="matSet('${a.id}',${i},'u',this.value)"></td><td class="r"><input class="coi" type="number" style="width:110px;text-align:right" value="${num(x.q)}" onchange="matSet('${a.id}',${i},'q',this.value)"></td><td><button class="btn sm d" onclick="matDel('${a.id}',${i})">✕</button></td></tr>`));
+    b+=`<div class="acts"><button class="btn sm" onclick="matAdd('${a.id}')">+ Add item</button>${src!=='Auto'?`<button class="btn sm" onclick="matReset('${a.id}')">Copy auto count</button>`:`<button class="btn sm" onclick="matReset('${a.id}')">Edit this list</button>`}</div>`;
+    if(src==='Design') b+=`<div class="frm" style="margin-top:6px"><label>Designed by<input class="coi" value="${esc(a.dBy||'')}" onchange="actSetD('${a.id}','dBy',this.value)"></label><label>Drawing / ref.<input class="coi" value="${esc(a.dRef||'')}" onchange="actSetD('${a.id}','dRef',this.value)"></label></div>`;
+    b+=`<details style="margin-top:8px"><summary><b>Paste list from design (Excel)</b></summary><p class="note">Columns: Item · Unit · Qty. Replaces this list and marks it Design.</p><textarea id="mp_${a.id}" class="coi" rows="6" style="width:100%;font-family:monospace" placeholder="Cuplock vertical 2.5 m\tnos\t320"></textarea><div class="frm"><label>Designed by<input id="mpBy_${a.id}" class="coi" value="${esc(a.dBy||'')}"></label><label>Drawing / ref.<input id="mpRef_${a.id}" class="coi" value="${esc(a.dRef||'')}"></label></div><div class="acts"><button class="btn p" onclick="matPaste('${a.id}')">Use this list</button></div></details>`;
+    h+=panel('Material list · '+(a.name||'Activity'),b); }
+  const rest=_p(); const i=rest.indexOf('<div class="panel"',10); h+=i>0?rest.slice(rest.indexOf('<div class="panel"',rest.indexOf('<div class="panel"')+1)):'';
+  return h; }; }
+
+/* ================= DESIGN (authorised users) ================= */
+const DZ_LV=['None','View','Edit','Approve','Owner'];
+function dzLv(){ try{ if(!TRIAL_ON||isOwnerDev()) return 4; return (ACC&&ACC.dz)||0; }catch(e){ return 0; } }
+const DZ_K={Sheathing:{kM:0.1,kV:0.625,kD:0.0066,Ln:270,ab:1.5},Secondary:{kM:0.125,kV:0.5,kD:0.013,Ln:360,ab:6},Primary:{kM:0.125,kV:0.5,kD:0.013,Ln:360,ab:6}};
+const DZ_LED=[0.6,0.9,1.2,1.5,1.8,2.5];
+function dzSec(x){ const B=num(x.B), D=num(x.D)||B, t=num(x.t), fy=num(x.fy)||250, E=num(x.E)||210000; if(!B||!t||2*t>=Math.min(B,D)) return null;
+  const b=B-2*t, d=D-2*t, A=B*D-b*d, I=(B*D**3-b*d**3)/12, Z=I/(D/2); return {A,I,Z,kg:A*7.85e-3,M:0.66*fy*Z/1e6,V:0.4*fy*A/1e3,EI:E*I/1e9}; }
+const DZ_DEF=[
+ {id:'dm-ply12',g:'Sheathing',n:'Plywood 12 mm',stock:'Plywood 12 mm',M:0.20,V:6.16,EI:1.07,src:'Slab design sheet (IS 4990)',ok:1},
+ {id:'dm-ply15',g:'Sheathing',n:'Plywood 15 mm',stock:'Plywood 15 mm',M:0.25,V:7.50,EI:2.08,src:'Design App360',ok:0},
+ {id:'dm-ply18',g:'Sheathing',n:'Plywood 18 mm',stock:'Plywood 18 mm',M:0.30,V:9.00,EI:3.61,src:'Design App360',ok:0},
+ {id:'dm-sq5036',g:'Secondary',n:'SQ tube 50×50×3.6',stock:'SQ tube 50x50',sec:{type:'SQ tube',B:50,t:3.6,fy:250,E:210000},src:'Section calc · IS 800 (WSM)',ok:1},
+ {id:'dm-h12',g:'Secondary',n:'H-12 timber beam',stock:'H-12 beam',M:4.90,V:9.10,EI:62.6,src:'Slab design sheet (275 mm) · values differ in files',ok:0},
+ {id:'dm-t75',g:'Secondary',n:'Timber 75×100',stock:'Timber 75x100',M:1.187,V:4.20,EI:72.81,src:'Design App360',ok:0},
+ {id:'dm-ismc1',g:'Primary',n:'ISMC 100 (single)',stock:'ISMC 100',M:5.70,V:117,EI:384,src:'Slab design sheet (11.4 ÷ 2)',ok:1},
+ {id:'dm-ismc2',g:'Primary',n:'ISMC 100 (double, B/B)',stock:'ISMC 100',per:2,M:11.40,V:234,EI:768,src:'2 × single',ok:1},
+ {id:'dm-cup',g:'Support',n:'Cuplock vertical · 1.0 m lift',stock:'Cuplock vertical',cap:31.2,src:'Test report 62.4 kN ÷ FOS 2',ok:1},
+ {id:'dm-prop',g:'Support',n:'Adjustable steel prop',stock:'Adjustable prop',cap:20.0,src:'Design App360',ok:0}];
+const dzLoad=c=>Object.assign({rho:26,sw:0.5,ll:1.5},c.dzLoad||{});
+function dzMats(c){ const L=(c.dzMats&&c.dzMats.filter(x=>!x.del).length)?c.dzMats.filter(x=>!x.del):DZ_DEF.map(x=>JSON.parse(JSON.stringify(x)));
+  return L.map(x=>{ const k=DZ_K[x.g]||{}, y=Object.assign({},k,x); if(y.sec){ const p=dzSec(y.sec); if(p){ y.M=p.M; y.V=p.V; y.EI=p.EI; y.kg=p.kg; } } return y; }); }
+const dzMat=(c,id)=>dzMats(c).find(x=>x.id===id);
+const dzCanCrit=c=>dzLv()===4||(dzLv()>=2&&!c.dzLock);
+function dzMatsW(c){ if(!c.dzMats||!c.dzMats.length) c.dzMats=DZ_DEF.map(x=>JSON.parse(JSON.stringify(x))); return c.dzMats; }
+function dzMatSet(id,k,v){ const c=CO.get(); if(!dzCanCrit(c)) return toast('Criteria are locked.'); const m=dzMatsW(c).find(x=>x.id===id); if(!m) return;
+  if(['B','D','t','fy','E'].includes(k)){ m.sec=Object.assign({},m.sec||{},{[k]:num(v)}); } else m[k]=['M','V','EI','cap','kM','kV','kD','Ln','ab','per'].includes(k)?num(v):v; coSave(c); }
+function dzMatDel(id){ const c=CO.get(); if(!dzCanCrit(c)) return; const m=dzMatsW(c).find(x=>x.id===id); if(!m) return; if(c.dzDes.some(d=>!d.del&&[d.ply,d.sec,d.pri,d.sup].includes(id))) return toast('Used in a design.'); m.del=true; coSave(c); }
+function dzMatAdd(pre){ const c=CO.get(); if(!dzCanCrit(c)) return toast('Criteria are locked.'); const g=v$('dzA_g')||'Secondary', ty=v$('dzA_ty')||'Values', id='dm-'+Date.now().toString(36);
+  const m={id,g,n:v$('dzA_n'),stock:v$('dzA_st'),src:v$('dzA_src')||'',ok:0};
+  if(pre){ Object.assign(m,pre); }
+  else if(ty==='SQ tube'||ty==='RHS'){ m.sec={type:ty,B:num(v$('dzA_B')),D:ty==='RHS'?num(v$('dzA_D')):num(v$('dzA_B')),t:num(v$('dzA_t')),fy:num(v$('dzA_fy'))||250,E:num(v$('dzA_E'))||210000}; if(!dzSec(m.sec)) return toast('Check size and thickness.'); if(!m.n) m.n=ty+' '+m.sec.B+'×'+m.sec.D+'×'+m.sec.t; if(!m.src) m.src='Section calc · IS 800 (WSM)'; }
+  else if(g==='Support'){ m.cap=num(v$('dzA_cap')); if(!m.cap) return toast('Enter safe working load.'); }
+  else { m.M=num(v$('dzA_M')); m.V=num(v$('dzA_V')); m.EI=num(v$('dzA_EI')); if(!m.M||!m.V||!m.EI) return toast('Enter M, V and EI.'); }
+  if(!m.n) return toast('Enter a name.'); dzMatsW(c).push(m); state.ui.dzAdd=false; coSave(c); toast('Material added · mark Verified after checking.'); }
+function dzLoadSet(k,v){ const c=CO.get(); if(!dzCanCrit(c)) return; c.dzLoad=Object.assign(dzLoad(c),{[k]:num(v)}); coSave(c); }
+function dzLockSet(on){ if(dzLv()!==4) return; const c=CO.get(); c.dzLock=on?todayStr():''; coSave(c); toast(on?'Design criteria locked.':'Design criteria unlocked.'); }
+function dzMem(x,w,prov){ const Lm=Math.sqrt(x.M/(x.kM*w)), Lv=x.V/(x.kV*w), K=x.kD*w/x.EI, Ld1=Math.pow(1/(K*x.Ln),1/3), Ld2=Math.pow((x.ab/1000)/K,1/4), Ld=Math.min(Ld1,Ld2), L=Math.min(Lm,Lv,Ld);
+  return {w,Lm,Lv,K,Ld1,Ld2,Ld,L,gov:L===Lm?'Bending':L===Lv?'Shear':'Deflection',prov,ok:prov<=L+1e-9}; }
+const dzStd=(H,t)=>{ const sp=(H.sp||[]).slice().sort((a,b)=>num(a[0])-num(b[0])); const r=sp.find(x=>num(t)<=num(x[0]))||sp[sp.length-1]||[0,1.2,1.2,0.3]; return {X:num(r[1]),Y:num(r[2]),s:num(r[3])}; };
+const dnTo=(x,L)=>L.filter(v=>v<=x+1e-9).pop()||0;
+function dzRun(c,d){ const L=dzLoad(c), t=num(d.t), Wc=L.rho*t/1000, W=Wc+L.sw+L.ll, ply=dzMat(c,d.ply), sec=dzMat(c,d.sec), pri=dzMat(c,d.pri), sup=dzMat(c,d.sup), H=hrGet();
+  if(!t||!ply||!sec||!pri||!sup) return {err:'Select thickness and all four materials.'};
+  const s0=Math.floor(dzMem(ply,W,9).L*20)/20, X0=dnTo(dzMem(sec,W*s0,9).L,DZ_LED), Y0=Math.min(dnTo(dzMem(pri,W*X0,9).L,DZ_LED),dnTo(sup.cap/(W*X0),DZ_LED)), std=dzStd(H,t);
+  const md=d.mode||'std', p1=md==='man'?num(d.p1):md==='lim'?s0:std.s, p2=md==='man'?num(d.p2):md==='lim'?X0:std.X, p3=md==='man'?num(d.p3):md==='lim'?Y0:std.Y;
+  const A=dzMem(ply,W,p1), B=dzMem(sec,W*p1,p2), C=dzMem(pri,W*p2,p3), load=W*p2*p3, ut=load/sup.cap, ok=A.ok&&B.ok&&C.ok&&ut<=1;
+  const lim=(()=>{ const a=dzMem(ply,W,s0), b=dzMem(sec,W*s0,X0), cc=dzMem(pri,W*X0,Y0); return {load:W*X0*Y0,ut:W*X0*Y0/sup.cap,ok:a.ok&&b.ok&&cc.ok&&W*X0*Y0<=sup.cap}; })();
+  return {L,t,Wc,W,ply,sec,pri,sup,s0,X0,Y0,std,p1,p2,p3,A,B,C,load,ut,ok,lim,mode:md}; }
+function dzQty(c,d,r){ const H=hrGet(), Lx=num(d.L), Wy=num(d.W); if(!Lx||!Wy||!r||r.err) return [];
+  const rr=actCalc({L:Lx,W:Wy,H:d.H,thk:d.t},H), nx=Math.ceil(Lx/r.p2)+1, ny=Math.ceil(Wy/r.p3)+1, V=nx*ny, lev=Math.ceil(vLen(String(rr.vs).split('+')[0])/num(H.lev||1.5))+1, out=[];
+  String(rr.vs).split('+').forEach(x=>out.push({n:H.names.vert.replace('{L}',fmtN(num(x),1)),u:'nos',q:V,b:nx+' × '+ny+' · grid '+r.p2+' × '+r.p3}));
+  const lg=(len,q)=>out.push({n:'Cuplock ledger '+fmtN(len,1)+' m',u:'nos',q,b:lev+' lifts'}); if(Math.abs(r.p2-r.p3)<1e-6) lg(r.p2,(nx*(ny-1)+ny*(nx-1))*lev); else { lg(r.p2,ny*(nx-1)*lev); lg(r.p3,nx*(ny-1)*lev); }
+  out.push({n:H.names.uj,u:'nos',q:V,b:'1 per vertical'},{n:H.names.bj,u:'nos',q:V,b:'1 per vertical'});
+  const pr=r.pri.stock||r.pri.n; out.push({n:pr,u:'rmt',q:Math.ceil(nx*Wy*(num(r.pri.per)||1)),b:nx+' lines × '+fmtN(Wy,1)+' m'+(num(r.pri.per)>1?' × '+r.pri.per:'')});
+  const sc=r.sec.stock||r.sec.n, ns=Math.ceil(Wy/r.p1)+1; out.push({n:sc,u:'rmt',q:Math.ceil(ns*Lx),b:ns+' lines × '+fmtN(Lx,1)+' m @ '+r.p1+' m'});
+  out.push({n:r.ply.stock||r.ply.n,u:'sheet',q:Math.ceil(Lx*Wy/num(H.plyA||2.977)*1.05),b:'+5%'}); return out.filter(x=>x.q>0); }
+function dzNew(){ if(dzLv()<2) return; const c=CO.get(), M=dzMats(c), f=g=>(M.find(x=>x.g===g&&x.ok)||M.find(x=>x.g===g)||{}).id||'';
+  const d={id:'dz'+Date.now().toString(36),no:nextNo(c.dzDes,'FW-SLAB-'),el:'Slab',site:PRJ.cur,area:'',t:150,H:3.0,L:0,W:0,ply:f('Sheathing'),sec:f('Secondary'),pri:f('Primary'),sup:f('Support'),mode:'std',p1:0.3,p2:1.2,p3:1.2,by:audWho(),chk:'',rev:0,status:'Draft',date:todayStr()};
+  c.dzDes.push(d); state.ui.dzSel=d.id; coSave(c); go('dzSlab'); }
+function dzSet(id,k,v){ const c=CO.get(), d=c.dzDes.find(x=>x.id===id); if(!d||dzLv()<2) return; if(d.status==='Approved'&&!['chk','note'].includes(k)) return toast('Approved · make a new revision to change.'); d[k]=['t','H','L','W','p1','p2','p3'].includes(k)?num(v):v; coSave(c); }
+function dzRev(id){ const c=CO.get(), d=c.dzDes.find(x=>x.id===id); if(!d||dzLv()<2) return; const n=Object.assign(JSON.parse(JSON.stringify(d)),{id:'dz'+Date.now().toString(36),rev:num(d.rev)+1,status:'Draft',appBy:'',appAt:'',by:audWho(),date:todayStr(),sent:''}); delete n._t; delete n._h; delete n._d; delete n._by; d.status='Superseded'; c.dzDes.push(n); state.ui.dzSel=n.id; coSave(c); toast('Revision R'+n.rev+' created.'); }
+function dzApprove(id){ const c=CO.get(), d=c.dzDes.find(x=>x.id===id); if(!d) return; if(dzLv()<3) return toast('Approval needs Design: Approve.'); const r=dzRun(c,d); if(r.err||!r.ok) return toast('Design is not safe · cannot approve.');
+  const un=[r.ply,r.sec,r.pri,r.sup].filter(m=>!m.ok); if(un.length&&!confirm('Not verified: '+un.map(m=>m.n).join(', ')+'. Approve anyway?')) return;
+  d.status='Approved'; d.appBy=audWho(); d.appAt=todayStr(); coSave(c); toast('Design approved.'); }
+function dzDel(id){ const c=CO.get(), d=c.dzDes.find(x=>x.id===id); if(!d||dzLv()<2||d.status==='Approved') return; d.del=true; state.ui.dzSel=''; coSave(c); }
+function dzSend(id){ const c=CO.get(), d=c.dzDes.find(x=>x.id===id); if(!d) return; if(d.status!=='Approved') return toast('Approve the design first.'); const r=dzRun(c,d), Q=dzQty(c,d,r); if(!Q.length) return toast('Enter L × W of the area.');
+  const ref=d.no+' R'+d.rev, act={id:'act-'+d.id.replace(/^dz/,''),name:d.area||ref,L:d.L,W:d.W,H:d.H,thk:d.t,src:'Design',mat:Q.map(x=>({n:x.n,u:x.u,q:x.q})),dBy:d.by||'',dRef:ref,dDate:todayStr(),_u:nowMs()};
+  const put=st=>{ st.acts=Array.isArray(st.acts)?st.acts:[]; const old=st.acts.find(a=>a.dRef&&a.dRef.split(' R')[0]===d.no||a.id===act.id); if(old) Object.assign(old,act,{id:old.id}); else st.acts.push(act); };
+  if(d.site===PRJ.cur){ put(state); save(); } else { const st=readProject(d.site); if(!st) return toast('Site data not on this device.'); put(st); st.savedAt=Date.now(); stWrite(d.site,st); }
+  d.sent=todayStr(); coHist(c,'Design sent to site · '+ref,'',(siteCode(d.site)||'')+' '+(d.area||'')); coSave(c); toast('Material list sent to Material Requirement ('+(siteCode(d.site)||'site')+').'); }
+const dzSiteN=pid=>{ const p=PRJ.list.find(x=>x.id===pid); return (siteCode(pid)?siteCode(pid)+' · ':'')+(p?p.name:'—'); };
+const dzStPill=s=>PILL(s==='Approved'?'ok':s==='Draft'?'wn':'na',s);
+const dzLocked=()=>`<div style="max-width:560px;margin:50px auto;text-align:center;border:1px solid var(--line);border-radius:14px;padding:34px 28px;background:var(--paper)"><div style="font-size:40px">🔒</div><h2 style="margin:8px 0 6px">Design · authorised users only</h2><p class="muted" style="margin:0">Ask the owner for an access link with Design permission.</p></div>`;
+const dz3=(x,d=3)=>x==null||!isFinite(x)?'—':Number(x).toLocaleString('en-IN',{minimumFractionDigits:d,maximumFractionDigits:d});
+
+PAGES.dzHome=()=>{ if(!dzLv()) return dzLocked(); const c=CO.get(), D=c.dzDes.filter(x=>!x.del), M=dzMats(c);
+  const cards=[['Slab Design','Ply → secondary → primary → staging · grid check · material list','dzSlab',D.filter(x=>x.el==='Slab').length+' designs'],['Beam Design','Beam bottom & side · props under beam · side clamps','',''],['Wall Design','Concrete pressure · sheathing → stud → waler → tie','',''],['Column Design','Column pressure · clamps / walers · ties','',''],['Design Criteria','Material-wise values · load criteria · your standard spacing','dzCrit',M.length+' materials'],['Design Register','All designs by site · status · revision · approved by','dzReg',D.length+' designs']];
+  let h=`<div class="kpis">${kpi('Designs',D.filter(x=>x.status!=='Superseded').length,D.filter(x=>x.status==='Approved').length+' approved')}${kpi('Materials',M.length,M.filter(x=>!x.ok).length+' to verify',M.some(x=>!x.ok)?'warn':'good')}${kpi('Pending approval',D.filter(x=>x.status==='Draft').length,'',D.some(x=>x.status==='Draft')?'warn':'good')}${kpi('Your access',DZ_LV[dzLv()],c.dzLock?'criteria locked '+fmtD(c.dzLock):'criteria open')}</div>`;
+  h+=panel('Design',`<div class="dzcards">${cards.map(x=>`<div class="dzcard"><div class="dzh"><b>${x[0]}</b>${x[2]?PILL('ok','Ready'):PILL('na','Next')}</div><div class="muted dzd">${x[1]}</div><div class="dzh"><small class="muted">${x[3]||'—'}</small>${x[2]?`<button class="btn sm p" onclick="go('${x[2]}')">Open</button>`:'<button class="btn sm" disabled>Soon</button>'}</div></div>`).join('')}</div>`);
+  return h+dzRegTable(D.slice().sort((a,b)=>(b.date||'').localeCompare(a.date||'')).slice(0,8),'Recent designs'); };
+
+function dzRegTable(D,title){ return panel(title,simpleTable([['Doc no.'],['Rev.'],['Site'],['Element'],['Area'],['System'],['Grid'],['Status'],['Designed'],['Approved'],['']],D.map(d=>{ const c=CO.get(), r=dzRun(c,d); return `<tr><td class="calc"><b>${esc(d.no)}</b></td><td class="calc">R${d.rev||0}</td><td class="calc">${esc(dzSiteN(d.site))}</td><td class="calc">${esc(d.el)} ${d.t?d.t+' mm':''}</td><td class="calc">${esc(d.area||'')}</td><td class="calc">${r.err?'—':esc([r.ply.n,r.sec.n,r.pri.n,r.sup.n].join(' + '))}</td><td class="calc">${r.err?'—':r.p2+' × '+r.p3}</td><td class="calc">${dzStPill(d.status)}${!r.err&&!r.ok?' '+PILL('bd','Unsafe'):''}</td><td class="calc">${esc(d.by||'')}</td><td class="calc">${d.appBy?esc(d.appBy)+' · '+fmtD(d.appAt):'—'}</td><td class="calc"><button class="btn sm" onclick="state.ui.dzSel='${d.id}';go('dzSlab')">Open</button></td></tr>`; }))); }
+PAGES.dzReg=()=>{ if(!dzLv()) return dzLocked(); const c=CO.get(), f=state.ui.dzF||'', D=c.dzDes.filter(x=>!x.del&&(!f||x.status===f)).sort((a,b)=>(a.no||'').localeCompare(b.no||'')||num(a.rev)-num(b.rev));
+  return `<div class="chips noprint">${['','Draft','Approved','Superseded'].map(x=>`<button class="btn sm ${f===x?'p':''}" onclick="setUI('dzF','${x}')">${x||'All'}</button>`).join('')}${dzLv()>=2?'<span style="width:10px"></span><button class="btn sm p" onclick="dzNew()">+ New slab design</button>':''}</div>`+dzRegTable(D,'Design register'); };
+
+PAGES.dzCrit=()=>{ if(!dzLv()) return dzLocked(); const c=CO.get(), M=dzMats(c), L=dzLoad(c), ed=dzCanCrit(c), H=hrGet();
+  const ni=(v,on,w=90)=>ed?`<input class="coi" type="number" step="any" style="width:${w}px;text-align:right" value="${v??''}" onchange="${on}">`:`<b>${v??'—'}</b>`;
+  let h=`<div class="kpis">${kpi('Materials',M.length)}${kpi('Verified',M.filter(x=>x.ok).length,'','good')}${kpi('To verify',M.filter(x=>!x.ok).length,'',M.some(x=>!x.ok)?'warn':'good')}${kpi('Criteria',c.dzLock?'Locked':'Open',c.dzLock?'since '+fmtD(c.dzLock):'',c.dzLock?'good':'')}</div>`;
+  if(dzLv()===4) h+=`<div class="chips noprint">${c.dzLock?`<button class="btn sm" onclick="dzLockSet(false)">🔓 Unlock criteria</button>`:`<button class="btn sm p" onclick="dzLockSet(true)">🔒 Lock criteria</button>`}</div>`;
+  h+=panel('Load criteria',simpleTable([['Item'],['Value',1],['Unit'],['Reference']],[['Density of wet concrete','rho',L.rho,'kN/m³','IS 14687 Cl. 7.3.1.1(b)'],['Self weight of formwork','sw',L.sw,'kN/m²','IS 14687 Cl. 7.3.1.1(b)'],['Construction live load','ll',L.ll,'kN/m²','IS 875 (Part 2) Table 2']].map(r=>`<tr><td class="calc">${r[0]}</td><td class="calc r">${ni(r[2],`dzLoadSet('${r[1]}',this.value)`)}</td><td class="calc">${r[3]}</td><td class="calc muted">${r[4]}</td></tr>`)));
+  ['Sheathing','Secondary','Primary','Support'].forEach(g=>{ const G=M.filter(x=>x.g===g);
+    const st=x=>ed?`<button class="btn sm" title="${x.ok?'Unmark':'Mark verified'}" onclick="dzMatSet('${x.id}','ok',${x.ok?0:1})">${x.ok?'✓ Verified':'Verify'}</button> <button class="btn sm d" title="Remove" onclick="dzMatDel('${x.id}')">✕</button>`:(x.ok?PILL('ok','Verified'):PILL('wn','Verify'));
+    h+=panel('Design criteria · '+g,g==='Support'?simpleTable([['Material'],['Safe working load (kN)',1],['Source'],['Status']],G.map(x=>`<tr><td class="calc"><b>${esc(x.n)}</b><br><small class="muted">stock: ${esc(x.stock||'—')}</small></td><td class="calc r">${ni(x.cap,`dzMatSet('${x.id}','cap',this.value)`)}</td><td class="calc">${esc(x.src||'')}</td><td class="calc">${st(x)}</td></tr>`))
+     :simpleTable([['Material'],['M allow (kNm)',1],['V allow (kN)',1],['EI (kNm²)',1],['BM / SF / Defl. coef.'],['Defl. limit'],['Source'],['Status']],G.map(x=>`<tr><td class="calc"><b>${esc(x.n)}</b><br><small class="muted">${x.sec?`${x.sec.B}×${x.sec.D||x.sec.B}×${x.sec.t} · fy ${x.sec.fy||250} · ${dz3(x.kg,2)} kg/m · `:''}stock: ${esc(x.stock||'—')}</small></td><td class="calc r">${x.sec?dz3(x.M):ni(x.M,`dzMatSet('${x.id}','M',this.value)`)}</td><td class="calc r">${x.sec?dz3(x.V,2):ni(x.V,`dzMatSet('${x.id}','V',this.value)`)}</td><td class="calc r">${x.sec?dz3(x.EI,2):ni(x.EI,`dzMatSet('${x.id}','EI',this.value)`)}</td><td class="calc" style="white-space:nowrap">${x.kM} / ${x.kV} / ${x.kD}</td><td class="calc" style="white-space:nowrap">L/${x.Ln} · ${x.ab} mm</td><td class="calc" style="white-space:normal;max-width:200px">${esc(x.src||'')}</td><td class="calc" style="white-space:nowrap">${st(x)}</td></tr>`))); });
+  h+=panel('Your standard spacing · by slab thickness',simpleTable([['Slab up to (mm)',1],['Grid X (m)',1],['Grid Y (m)',1],['Secondary c/c (m)',1]],(H.sp||[]).map(r=>`<tr><td class="calc r">${r[0]}</td><td class="calc r"><b>${r[1]}</b></td><td class="calc r"><b>${r[2]}</b></td><td class="calc r"><b>${r[3]}</b></td></tr>`))+`<div class="acts"><button class="btn sm" onclick="go('coHR')">Edit in Height Rules</button></div>`);
+  if(ed){ const ty=state.ui.dzTy||'SQ tube', g=state.ui.dzG||'Secondary', inp=(id,l,v,w)=>`<label>${l}<input id="${id}" class="coi" value="${v??''}" ${w?`style="width:${w}px"`:''}></label>`;
+    let f=`<div class="frm"><label>Use as<select id="dzA_g" class="coi" onchange="setUI('dzG',this.value)">${['Sheathing','Secondary','Primary','Support'].map(x=>`<option ${x===g?'selected':''}>${x}</option>`).join('')}</select></label>${g!=='Support'?`<label>Values from<select id="dzA_ty" class="coi" onchange="setUI('dzTy',this.value)">${['SQ tube','RHS','Values'].map(x=>`<option ${x===ty?'selected':''} value="${x}">${x==='Values'?'Supplier / test report':x+' (calculate)'}</option>`).join('')}</select></label>`:''}${inp('dzA_n','Name in design','')}${inp('dzA_st','Stock item (Material Master)','')}${inp('dzA_src','Reference','')}</div>`;
+    if(g==='Support') f+=`<div class="frm">${inp('dzA_cap','Safe working load (kN)','',120)}</div>`;
+    else if(ty==='Values') f+=`<div class="frm">${inp('dzA_M','M allow (kNm)','',110)}${inp('dzA_V','V allow (kN)','',110)}${inp('dzA_EI','EI (kNm²)','',110)}</div>`;
+    else { f+=`<div class="frm">${inp('dzA_B','B (mm)','50',80)}${ty==='RHS'?inp('dzA_D','D (mm)','100',80):''}${inp('dzA_t','t (mm)','3.6',80)}${inp('dzA_fy','fy (N/mm²)','250',90)}${inp('dzA_E','E (N/mm²)','210000',110)}</div>`;
+      const rows=[]; [[40,[2.0,2.6,2.9,3.2]],[50,[2.0,2.6,2.9,3.2,3.6,4.0]]].forEach(([B,T])=>T.forEach(t=>{ const x=dzSec({B,t}); rows.push(`<tr><td class="calc"><b>SQ tube ${B}×${B}×${t.toFixed(1)}</b></td><td class="calc r">${dz3(x.kg,2)}</td><td class="calc r">${dz3(x.M)}</td><td class="calc r">${dz3(x.V,2)}</td><td class="calc r">${dz3(x.EI,2)}</td><td class="calc"><button class="btn sm" onclick="dzMatAdd({n:'SQ tube ${B}×${B}×${t.toFixed(1)}',stock:'SQ tube ${B}x${B}',sec:{type:'SQ tube',B:${B},D:${B},t:${t},fy:250,E:210000},src:'Section calc · IS 800 (WSM)'})">Add</button></td></tr>`); }));
+      f+=`<p class="note">M = 0.66 fy × Z · V = 0.40 fy × A · EI = E × I (hollow section, sharp corners).</p>`+simpleTable([['SQ tube'],['kg/m',1],['M allow (kNm)',1],['V allow (kN)',1],['EI (kNm²)',1],['']],rows); }
+    h+=panel('Add material',f+`<div class="acts"><button class="btn p" onclick="dzMatAdd()">Add material</button></div>`); }
+  return h; };
+
+PAGES.dzSlab=()=>{ if(!dzLv()) return dzLocked(); const c=CO.get(), D=c.dzDes.filter(x=>!x.del&&x.el==='Slab'), ed=dzLv()>=2;
+  let d=D.find(x=>x.id===state.ui.dzSel)||D.filter(x=>x.status!=='Superseded').slice(-1)[0];
+  let h=`<div class="chips noprint"><label>Design<select class="coi" onchange="setUI('dzSel',this.value)">${D.map(x=>`<option value="${x.id}" ${d&&x.id===d.id?'selected':''}>${esc(x.no)} R${x.rev||0} · ${esc(x.area||'')} · ${x.status}</option>`).join('')||'<option>—</option>'}</select></label>${ed?'<button class="btn sm p" onclick="dzNew()">+ New slab design</button>':''}</div>`;
+  if(!d) return h+panel('Slab design','<p class="note">No slab design yet.</p>');
+  const r=dzRun(c,d), M=dzMats(c), lockD=d.status!=='Draft'||!ed, dis=lockD?'disabled':'';
+  const ip=(k,l,v,w,ty)=>`<label>${l}<input class="coi" ${ty?'type="number" step="any"':''} ${dis} style="${w?'width:'+w+'px':''}" value="${esc(v??'')}" onchange="dzSet('${d.id}','${k}',this.value)"></label>`;
+  const ms=(k,l,g)=>`<label>${l}<select class="coi" ${dis} onchange="dzSet('${d.id}','${k}',this.value)">${M.filter(x=>x.g===g).map(x=>`<option value="${x.id}" ${x.id===d[k]?'selected':''}>${esc(x.n)}${x.ok?'':' (verify)'}</option>`).join('')}</select></label>`;
+  const sites=PRJ.list.map(p=>`<option value="${p.id}" ${p.id===d.site?'selected':''}>${esc(dzSiteN(p.id))}</option>`).join('');
+  if(!r.err) h+=`<div class="kpis">${kpi('Design load W',dz3(r.W,2)+' kN/m²',r.t+' mm slab')}${kpi('Grid adopted',r.p2+' × '+r.p3+' m',{std:'your standard',lim:'design limit',man:'entered'}[r.mode]+' · secondary '+r.p1+' m',r.ok?'good':'bad')}${kpi('Design limit grid',r.X0+' × '+r.Y0+' m','ledger sizes')}${kpi('Load per vertical',dz3(r.load,1)+' kN',Math.round(r.ut*100)+'% of SWL',r.ut<=1?'good':'bad')}</div>`;
+  h+=panel(`${esc(d.no)} · R${d.rev||0} · ${dzStPill(d.status)}${d.appBy?' <small>approved by '+esc(d.appBy)+' · '+fmtD(d.appAt)+'</small>':''}`,`<div class="frm"><label>Site<select class="coi" ${dis} onchange="dzSet('${d.id}','site',this.value)">${sites}</select></label>${ip('area','Area',d.area,180)}${ip('t','Slab thickness (mm)',d.t,110,1)}${ip('H','Slab height (m)',d.H,100,1)}${ip('L','L (m)',d.L,80,1)}${ip('W','W (m)',d.W,80,1)}</div>
+   <div class="frm">${ms('ply','Sheathing','Sheathing')}${ms('sec','Secondary','Secondary')}${ms('pri','Primary','Primary')}${ms('sup','Support','Support')}</div>
+   <div class="frm">${ip('by','Designed by',d.by,150)}<label>Checked by<input class="coi" ${!ed?'disabled':''} value="${esc(d.chk||'')}" onchange="dzSet('${d.id}','chk',this.value)" style="width:150px"></label>${ip('no','Doc no.',d.no,150)}</div>`);
+  if(r.err) return h+panel('Result',`<p class="note">${r.err}</p>`);
+  const cmp=(a,b,cc,dd)=>`<tr><td class="calc">${a}</td><td class="calc r">${b}</td><td class="calc r">${cc}</td><td class="calc r">${dd}</td></tr>`, sp=x=>x?PILL('ok','Safe'):PILL('bd','Unsafe');
+  const nv=(x,y)=>num(d.L)&&num(d.W)?(Math.ceil(num(d.L)/x)+1)*(Math.ceil(num(d.W)/y)+1):'—';
+  h+=panel('Grid · design limit vs adopted',simpleTable([['Item'],['Design limit · ledger sizes',1],['Your standard',1],['Adopted',1]],[
+    cmp('Secondary c/c (m)',dz3(r.s0,2),dz3(r.std.s,2),'<b>'+dz3(r.p1,2)+'</b>'),cmp('Grid X · primary c/c (m)',r.X0,r.std.X,'<b>'+r.p2+'</b>'),cmp('Grid Y · vertical c/c along primary (m)',r.Y0,r.std.Y,'<b>'+r.p3+'</b>'),
+    cmp('Load per vertical (kN)',dz3(r.lim.load,1)+' · '+Math.round(r.lim.ut*100)+'%','—','<b>'+dz3(r.load,1)+' · '+Math.round(r.ut*100)+'%</b>'),cmp('Verticals for L × W',nv(r.X0,r.Y0),nv(r.std.X,r.std.Y),'<b>'+nv(r.p2,r.p3)+'</b>'),cmp('Check',sp(r.lim.ok),'—',sp(r.ok))])
+    +`<div class="acts">${[['std','Use my standard'],['lim','Use design limit'],['man','Enter grid']].map(([k,l])=>`<label><input type="radio" name="dzm" ${r.mode===k?'checked':''} ${dis} onchange="dzSet('${d.id}','mode','${k}')"> ${l}</label>`).join('&nbsp;&nbsp;')}</div>`
+    +(r.mode==='man'?`<div class="frm">${ip('p1','Secondary c/c (m)',d.p1,100,1)}${ip('p2','Grid X (m)',d.p2,90,1)}${ip('p3','Grid Y (m)',d.p3,90,1)}</div>`:''));
+  const row=(a,b,v,u,k)=>`<tr><td class="calc">${a}</td><td class="calc" style="font-family:monospace">${b}</td><td class="calc r"><b>${v}</b></td><td class="calc">${u||''}</td><td class="calc">${k||''}</td></tr>`, HH=[['Step'],['Formula'],['Value',1],['Unit'],['Check']];
+  h+=panel('1 · Load',simpleTable(HH,[row('Self weight of concrete',r.L.rho+' × t ÷ 1000',dz3(r.Wc,2),'kN/m²'),row('Self weight of formwork','—',dz3(r.L.sw,2),'kN/m²'),row('Construction live load','—',dz3(r.L.ll,2),'kN/m²'),row('<b>Design load W</b>','Σ',dz3(r.W,2),'kN/m²')]));
+  const blk=(no,x,X,wl,nx,pl)=>panel(no+' · '+esc(x.n)+(x.ok?'':' '+PILL('wn','Verify')),simpleTable(HH,[row('Line load w',wl,dz3(X.w),'kN/m'),row('Safe span · bending','√(M ÷ ('+x.kM+' × w))',dz3(X.Lm),'m'),row('Safe span · shear','V ÷ ('+x.kV+' × w)',dz3(X.Lv),'m'),row('Safe span · deflection L/'+x.Ln,'∛(1 ÷ (K × '+x.Ln+')) · K = '+x.kD+'w ÷ EI',dz3(X.Ld1),'m'),row('Safe span · deflection '+x.ab+' mm','∜('+(x.ab/1000)+' ÷ K)',dz3(X.Ld2),'m'),row('<b>Allowed '+nx+'</b>','min · governs: '+X.gov,dz3(X.L),'m'),row('<b>Provided '+nx+'</b>','',dz3(X.prov,2),'m',sp(X.ok))]));
+  h+=blk('2 · Sheathing',r.ply,r.A,'W × 1 m strip','secondary c/c')+blk('3 · Secondary',r.sec,r.B,'W × '+r.p1,'primary c/c')+blk('4 · Primary',r.pri,r.C,'W × '+r.p2,'vertical c/c');
+  h+=panel('5 · Support · '+esc(r.sup.n)+(r.sup.ok?'':' '+PILL('wn','Verify')),simpleTable(HH,[row('Load on one vertical','W × '+r.p2+' × '+r.p3,dz3(r.load,2),'kN'),row('Safe working load',esc(r.sup.src||''),dz3(r.sup.cap,1),'kN'),row('<b>Utilisation</b>','load ÷ SWL',Math.round(r.ut*100)+'%','',sp(r.ut<=1))]));
+  const Q=dzQty(c,d,r);
+  h+=panel('6 · Material list from this design',(Q.length?simpleTable([['Item'],['Unit'],['Quantity',1],['Basis']],Q.map(x=>`<tr><td class="calc"><b>${esc(x.n)}</b></td><td class="calc">${x.u}</td><td class="calc r">${fmtN(x.q)}</td><td class="calc muted">${esc(x.b)}</td></tr>`)):'<p class="note">Enter L × W to get the material list.</p>')
+   +`<div class="acts noprint">${d.status==='Draft'&&dzLv()>=3?`<button class="btn p" onclick="dzApprove('${d.id}')">Approve design</button>`:''}${d.status==='Approved'?`<button class="btn p" onclick="dzSend('${d.id}')">Send to Material Requirement${d.sent?' (sent '+fmtD(d.sent)+')':''}</button>`:''}${d.status==='Approved'&&dzLv()>=3?`<button class="btn" onclick="dzRevoke('${d.id}')">Revoke approval</button>`:''}${ed&&d.status!=='Draft'?`<button class="btn" onclick="dzRev('${d.id}')">New revision</button>`:''}<button class="btn" onclick="window.print()">Print calculation sheet</button>${ed&&d.status==='Draft'?`<button class="btn d" onclick="dzDel('${d.id}')">Delete draft</button>`:''}</div>`);
+  if(!r.ok) h=h.replace('<div class="kpis">',`<div class="banner">${PILL('bd','UNSAFE')} <span>One or more checks fail with the adopted grid. Reduce spacing or change material.</span></div><div class="kpis">`);
+  return h; };
+
+/* menu: Design group for authorised users only */
+(()=>{ const i=NAV_CO.findIndex(g=>g.g==='Planning'); NAV_CO.splice(i<0?1:i+1,0,{g:'Design',items:[['dzHome','Design Overview'],['dzSlab','Slab Design'],['dzCrit','Design Criteria'],['dzReg','Design Register']]});
+  ICONS.dzHome='<path d="M3 21h18M6 21V8l6-5 6 5v13"/><path d="M10 21v-6h4v6"/>'; ICONS.dzSlab='<path d="M3 7h18M3 12h18"/><path d="M6 12v9M12 12v9M18 12v9"/>'; ICONS.dzCrit='<path d="M4 6h16M4 12h10M4 18h7"/><circle cx="18" cy="16" r="3"/>'; ICONS.dzReg='<rect x="5" y="3" width="14" height="18" rx="2"/><path d="M9 8h6M9 12h6M9 16h4"/>'; })();
+{ const _sn=setNav; setNav=function(){ const r=_sn.apply(this,arguments); try{ if(!dzLv()){ const i=NAV.findIndex(g=>g.g==='Design'); if(i>=0) NAV.splice(i,1); } }catch(e){} return r; }; }
+Object.assign(SHEETN,{dzMats:'Design criteria',dzDes:'Designs'});
+try{ setNav(); }catch(e){}
+
+/* ================= SURPLUS ↔ REQUISITION LINK ================= */
+let NM_C={t:0,v:null};
+function needMaps(){ if(NM_C.v&&Date.now()-NM_C.t<3000) return NM_C.v; const N={}, H=hrGet(); PRJ.list.forEach(p=>{ try{ const st=p.id===PRJ.cur?state:readProject(p.id); const M=new Map(); if(st) withState(st,()=>actNeeds(H)).forEach(x=>M.set(ikey(x.n,x.u),(M.get(ikey(x.n,x.u))||0)+num(x.q))); N[p.id]=M; }catch(e){ N[p.id]=new Map(); } }); NM_C={t:Date.now(),v:N}; return N; }
+function surplusAt(c,loc,item,unit,N){ const k=ikey(item,unit), S=stockAt(c,loc,item,unit), st=(c.sites||{})[loc]||{}, closing=['Finishing','Closed'].includes(st.status), isSite=PRJ.list.some(p=>p.id===loc);
+  const out=LIVE(c).m.filter(m=>m.status==='Planned'&&m.from===loc&&ikey(m.item,m.unit)===k).reduce((a,m)=>a+num(m.qty),0);
+  const asks=LIVE(c).r.filter(r=>r.status==='Raised'&&r.site===loc&&ikey(r.item,r.unit)===k).length;
+  const need=isSite&&!closing?num((N[loc]||new Map()).get(k)):0, sur=asks?0:Math.max(0,S.good-out-need);
+  return {good:S.good,out,need,sur,closing,isSite,asks}; }
+function surplusFor(c,r,N){ return coLocs(c).filter(l=>l.id!==r.site).map(l=>Object.assign({l},surplusAt(c,l.id,r.item,r.unit,N))).filter(x=>x.good>1e-9).sort((a,b)=>(b.l.kind==='Store')-(a.l.kind==='Store')||b.closing-a.closing||b.sur-a.sur); }
+function reqPlan(c,r,N){ let left=num(r.qty); const P=[]; surplusFor(c,r,N).forEach(x=>{ if(left<=1e-9||x.sur<=1e-9) return; const q=Math.min(left,Math.floor(x.sur)); if(q>0){ P.push({loc:x.l.id,q}); left-=q; } }); return {P,left:Math.max(0,left)}; }
+function reqAuto(id){ const c=CO.get(), r=c.reqs.find(x=>x.id===id); if(!r||r.status!=='Raised') return; const {P,left}=reqPlan(c,r,needMaps()); if(!P.length) return toast('No surplus available · choose Rent or Purchase.');
+  const rem=v$('rm_'+id); r.moveIds=[]; P.forEach((p,i)=>{ const mv={id:'mv'+Date.now().toString(36)+i,no:nextNo(c.moves,'TR-'),from:p.loc,to:r.site,item:r.item,unit:r.unit,qty:p.q,status:'Planned',planDate:todayStr(),needBy:r.needBy,reqId:r.id,note:'Surplus · '+r.no}; c.moves.push(mv); r.moveIds.push(mv.id); });
+  r.moveId=r.moveIds[0]; r.source=P[0].loc; r.appQty=P.reduce((a,p)=>a+p.q,0); r.status='Approved'; r.decided=todayStr(); r.remark=(rem?rem+' · ':'')+(left?'balance '+fmtN(left)+' '+r.unit+' to rent / purchase':'from surplus');
+  coHist(c,'Requisition approved · '+r.no,fmtN(r.qty),P.map(p=>fmtN(p.q)+' from '+locSh(c,p.loc)).join(' + ')); coSave(c); toast(P.length+' transfer'+(P.length>1?'s':'')+' planned'+(left?' · '+fmtN(left)+' '+r.unit+' still to arrange':'')+'.'); }
+{ const _p=PAGES.coReq; PAGES.coReq=()=>{ let h=_p(); const c=CO.get(), N=needMaps(), f=state.ui.coRqF||'Raised', R=LIVE(c).r.filter(r=>r.status==='Raised');
+  if(f!=='Raised'||!R.length) return h;
+  const rows=R.map(r=>{ const S=surplusFor(c,r,N), {P,left}=reqPlan(c,r,N);
+    return `<tr><td class="calc"><b>${esc(r.no)}</b><br><small class="muted">${esc(locSh(c,r.site))}${r.area?' · '+esc(r.area):''}</small></td><td class="calc"><b>${esc(r.item)}</b><br><small class="muted">${fmtN(r.qty)} ${esc(r.unit)}${r.needBy?' · by '+fmtD(r.needBy):''}</small></td>
+     <td class="calc">${S.map(x=>`<div>${esc(x.l.code||x.l.name)} ${x.l.kind==='Store'?'<small class="muted">store</small>':''}${x.closing?' '+PILL('wn','closing'):''}: <b class="${x.sur>0?'':'muted'}">surplus ${fmtN(x.sur)}</b> <small class="muted">stock ${fmtN(x.good)}${x.need?' · own need '+fmtN(x.need):''}${x.out?' · planned out '+fmtN(x.out):''}${x.asks?' · has open request':''}</small></div>`).join('')||'<span class="muted">no stock at other sites / stores</span>'}</td>
+     <td class="calc">${P.length?P.map(p=>`<b>${fmtN(p.q)}</b> from ${esc(locSh(c,p.loc))}`).join(' + ')+(left?`<br><small class="neg">balance ${fmtN(left)} ${esc(r.unit)} · rent / purchase</small>`:''):'<span class="muted">rent / purchase</span>'}</td>
+     <td class="calc" style="white-space:nowrap">${P.length?`<button class="btn sm p" onclick="reqAuto('${r.id}')">Approve plan</button>`:''}</td></tr>`; });
+  const box=panel('Surplus match · waiting requisitions',simpleTable([['Requisition'],['Item · qty'],['Surplus at other sites / stores'],['Suggested plan'],['']],rows)+`<p class="note">Surplus = good stock − that site's own requirement (Material Requirement) − transfers already planned out. Stores and closing sites first.</p>`);
+  const i=h.indexOf('<div class="panel">'); return i>=0?h.slice(0,i)+box+h.slice(i):h+box; }; }
+PAGES.coSur=()=>{ const c=CO.get(), N=needMaps(), L=coLocs(c), keys=new Map();
+  [...coStock(c).values()].forEach(x=>{ if(x.good>1e-9) keys.set(ikey(x.item,x.unit),{item:x.item,unit:x.unit}); });
+  const rows=[]; keys.forEach(({item,unit})=>{ L.forEach(l=>{ const s=surplusAt(c,l.id,item,unit,N); if(s.sur>1e-9) rows.push({item,unit,l,s,req:LIVE(c).r.filter(r=>r.status==='Raised'&&r.site!==l.id&&ikey(r.item,r.unit)===ikey(item,unit))}); }); });
+  rows.sort((a,b)=>b.req.length-a.req.length||a.item.localeCompare(b.item)||b.s.sur-a.s.sur);
+  const matched=rows.filter(x=>x.req.length).length;
+  let h=`<div class="kpis">${kpi('Items with surplus',new Set(rows.map(x=>ikey(x.item,x.unit))).size)}${kpi('Locations',new Set(rows.map(x=>x.l.id)).size)}${kpi('Matches open requisitions',matched,'',matched?'warn':'good')}${kpi('Closing sites',rows.filter(x=>x.s.closing).length?new Set(rows.filter(x=>x.s.closing).map(x=>x.l.id)).size:0)}</div>`;
+  h+=panel('Surplus material',simpleTable([['Item'],['Location'],['Good stock',1],['Own need',1],['Planned out',1],['Surplus',1],['Wanted by'],['']],rows.map(x=>`<tr><td class="calc"><b>${esc(x.item)}</b> <small class="muted">${esc(x.unit)}</small></td><td class="calc">${esc(x.l.code||x.l.name)} ${x.l.kind==='Store'?'<small class="muted">store</small>':''}${x.s.closing?' '+PILL('wn','closing'):''}</td><td class="calc r">${fmtN(x.s.good)}</td><td class="calc r">${x.s.need?fmtN(x.s.need):'—'}</td><td class="calc r">${x.s.out?fmtN(x.s.out):'—'}</td><td class="calc r"><b>${fmtN(x.s.sur)}</b></td><td class="calc">${x.req.map(r=>`${esc(locSh(c,r.site))} · ${esc(r.no)} · ${fmtN(r.qty)}`).join('<br>')||'<span class="muted">—</span>'}</td><td class="calc">${x.req.length?`<button class="btn sm p" onclick="setUI('coRqF','Raised');go('coReq')">Plan</button>`:''}</td></tr>`))
+   +'<p class="note">Own need comes from each site\'s Material Requirement. Surplus with no request can be moved to a store, sold or scrapped.</p>');
+  return h; };
+(()=>{ const g=NAV_CO.find(x=>x.g==='Planning'); if(g){ const i=g.items.findIndex(x=>x[0]==='coReq'); g.items.splice(i+1,0,['coSur','Surplus Material']); } ICONS.coSur='<path d="M4 7l8-4 8 4-8 4-8-4z"/><path d="M4 12l8 4 8-4M4 17l8 4 8-4"/>'; })();
+{ const _b=sideBadges; sideBadges=function(){ const b=_b(); try{ const c=CO.get(), R=LIVE(c).r.filter(r=>r.status==='Raised'); if(R.length){ const N=needMaps(); const n=R.filter(r=>reqPlan(c,r,N).P.length).length; if(n) b.coSur=[n,'wn']; } }catch(e){} return b; }; }
+try{ setNav(); }catch(e){}
+
+/* ---------- revoke approval ---------- */
+function reqRevoke(id){ const c=CO.get(), r=c.reqs.find(x=>x.id===id); if(!r||r.status!=='Approved') return;
+  const ids=(r.moveIds&&r.moveIds.length?r.moveIds:[r.moveId]).filter(Boolean), M=ids.map(i=>c.moves.find(m=>m.id===i)).filter(Boolean), gone=M.filter(m=>m.status!=='Planned'&&m.status!=='Cancelled');
+  if(gone.length) return toast(gone.map(m=>m.no).join(', ')+' already '+(gone[0].status==='Received'?'received':'dispatched')+' · cannot revoke. Return the material with a new transfer.');
+  if(!confirm('Revoke approval of '+r.no+'?'+(M.length?' Planned transfer '+M.map(m=>m.no).join(', ')+' will be cancelled.':''))) return;
+  M.forEach(m=>{ m.status='Cancelled'; m.note=(m.note?m.note+' · ':'')+'approval revoked'; });
+  const was=fmtN(r.appQty)+' '+(r.unit||'')+(r.source?' from '+(r.moveId?locSh(c,r.source):r.source):'');
+  Object.assign(r,{status:'Raised',appQty:null,source:'',moveId:'',moveIds:[],decided:'',revoked:todayStr(),revBy:audWho(),remark:'approval revoked'});
+  coHist(c,'Requisition approval revoked · '+r.no,was,'Raised'); NM_C={t:0,v:null}; coSave(c); toast('Approval revoked · '+r.no+' is waiting again.'); }
+function dzRevoke(id){ const c=CO.get(), d=c.dzDes.find(x=>x.id===id); if(!d||d.status!=='Approved') return; if(dzLv()<3) return toast('Needs Design: Approve.');
+  if(!confirm('Revoke approval of '+d.no+' R'+(d.rev||0)+'?'+(d.sent?' The material list already sent to the site will be marked "approval revoked".':''))) return;
+  if(d.sent){ const mark=st=>{ (st.acts||[]).forEach(a=>{ if(a.dRef===d.no+' R'+(d.rev||0)){ a.dRef+=' · approval revoked'; a._u=nowMs(); } }); };
+    if(d.site===PRJ.cur){ mark(state); save(); } else { const st=readProject(d.site); if(st){ mark(st); st.savedAt=Date.now(); stWrite(d.site,st); } } }
+  Object.assign(d,{status:'Draft',appBy:'',appAt:'',revoked:todayStr(),revBy:audWho()}); coHist(c,'Design approval revoked · '+d.no+' R'+(d.rev||0),'Approved','Draft'); coSave(c); toast('Approval revoked · design back to Draft.'); }
+
+/* ================= DESIGN v2 · MATERIAL LIBRARY · WALL (ALUMINIUM) · COLUMN / WALL (H-BEAM) ================= */
+const dzCl=x=>JSON.parse(JSON.stringify(x));
+dzSec=function(x){ const B=num(x.B), D=num(x.D)||B, t=num(x.t), fy=num(x.fy)||250, E=num(x.E)||210000; if(!B||!t||2*t>=Math.min(B,D)) return null;
+  const b=B-2*t, d=D-2*t, A=B*D-b*d, I=(B*D**3-b*d**3)/12, Z=I/(D/2), Av=A*D/(B+D); return {A,Av,I,Z,kg:A*7.85e-3,M:0.66*fy*Z/1e6,V:0.4*fy*Av/1e3,EI:E*I/1e9}; };
+(()=>{ const P=id=>DZ_DEF.find(x=>x.id===id);
+  Object.assign(P('dm-ply12'),{M:0.20,V:6.16,EI:1.07,src:'IS 4990 · E 7,500 × I (12 mm)',alt:[{src:'Beam calc (deep beam)',M:0.200,V:6.16,EI:1.10,why:'EI above IS 4990'}],
+    comp:[['Grade','IS 4990 shuttering · BWP'],['E (along grain)','7,500 N/mm² · IS 4990 average'],['Size','2440 × 1220 × 12 mm'],['Weight','10 kg/m²'],['EI basis','7,500 × 1000 × 12³ ÷ 12 = 1.08 kNm²/m']]});
+  Object.assign(P('dm-ismc1'),{M:5.21,V:47.0,EI:373.4,src:'IS 800 WSM · unbraced 1.25 m',alt:[{src:'Slab design sheet (11.4 ÷ 2)',M:5.70,V:117,EI:384,why:'V on full area · IS uses web only'},{src:'Beam calc (deep beam)',M:5.93,V:122,EI:0,why:'V on full area · no EI'}],
+    comp:[['Grade','E250 · IS 2062'],['fy','250 N/mm²'],['E','2,00,000 N/mm²'],['Section','100 × 50 · tw 4.7 · tf 7.5 mm'],['Area A','1,170 mm²'],['Ixx','18,67,000 mm⁴'],['Zxx','37,300 mm³'],['ry','14.9 mm'],['Weight','9.2 – 9.56 kg/m'],['M basis','σbc 139.7 (IS 800 cl. 6.2.4, L 1.25 m) × Z'],['V basis','0.4 fy × d × tw = 100 × 100 × 4.7']]});
+  Object.assign(P('dm-ismc2'),{M:10.42,V:94.0,EI:746.8,src:'2 × single (IS 800 WSM)',alt:[{src:'Slab design sheet',M:11.40,V:234,EI:768,why:'2 × old single'}]});
+  Object.assign(P('dm-cup'),{alt:[{src:'Beam calc (deep beam)',cap:35.0,why:'source not stated'}],comp:[['Tube','48.3 OD × 3.2'],['SWL','depends on ledger lift'],['To enter','supplier table for 1.5 m and 2.0 m lifts']]});
+  Object.assign(P('dm-h12'),{alt:[{src:'Column design sheet (H-12)',M:2.0,V:3.25,EI:101.75,why:'differs from slab sheet'}]});
+  const i=DZ_DEF.findIndex(x=>x.id==='dm-ply18');
+  DZ_DEF.splice(i+1,0,{id:'dm-ply12d',g:'Sheathing',n:'Plywood 12 mm densified',stock:'Plywood 12 mm',M:0.34,V:9.75,EI:1.07,src:'Column design sheet · supplier test',ok:0});
+  const j=DZ_DEF.findIndex(x=>x.id==='dm-h12');
+  DZ_DEF.splice(j+1,0,
+   {id:'dm-h16',g:'Secondary',n:'H-16 timber beam',stock:'H-16 beam',M:3.0,V:6.0,EI:145,src:'Column design sheet · IIT test',alt:[{src:'DOKA H16 (table in sheet)',M:2.7,V:8.5,EI:250}],ok:0},
+   {id:'dm-h20',g:'Secondary',n:'H-20 timber beam',stock:'H-20 beam',M:5.0,V:11.0,EI:375,src:'Column design sheet · IIT test',alt:[{src:'DOKA H20 (table in sheet)',M:5.0,V:11.0,EI:450}],ok:0},
+   {id:'dm-al75',g:'Secondary',n:'Aluminium beam 75×150',stock:'Aluminium beam',M:5.40,V:22.0,EI:0,ab:3,src:'Beam calc (deep beam)',ok:0,
+     comp:[['Grade','6061-T6 ? · confirm with supplier'],['E','68,900 N/mm² · IS 8147'],['Size','75 × 150 mm'],['Weight','enter'],['Missing','I or EI · needed for deflection'],['Ply on this beam','span = c/c − 60 mm (two support lines)']]});
+  DZ_DEF.push(
+   {id:'dm-tie16',g:'Tie',n:'Tie rod 16 (18×5 thread)',stock:'Tie rod 16',cap:41.6,src:'IS 800 WSM · 0.6 fy × 201 mm² (fy 345)',alt:[{src:'Column design sheet',cap:50,why:'0.87 fy is limit-state · not for working load'}],ok:1},
+   {id:'dm-tie15',g:'Tie',n:'Tie rod 15 mm (fy 580)',stock:'Tie rod 15',cap:57.1,src:'Supplier calc R1 · 169.7 × 580 ÷ 1.5 ÷ 1.15',ok:0},
+   {id:'dm-flat40',g:'Tie',n:'Flat tie 40×3 (fy 550)',stock:'Flat tie 40x3',cap:23.8,src:'Supplier calc R0 · 0.6 × 550 × 72 mm²',ok:0});
+})();
+const DZ_OLD={'dm-ismc1':{M:5.70,V:117,EI:384},'dm-ismc2':{M:11.40,V:234,EI:768}};
+function dzMig(L){ DZ_DEF.forEach(def=>{ const s=L.find(x=>x.id===def.id); if(!s){ L.push(dzCl(def)); return; }
+    ['comp','alt'].forEach(k=>{ if(s[k]==null&&def[k]!=null) s[k]=dzCl(def[k]); });
+    const o=DZ_OLD[def.id]; if(!s._v&&o&&Object.keys(o).every(k=>num(s[k])===o[k])){ ['M','V','EI','src'].forEach(k=>s[k]=def[k]); } }); L.forEach(x=>x._v=2); return L; }
+dzMats=function(c){ const raw=(c.dzMats&&c.dzMats.length)?dzMig(dzCl(c.dzMats)):dzCl(DZ_DEF); const L=raw.filter(x=>!x.del);
+  return L.map(x=>{ const k=DZ_K[x.g]||{}, y=Object.assign({},k,x); if(y.sec){ const p=dzSec(y.sec); if(p){ y.M=p.M; y.V=p.V; y.EI=p.EI; y.kg=p.kg; y.Av=p.Av; } } y.miss=(!['Support','Tie'].includes(y.g))&&!(num(y.EI)>0); return y; }); };
+dzMatsW=function(c){ if(!c.dzMats||!c.dzMats.length) c.dzMats=dzCl(DZ_DEF); else dzMig(c.dzMats); return c.dzMats; };
+function dzMatUse(id,i){ const c=CO.get(); if(!dzCanCrit(c)) return toast('Criteria are locked.'); const m=dzMatsW(c).find(x=>x.id===id); if(!m||!m.alt||!m.alt[i]) return;
+  const a=m.alt[i], cur={src:m.src}; ['M','V','EI','cap'].forEach(k=>{ if(m[k]!=null) cur[k]=m[k]; }); ['M','V','EI','cap'].forEach(k=>{ if(a[k]!=null) m[k]=a[k]; }); m.src=a.src; m.alt[i]=cur; m.ok=0; coSave(c); toast('In use: '+a.src+' · mark Verified after checking.'); }
+function dzCompSet(id,i,v){ const c=CO.get(); if(!dzCanCrit(c)) return; const m=dzMatsW(c).find(x=>x.id===id); if(!m) return; m.comp=m.comp||[]; if(i<0){ const k=v$('dzC_k'), vv=v$('dzC_v'); if(!k) return toast('Enter property name.'); m.comp.push([k,vv||'']); } else if(v===null) m.comp.splice(i,1); else m.comp[i][1]=v; coSave(c); }
+{ const _r=dzRun; dzRun=function(c,d){ const r=_r(c,d); if(r&&!r.err){ const mi=[r.ply,r.sec,r.pri].filter(m=>m.miss); if(mi.length) return {err:'EI missing for '+mi.map(m=>m.n).join(', ')+' · enter it in Design Criteria before using.'}; } return r; }; }
+dzMem=function(x,w,prov){ const Lm=Math.sqrt(x.M/(x.kM*w)), Lv=x.V/(x.kV*w), K=x.kD*w/(num(x.EI)||1e-9), Ld1=Math.pow(1/(K*x.Ln),1/3), Ld2=Math.pow((x.ab/1000)/K,1/4), Ld=Math.min(Ld1,Ld2), L=Math.min(Lm,Lv,Ld);
+  return {w,Lm,Lv,K,Ld1,Ld2,Ld,L,gov:L===Lm?'Bending':L===Lv?'Shear':'Deflection',prov,ok:prov<=L+1e-9}; };
+
+/* ---- IS 8147 aluminium grades (reference) ---- */
+const AL_GR=[['6061-T6','65032 WP · extrusion','Frames, ribs, channels, beams',235,280,68900,2710,129,'143',77,201,'IS 8147 Table 1 · 4'],
+             ['5052','52000 (N4) H1 · sheet ≤ 6.3','Skin sheet',125,200,68900,2690,73,'83 / 76',44,167,'IS 8147 Table 24 · 25']];
+
+/* ---- concrete pressure · CIRIA 108 ---- */
+function ciria(D,C1,R,C2,T,H,full){ const K=(36/(num(T)+16))**2, s=C1*Math.sqrt(num(R)), hyd=D*num(H), cal=s>=num(H)?hyd:D*(s+C2*K*Math.sqrt(num(H)-s));
+  const P=full?hyd:Math.min(cal,hyd); return {K,cal,hyd,P,use:Math.ceil(P-1e-9),full:full||cal>=hyd}; }
+
+/* ---- design defaults ---- */
+const DZ_IN={
+ Wall:{H:3.8,R:2.5,T:32,C2:0.3,t:3.5,g:'5052',b:245,pB:0.4974,pA:0.0277,W:0.6,Lw:0.8,Lt:0.7,Zc:14615,Av:142.7,Ic:839942,Zw:13971,Aw:465.9,Iw:349290,fy:210,tie:'dm-tie15'},
+ Column:{kind:'Column',full:1,H:3.6,R:1,T:27,C2:0.45,ply:'dm-ply12d',hb:'dm-h20',fl:80,sp:0.3,L:1.0,cb:0.45,ct:0.8,wal:'dm-ismc2',Lt:1.2,tie:'dm-tie16'}};
+const DZ_PRE={Slab:'FW-SLAB-',Wall:'FW-WALL-',Column:'FW-COL-'}, DZ_PG={Slab:'dzSlab',Wall:'dzWall',Column:'dzCol'};
+{ const _n=dzNew; dzNew=function(el){ if(!el||el==='Slab') return _n(); if(dzLv()<2) return; const c=CO.get();
+  const d={id:'dz'+Date.now().toString(36),no:nextNo(c.dzDes,DZ_PRE[el]),el,site:PRJ.cur,area:'',in:dzCl(DZ_IN[el]),by:audWho(),chk:'',rev:0,status:'Draft',date:todayStr()};
+  c.dzDes.push(d); state.ui.dzSel=d.id; coSave(c); go(DZ_PG[el]); }; }
+function dzIn(id,k,v){ const c=CO.get(), d=c.dzDes.find(x=>x.id===id); if(!d||dzLv()<2) return; if(d.status!=='Draft') return toast('Approved · make a new revision to change.');
+  d.in=Object.assign(dzCl(DZ_IN[d.el]||{}),d.in||{}); d.in[k]=['g','tie','ply','hb','wal','kind','sec','pri','sup','sply','ster','ssec','pb'].includes(k)?v:num(v); if(k==='kind') d.in.full=v==='Column'?1:0; coSave(c); }
+
+/* ---- aluminium wall panel ---- */
+function alRun(c,d){ const a=Object.assign(dzCl(DZ_IN.Wall),d.in||{}), L=dzLoad(c), pr=ciria(L.rho,1,a.R,a.C2,a.T,a.H,0), P=pr.use, p=P/1000, E=68900, tie=dzMat(c,a.tie);
+  const sa=a.g==='5052'?76:143, fb=a.pB*p*a.b**2/a.t**2, ds=a.pA*p*a.b**4/(E*a.t**3);
+  const wc=P*a.W, Lw=a.Lw, Mc=0.0911*wc*Lw*Lw, Vc=0.535*wc*Lw, dc=0.00387*wc*(Lw*1000)**4/(E*a.Ic);
+  const ww=P*a.Lw, Mw=ww*a.Lt**2/10, Vw=0.6*ww*a.Lt, dw=0.0069*ww*(a.Lt*1000)**4/(2.05e5*a.Iw), tl=1.1*P*a.Lw*a.Lt;
+  const C=[
+   ['Skin','Bending · '+a.g,`B·p·b²/t² = ${a.pB} × ${dz3(p,3)} × ${a.b}² ÷ ${a.t}²`,fb,sa,'N/mm²'],
+   ['Skin','Deflection',`A·p·b⁴/(E·t³) = ${a.pA} × ${dz3(p,3)} × ${a.b}⁴ ÷ (68,900 × ${a.t}³)`,ds,2.0,'mm'],
+   ['Side channel','Bending · 6061-T6',`0.0911 × ${dz3(wc,1)} × ${Lw}² = ${dz3(Mc,2)} kNm ÷ Z ${fmtN(a.Zc)}`,Mc*1e6/a.Zc,143,'N/mm²'],
+   ['Side channel','Shear · 6061-T6',`0.535 × ${dz3(wc,1)} × ${Lw} = ${dz3(Vc,2)} kN ÷ Av ${a.Av}`,Vc*1e3/a.Av,77,'N/mm²'],
+   ['Side channel','Deflection L/270',`0.00387 × w × L⁴ ÷ (68,900 × ${fmtN(a.Ic)})`,dc,Lw*1000/270,'mm'],
+   ['Waller','Bending · 0.66 fy',`${dz3(ww,1)} × ${a.Lt}² ÷ 10 = ${dz3(Mw,2)} kNm ÷ Z ${fmtN(a.Zw)}`,Mw*1e6/a.Zw,0.66*a.fy,'N/mm²'],
+   ['Waller','Shear · 0.4 fy',`0.6 × ${dz3(ww,1)} × ${a.Lt} = ${dz3(Vw,2)} kN ÷ Av ${a.Aw}`,Vw*1e3/a.Aw,0.4*a.fy,'N/mm²'],
+   ['Waller','Deflection L/270',`0.0069 × w × L⁴ ÷ (2.05×10⁵ × ${fmtN(a.Iw)})`,dw,a.Lt*1000/270,'mm'],
+   ['Tie',tie?tie.n:'—',`1.1 × ${P} × ${a.Lw} × ${a.Lt}`,tl,tie?num(tie.cap):0,'kN']];
+  return dzRes(C,{a,pr,P,sys:'Aluminium panel '+a.t+' mm '+a.g+' · waller '+a.Lw+' m · tie '+(tie?tie.n:'—'),grid:a.Lw+' × '+a.Lt}); }
+function dzRes(C,o){ const ck=C.map(x=>({g:x[0],n:x[1],f:x[2],a:x[3],al:x[4],u:x[5],r:x[4]>0?x[3]/x[4]:9})); const ok=ck.every(x=>x.r<=1+1e-9);
+  return Object.assign(o,{ck,ok,fail:ck.filter(x=>x.r>1+1e-9).length,tight:ck.filter(x=>x.r>0.95&&x.r<=1+1e-9).length}); }
+
+/* ---- column / wall · ply + H-beam + double channel waler + tie ---- */
+function colRun(c,d){ const a=Object.assign(dzCl(DZ_IN.Column),d.in||{}), L=dzLoad(c), C1=a.kind==='Column'?1.5:1, pr=ciria(L.rho,C1,a.R,a.C2,a.T,a.H,num(a.full)), P=pr.use;
+  const ply=dzMat(c,a.ply), hb=dzMat(c,a.hb), wal=dzMat(c,a.wal), tie=dzMat(c,a.tie); if(!ply||!hb||!wal||!tie) return {err:'Select ply, H-beam, waler and tie.'};
+  const mi=[ply,hb,wal].filter(m=>m.miss); if(mi.length) return {err:'EI missing for '+mi.map(m=>m.n).join(', ')+' · enter it in Design Criteria.'};
+  const e=a.sp-a.fl/1000+0.012, pm=P*e*e/10, pv=0.6*P*e, pd=P*e**4/(145*ply.EI)*1000, pl=Math.min(e*1000/270,1.5);
+  const w=P*a.sp, Lh=a.L, hl=Math.min(Lh*1000/hb.Ln,hb.ab);
+  const pt=Math.min(P,L.rho*a.ct), wt=pt*a.sp, cl=x=>Math.min(x*1000/hb.Ln*2,hb.ab);
+  const W2=P*a.L, Lt=a.Lt, wl=Math.min(Lt*1000/wal.Ln,wal.ab), tl=P*a.Lt*a.L;
+  const C=[
+   [ply.n,'Bending',`P × e² ÷ 10 = ${P} × ${dz3(e,3)}² ÷ 10 · e = ${a.sp} − ${a.fl/1000} + 0.012`,pm,ply.M,'kNm/m'],
+   [ply.n,'Shear',`0.6 × P × e`,pv,ply.V,'kN/m'],
+   [ply.n,'Deflection L/270 · 1.5 mm',`P × e⁴ ÷ (145 × EI ${ply.EI})`,pd,pl,'mm'],
+   [hb.n,'Span · bending',`w = ${P} × ${a.sp} = ${dz3(w,2)} kN/m · w L² ÷ 8 · L ${Lh}`,w*Lh*Lh/8,hb.M,'kNm'],
+   [hb.n,'Span · shear',`w L ÷ 2`,w*Lh/2,hb.V,'kN'],
+   [hb.n,`Span · deflection L/${hb.Ln} · ${hb.ab} mm`,`5 w L⁴ ÷ (384 EI ${hb.EI})`,5*w*Lh**4/(384*hb.EI)*1000,hl,'mm'],
+   [hb.n,'Bottom cantilever · bending',`w c² ÷ 2 · c ${a.cb}`,w*a.cb**2/2,hb.M,'kNm'],
+   [hb.n,'Bottom cantilever · shear',`w c`,w*a.cb,hb.V,'kN'],
+   [hb.n,'Bottom cantilever · deflection',`w c⁴ ÷ (8 EI)`,w*a.cb**4/(8*hb.EI)*1000,cl(a.cb),'mm'],
+   [hb.n,'Top cantilever · bending',`p = min(P, ${L.rho} × ${a.ct}) = ${dz3(pt,1)} · w c² ÷ 2`,wt*a.ct**2/2,hb.M,'kNm'],
+   [hb.n,'Top cantilever · shear',`w c`,wt*a.ct,hb.V,'kN'],
+   [hb.n,'Top cantilever · deflection',`w c⁴ ÷ (8 EI)`,wt*a.ct**4/(8*hb.EI)*1000,cl(a.ct),'mm'],
+   [wal.n,'Bending',`W = ${P} × ${a.L} = ${dz3(W2,1)} kN/m · W L² ÷ 8 · L ${Lt}`,W2*Lt*Lt/8,wal.M,'kNm'],
+   [wal.n,'Shear',`W L ÷ 2`,W2*Lt/2,wal.V,'kN'],
+   [wal.n,`Deflection L/${wal.Ln} · ${wal.ab} mm`,`5 W L⁴ ÷ (384 EI ${wal.EI})`,5*W2*Lt**4/(384*wal.EI)*1000,wl,'mm'],
+   [tie.n,'Tension',`P × ${a.Lt} × ${a.L}`,tl,num(tie.cap),'kN']];
+  return dzRes(C,{a,pr,P,C1,ply,hb,wal,tie,e,sys:ply.n+' + '+hb.n+' @ '+a.sp+' + '+wal.n+' @ '+a.L+' + '+tie.n+' @ '+a.Lt,grid:a.L+' × '+a.Lt}); }
+
+function dzEval(c,d){ if(d.el==='Wall') return alRun(c,d); if(d.el==='Column') return colRun(c,d); const r=dzRun(c,d); if(r.err) return r; return Object.assign(r,{sys:[r.ply.n,r.sec.n,r.pri.n,r.sup.n].join(' + '),grid:r.p2+' × '+r.p3}); }
+dzRegTable=function(D,title){ const c=CO.get(); return panel(title,simpleTable([['Doc no.'],['Rev.'],['Site'],['Element'],['Area'],['System'],['Grid'],['Status'],['Designed'],['Approved'],['']],D.map(d=>{ const r=dzEval(c,d), el=d.el==='Slab'?'Slab '+(d.t?d.t+' mm':''):d.el==='Wall'?'Wall · aluminium'+(d.in?' '+d.in.H+' m':''):d.el==='Beam'?'Beam '+(d.in?d.in.b+' × '+d.in.D:''):(d.in&&d.in.kind||'Column')+' · H-beam'+(d.in?' '+d.in.H+' m':'');
+  return `<tr><td class="calc"><b>${esc(d.no)}</b></td><td class="calc">R${d.rev||0}</td><td class="calc">${esc(dzSiteN(d.site))}</td><td class="calc">${esc(el)}</td><td class="calc">${esc(d.area||'')}</td><td class="calc" style="white-space:normal;min-width:260px;max-width:420px">${r.err?'—':esc(r.sys)}</td><td class="calc">${r.err?'—':r.grid}</td><td class="calc">${dzStPill(d.status)}${!r.err&&!r.ok?' '+PILL('bd','Unsafe'):''}</td><td class="calc">${esc(d.by||'')}</td><td class="calc">${d.appBy?esc(d.appBy)+' · '+fmtD(d.appAt):'—'}</td><td class="calc"><button class="btn sm" onclick="state.ui.dzSel='${d.id}';go('${DZ_PG[d.el]||'dzSlab'}')">Open</button></td></tr>`; }))); };
+{ const _a=dzApprove; dzApprove=function(id){ const c=CO.get(), d=c.dzDes.find(x=>x.id===id); if(!d||d.el==='Slab') return _a(id); if(dzLv()<3) return toast('Approval needs Design: Approve.');
+  const r=dzEval(c,d); if(r.err||!r.ok) return toast('Design is not safe · cannot approve.'); const M=d.el==='Column'?[r.ply,r.hb,r.wal,r.tie]:[dzMat(c,r.a.tie)].filter(Boolean), un=M.filter(m=>!m.ok);
+  if(un.length&&!confirm('Not verified: '+un.map(m=>m.n).join(', ')+'. Approve anyway?')) return; d.status='Approved'; d.appBy=audWho(); d.appAt=todayStr(); coSave(c); toast('Design approved.'); }; }
+
+/* ---- shared page parts ---- */
+function dzHead(el,label){ const c=CO.get(), D=c.dzDes.filter(x=>!x.del&&x.el===el), ed=dzLv()>=2, d=D.find(x=>x.id===state.ui.dzSel)||D.filter(x=>x.status!=='Superseded').slice(-1)[0];
+  const h=`<div class="chips noprint"><label>Design<select class="coi" onchange="setUI('dzSel',this.value)">${D.map(x=>`<option value="${x.id}" ${d&&x.id===d.id?'selected':''}>${esc(x.no)} R${x.rev||0} · ${esc(x.area||'')} · ${x.status}</option>`).join('')||'<option>—</option>'}</select></label>${ed?`<button class="btn sm p" onclick="dzNew('${el}')">+ New ${label}</button>`:''}</div>`; return {c,d,h,ed}; }
+function dzDocPanel(d,ed,extra){ const lockD=d.status!=='Draft'||!ed, dis=lockD?'disabled':'', sites=PRJ.list.map(p=>`<option value="${p.id}" ${p.id===d.site?'selected':''}>${esc(dzSiteN(p.id))}</option>`).join('');
+  return panel(`${esc(d.no)} · R${d.rev||0} · ${dzStPill(d.status)}${d.appBy?' <small>approved by '+esc(d.appBy)+' · '+fmtD(d.appAt)+'</small>':''}`,`<div class="frm"><label>Site<select class="coi" ${dis} onchange="dzSet('${d.id}','site',this.value)">${sites}</select></label><label>Area / element<input class="coi" ${dis} style="width:200px" value="${esc(d.area||'')}" onchange="dzSet('${d.id}','area',this.value)"></label><label>Designed by<input class="coi" ${dis} style="width:150px" value="${esc(d.by||'')}" onchange="dzSet('${d.id}','by',this.value)"></label><label>Checked by<input class="coi" ${!ed?'disabled':''} style="width:150px" value="${esc(d.chk||'')}" onchange="dzSet('${d.id}','chk',this.value)"></label><label>Doc no.<input class="coi" ${dis} style="width:150px" value="${esc(d.no)}" onchange="dzSet('${d.id}','no',this.value)"></label></div>${extra||''}`); }
+function dzInTable(d,ed,rows){ const lk=d.status!=='Draft'||!ed, a=d.in||{};
+  const f=(k,l,u,st,opts)=>{ const v=a[k]; const box=opts?`<select class="coi dzin" ${lk?'disabled':''} onchange="dzIn('${d.id}','${k}',this.value)">${opts.map(o=>{ const [val,lab]=Array.isArray(o)?o:[o,o]; return `<option value="${esc(val)}" ${String(val)===String(v)?'selected':''}>${esc(lab)}</option>`; }).join('')}</select>`:`<input class="coi dzin" type="number" step="${st||'any'}" ${lk?'disabled':''} value="${v??''}" onchange="dzIn('${d.id}','${k}',this.value)">`;
+    return `<tr><td class="calc">${l}</td><td class="calc r">${box}</td><td class="calc">${u||''}</td></tr>`; };
+  return simpleTable([['Input'],['Value',1],['Unit']],rows.map(r=>r[0]==='—'?`<tr><td class="calc" colspan="3"><b>${r[1]}</b></td></tr>`:f(...r))); }
+function dzCkTable(r){ return simpleTable([['Member'],['Check'],['Working'],['Actual',1],['Allowed',1],['Unit'],['Ratio',1],['Result']],r.ck.map(x=>{ const dp=x.u==='mm'||x.u.startsWith('kN')?2:1;
+  return `<tr${x.r>1+1e-9?' class="tkrow"':''}><td class="calc"><b>${esc(x.g)}</b></td><td class="calc">${esc(x.n)}</td><td class="calc muted" style="white-space:normal;max-width:380px">${x.f}</td><td class="calc r"><b>${dz3(x.a,dp)}</b></td><td class="calc r">${dz3(x.al,dp)}</td><td class="calc">${x.u}</td><td class="calc r">${dz3(x.r,2)}</td><td class="calc">${x.r>1+1e-9?PILL('bd','FAIL'):x.r>0.95?PILL('wn','TIGHT'):PILL('ok','OK')}</td></tr>`; })); }
+function dzSig(d){ return `<div class="dzsig"><div>Designed by<br><b>${esc(d.by||'')}</b></div><div>Checked by<br><b>${esc(d.chk||'')}</b></div><div>Approved by<br><b>${esc(d.appBy||'')}</b>${d.appAt?' · '+fmtD(d.appAt):''}</div></div>`; }
+function dzActs(d,ed){ return dzSig(d)+`<div class="acts noprint">${d.status==='Draft'&&dzLv()>=3?`<button class="btn p" onclick="dzApprove('${d.id}')">Approve design</button>`:''}${d.status==='Approved'&&dzLv()>=3?`<button class="btn" onclick="dzRevoke('${d.id}')">Revoke approval</button>`:''}${ed&&d.status!=='Draft'?`<button class="btn" onclick="dzRev('${d.id}')">New revision</button>`:''}<button class="btn" onclick="window.print()">Print calculation sheet</button>${ed&&d.status==='Draft'?`<button class="btn d" onclick="dzDel('${d.id}')">Delete draft</button>`:''}</div>`; }
+function dzWhatIf(r,fn){ const a=r.a; return simpleTable([['Condition'],['Pressure',1],['vs design',1],['Status']],fn(a).map(([l,q])=>{ const x=q/r.P; return `<tr><td class="calc">${l}</td><td class="calc r"><b>${dz3(q,1)}</b></td><td class="calc r">${Math.round(x*100)} %</td><td class="calc">${x<=1.001?PILL('ok','Covered'):PILL(x<1.1?'wn':'bd','Over design')}</td></tr>`; })); }
+function dzKpis(r,first){ return `<div class="kpis">${first}${kpi('Checks',r.ck.length)}${kpi('Fail',r.fail,r.fail?'see red rows':'all within allowed',r.fail?'bad':'good')}${kpi('Tight (> 95 %)',r.tight,'',r.tight?'warn':'')}</div>`+(r.ok?'':`<div class="banner">${PILL('bd','UNSAFE')} <span>One or more checks fail. Change thickness, spacing or material.</span></div>`); }
+
+PAGES.dzWall=()=>{ if(!dzLv()) return dzLocked(); const {c,d,h,ed}=dzHead('Wall','aluminium wall design'); if(!d) return h+panel('Wall design · aluminium panel','<p class="note">No wall design yet. Click "+ New aluminium wall design".</p>');
+  d.in=Object.assign(dzCl(DZ_IN.Wall),d.in||{}); const r=alRun(c,d), a=r.a, L=dzLoad(c), T=dzMats(c).filter(x=>x.g==='Tie');
+  let o=h+dzKpis(r,kpi('Design pressure',r.P+' kN/m²',`CIRIA · ${a.R} m/hr · ${a.T} °C`))+dzDocPanel(d,ed);
+  o+=`<div class="grid2">`+panel('Inputs',dzInTable(d,ed,[['—','Concrete'],['H','Wall / pour height','m'],['R','Rate of rise','m/hr'],['T','Concrete temperature','°C',1],['C2','C2 · constituent','',0,[[0.3,'0.3 · OPC, no retarder'],[0.45,'0.45 · retarder / blended'],[0.6,'0.6 · blended + retarder']]],
+     ['—','Panel'],['t','Skin thickness','mm',0.5],['g','Skin grade','',0,[['5052','5052 · bending 76'],['6061-T6','6061-T6 · bending 143']]],['b','Rib spacing (skin span)','mm',5],['pB','Plate coefficient B','',0.0001],['pA','Plate coefficient A','',0.0001],['W','Panel width','m',0.05],['Zc','Side channel Z','mm³',1],['Av','Side channel shear area','mm²',0.1],['Ic','Side channel I','mm⁴',1],
+     ['—','Waller and tie'],['Lw','Waller spacing (vertical)','m',0.05],['Lt','Tie spacing (horizontal)','m',0.05],['Zw','Waller Z','mm³',1],['Aw','Waller shear area','mm²',0.1],['Iw','Waller I','mm⁴',1],['fy','Waller steel fy','N/mm²',1],['tie','Tie','',0,T.map(x=>[x.id,x.n+' · '+x.cap+' kN'])]]))
+   +panel('Concrete pressure · CIRIA 108',simpleTable([['Item'],['Value',1],['Unit']],[['Density D',L.rho,'kN/m³'],['C1 (wall)','1.0',''],['K = (36 ÷ (T + 16))²',dz3(r.pr.K,2),''],['P = D [C1√R + C2·K·√(H − C1√R)]',dz3(r.pr.cal,1),'kN/m²'],['Full liquid head D × H',dz3(r.pr.hyd,1),'kN/m²'],['<b>Design pressure</b>','<b>'+r.P+'</b>','kN/m²']].map(x=>`<tr><td class="calc">${x[0]}</td><td class="calc r">${x[1]}</td><td class="calc">${x[2]}</td></tr>`))
+     +'<h4 style="margin:12px 0 6px">Same wall · other site conditions</h4>'+dzWhatIf(r,a=>[[`${a.R} m/hr · ${a.T} °C (design)`,ciria(L.rho,1,a.R,a.C2,a.T,a.H).P],[`${num(a.R)+0.5} m/hr · ${a.T} °C`,ciria(L.rho,1,num(a.R)+0.5,a.C2,a.T,a.H).P],[`${a.R} m/hr · 25 °C`,ciria(L.rho,1,a.R,a.C2,25,a.H).P],[`${a.R} m/hr · 15 °C (winter)`,ciria(L.rho,1,a.R,a.C2,15,a.H).P]])
+     +`<p class="note">Pour condition printed on this design: rate of rise ≤ ${a.R} m/hr, concrete ≥ ${a.T} °C. Allowables: 6061-T6 bending 143 · shear 77 · 5052 bending 76 (IS 8147) · steel 0.66 fy · 0.4 fy (IS 800 WSM).</p>`)+`</div>`;
+  o+=panel('Checks',dzCkTable(r)+dzActs(d,ed)); return o; };
+
+PAGES.dzCol=()=>{ if(!dzLv()) return dzLocked(); const {c,d,h,ed}=dzHead('Column','column / wall design'); if(!d) return h+panel('Column / wall design · H-beam','<p class="note">No design yet. Click "+ New column / wall design".</p>');
+  d.in=Object.assign(dzCl(DZ_IN.Column),d.in||{}); const r=colRun(c,d), a=d.in, L=dzLoad(c), M=dzMats(c), opt=g=>M.filter(x=>x.g===g).map(x=>[x.id,x.n+(x.ok?'':' (verify)')+(x.miss?' · EI missing':'')]);
+  const inp=dzInTable(d,ed,[['—','Concrete'],['kind','Element','',0,['Column','Wall']],['full','Pressure','',0,[[1,'Full liquid head (D × H)'],[0,'CIRIA (pour rate controlled)']]],['H','Pour height','m'],['R','Rate of rise','m/hr'],['T','Concrete temperature','°C',1],['C2','C2 · constituent','',0,[[0.3,'0.3 · OPC, no retarder'],[0.45,'0.45 · retarder / blended'],[0.6,'0.6 · blended + retarder']]],
+    ['—','Sheathing and H-beam'],['ply','Plywood','',0,opt('Sheathing')],['hb','H-beam','',0,opt('Secondary')],['fl','H-beam flange width','mm',1],['sp','H-beam spacing c/c','m',0.01],['L','Waler spacing (H-beam span)','m',0.05],['cb','Bottom cantilever','m',0.05],['ct','Top cantilever','m',0.05],
+    ['—','Waler and tie'],['wal','Waler','',0,opt('Primary')],['Lt','Tie spacing (waler span)','m',0.05],['tie','Tie','',0,opt('Tie')]]);
+  if(r.err) return h+dzDocPanel(d,ed)+`<div class="grid2">`+panel('Inputs',inp)+panel('Result',`<p class="note">${r.err}</p>`)+`</div>`;
+  let o=h+dzKpis(r,kpi('Design pressure',r.P+' kN/m²',r.pr.full?'full liquid head '+a.H+' m':'CIRIA · C1 '+r.C1+' · '+a.R+' m/hr'))+dzDocPanel(d,ed);
+  o+=`<div class="grid2">`+panel('Inputs',inp)
+   +panel('Concrete pressure',simpleTable([['Item'],['Value',1],['Unit']],[['Density D',L.rho,'kN/m³'],['C1 · '+a.kind,r.C1,''],['K = (36 ÷ (T + 16))²',dz3(r.pr.K,2),''],['CIRIA P = D [C1√R + C2·K·√(H − C1√R)]',dz3(r.pr.cal,1),'kN/m²'],['Full liquid head D × H',dz3(r.pr.hyd,1),'kN/m²'],['<b>Design pressure</b>','<b>'+r.P+'</b>'+(r.pr.full?' <small class="muted">full head</small>':''),'kN/m²']].map(x=>`<tr><td class="calc">${x[0]}</td><td class="calc r">${x[1]}</td><td class="calc">${x[2]}</td></tr>`))
+     +(a.full?'':'<h4 style="margin:12px 0 6px">Same pour · other site conditions</h4>'+dzWhatIf(r,a=>[[`${a.R} m/hr · ${a.T} °C (design)`,ciria(L.rho,r.C1,a.R,a.C2,a.T,a.H).P],[`${num(a.R)*2} m/hr · ${a.T} °C`,ciria(L.rho,r.C1,num(a.R)*2,a.C2,a.T,a.H).P],[`5 m/hr (typical column pour)`,ciria(L.rho,r.C1,5,a.C2,a.T,a.H).P],[`${a.R} m/hr · 15 °C`,ciria(L.rho,r.C1,a.R,a.C2,15,a.H).P]]))
+     +`<p class="note">${a.kind==='Column'?'Columns are usually poured fast · full liquid head is the safe default.':'Wall · C1 = 1.0.'} Ply effective span e = c/c − flange + ply thickness = ${dz3(r.e,3)} m. H-beam shear taken as wL ÷ 2 (no bearing deduction). Waler and tie values from Design Criteria.</p>`)+`</div>`;
+  o+=panel('Checks',dzCkTable(r)+dzActs(d,ed)); return o; };
+
+/* ---- Design Criteria v2: grades, composition, sources ---- */
+{ const _p=PAGES.dzCrit; PAGES.dzCrit=()=>{ if(!dzLv()) return dzLocked(); const c=CO.get(), M=dzMats(c), ed=dzCanCrit(c); let h=_p();
+  const T=M.filter(x=>x.g==='Tie'), st=x=>ed?`<button class="btn sm" onclick="dzMatSet('${x.id}','ok',${x.ok?0:1})">${x.ok?'✓ Verified':'Verify'}</button> <button class="btn sm d" onclick="dzMatDel('${x.id}')">✕</button>`:(x.ok?PILL('ok','Verified'):PILL('wn','Verify'));
+  const ni=(v,on)=>ed?`<input class="coi" type="number" step="any" style="width:90px;text-align:right" value="${v??''}" onchange="${on}">`:`<b>${v??'—'}</b>`;
+  const tieP=panel('Design criteria · Tie',simpleTable([['Tie'],['Safe working load (kN)',1],['Source'],['Status']],T.map(x=>`<tr><td class="calc"><b>${esc(x.n)}</b><br><small class="muted">stock: ${esc(x.stock||'—')}</small></td><td class="calc r">${ni(x.cap,`dzMatSet('${x.id}','cap',this.value)`)}</td><td class="calc">${esc(x.src||'')}</td><td class="calc">${st(x)}</td></tr>`)));
+  const al=panel('Aluminium grades · IS 8147 : 1976 permissible stresses (N/mm²)',simpleTable([['Grade'],['IS designation'],['Used for'],['0.2% proof',1],['Tensile',1],['E',1],['Density',1],['Tension',1],['Bending',1],['Shear',1],['Bearing',1],['Source']],AL_GR.map(g=>`<tr><td class="calc"><b>${g[0]}</b></td><td class="calc">${g[1]}</td><td class="calc">${g[2]}</td>${g.slice(3,11).map((x,i)=>`<td class="calc r">${i===5||i===6?'<b>'+x+'</b>':typeof x==='number'?fmtN(x):x}</td>`).join('')}<td class="calc muted">${g[11]}</td></tr>`))+'<p class="note">Bending 83 / 76 = tension / compression face. Values apply where buckling is not critical. 5052-H32 datasheet proof 160 may be used only if the supplier guarantees it (IS 8147 cl. 7.4.3).</p>');
+  const op=state.ui.dzOpen||'', W=M.filter(x=>x.comp||x.alt||x.sec||x.miss);
+  let cp=simpleTable([['Material'],['Use as'],['In use'],['Other sources'],['Check'],['']],W.map(x=>`<tr${x.id===op?' class="tkrow"':''}><td class="calc"><b>${esc(x.n)}</b></td><td class="calc">${x.g}</td><td class="calc" style="white-space:normal;max-width:240px">${esc(x.src||'')}</td><td class="calc r">${(x.alt||[]).length}</td><td class="calc">${x.miss?PILL('bd','EI missing'):(x.alt||[]).length?PILL('wn','sources differ'):PILL('ok','OK')}</td><td class="calc"><button class="btn sm ${x.id===op?'p':''}" onclick="setUI('dzOpen','${x.id===op?'':x.id}')">${x.id===op?'Close':'Composition'}</button></td></tr>`));
+  const m=M.find(x=>x.id===op);
+  if(m){ const comp=(m.comp||[]).slice(); if(m.sec){ const p=dzSec(m.sec); comp.unshift(['Section',`${m.sec.type} ${m.sec.B}×${m.sec.D||m.sec.B}×${m.sec.t}`],['fy',(m.sec.fy||250)+' N/mm²'],['E',fmtN(m.sec.E||210000)+' N/mm²'],['Area A',dz3(p.A,1)+' mm²'],['Shear area Av = A·D ÷ (B + D)',dz3(p.Av,1)+' mm²'],['I',fmtN(p.I)+' mm⁴'],['Z',fmtN(p.Z)+' mm³'],['Weight',dz3(p.kg,2)+' kg/m'],['M = 0.66 fy Z · V = 0.4 fy Av',dz3(p.M)+' kNm · '+dz3(p.V,2)+' kN']); }
+    const nc=m.sec?9:0;
+    const kv=simpleTable([['Property'],['Value'],['']],comp.map((r,i)=>`<tr><td class="calc">${esc(r[0])}</td><td class="calc">${ed&&i>=nc?`<input class="coi" style="width:260px" value="${esc(r[1])}" onchange="dzCompSet('${m.id}',${i-nc},this.value)">`:'<b>'+esc(r[1])+'</b>'}</td><td class="calc">${ed&&i>=nc?`<button class="btn sm d" onclick="dzCompSet('${m.id}',${i-nc},null)">✕</button>`:''}</td></tr>`))
+      +(ed?`<div class="frm"><label>Property<input id="dzC_k" class="coi" style="width:160px"></label><label>Value<input id="dzC_v" class="coi" style="width:220px"></label><button class="btn sm" onclick="dzCompSet('${m.id}',-1)">+ Add</button></div>`:'');
+    const isS=['Support','Tie'].includes(m.g);
+    const srcR=[Object.assign({src:m.src,cur:1},isS?{cap:m.cap}:{M:m.M,V:m.V,EI:m.EI})].concat((m.alt||[]).map((a,i)=>Object.assign({i},a)));
+    const src=simpleTable(isS?[['Source'],['SWL (kN)',1],['Note'],['In use']]:[['Source'],['M (kNm)',1],['V (kN)',1],['EI (kNm²)',1],['Note'],['In use']],srcR.map(s=>`<tr${s.cur?' class="tkrow"':''}><td class="calc">${esc(s.src||'')}</td>${isS?`<td class="calc r"><b>${dz3(s.cap,1)}</b></td>`:`<td class="calc r"><b>${dz3(s.M,2)}</b></td><td class="calc r">${dz3(s.V,2)}</td><td class="calc r">${num(s.EI)?dz3(s.EI,2):'<b class="neg">missing</b>'}</td>`}<td class="calc muted" style="white-space:normal;max-width:170px">${esc(s.why||'')}</td><td class="calc">${s.cur?PILL('ok','In use'):ed?`<button class="btn sm" onclick="dzMatUse('${m.id}',${s.i})">Use this</button>`:''}</td></tr>`));
+    cp+=`<div class="grid2">`+panel(esc(m.n)+' · composition',kv+(m.miss?`<div class="banner" style="margin-top:6px">${PILL('bd','MISSING')} <span>EI not known · this material cannot be used in a design until EI is entered (Design criteria table above).</span></div>`:''))+panel('Allowable values · by source',src+'<p class="note">Every design prints the source in use. Changing the source marks the material "Verify" again.</p>')+`</div>`; }
+  const comp=panel('Material composition · sources',cp);
+  const i=h.indexOf('<div class="panel"><div class="ph"><span>Your standard spacing'); const ins=tieP+comp+al;
+  return i>=0?h.slice(0,i)+ins+h.slice(i):h+ins; }; }
+{ const _s=dzMatSet; dzMatSet=function(id,k,v){ return _s(id,k,v); }; }
+
+/* ---- Design overview v2 ---- */
+PAGES.dzHome=()=>{ if(!dzLv()) return dzLocked(); const c=CO.get(), D=c.dzDes.filter(x=>!x.del), M=dzMats(c), n=el=>D.filter(x=>x.el===el&&x.status!=='Superseded').length;
+  const cards=[['Slab Design','Ply → secondary → primary → staging · grid check · material list to site','dzSlab',n('Slab')+' designs','Ready'],
+   ['Wall Design · aluminium panel','CIRIA pressure · skin · side channel · waller · tie · what-if pour rate / temperature','dzWall',n('Wall')+' designs','Ready'],
+   ['Column / Wall · H-beam','Full head or CIRIA · ply → H-beam (span + cantilevers) → double channel waler → tie rod','dzCol',n('Column')+' designs','Ready'],
+   ['Beam Design','Bottom: ply → secondary → primary → cuplock · Sides: full head or CIRIA · ply → tertiary → secondary → tie','dzBeam',n('Beam')+' designs','Ready'],
+   ['Design Criteria','Material library · composition · sources · IS 8147 aluminium · ties','dzCrit',M.length+' materials','Ready'],
+   ['Design Register','All designs by site · status · revision · approved by','dzReg',D.length+' designs','Ready']];
+  let h=`<div class="kpis">${kpi('Designs',D.filter(x=>x.status!=='Superseded').length,D.filter(x=>x.status==='Approved').length+' approved')}${kpi('Materials',M.length,M.filter(x=>!x.ok).length+' to verify · '+M.filter(x=>x.miss).length+' EI missing',M.some(x=>!x.ok||x.miss)?'warn':'good')}${kpi('Pending approval',D.filter(x=>x.status==='Draft').length,'',D.some(x=>x.status==='Draft')?'warn':'good')}${kpi('Your access',DZ_LV[dzLv()],c.dzLock?'criteria locked '+fmtD(c.dzLock):'criteria open')}</div>`;
+  h+=panel('Design',`<div class="dzcards">${cards.map(x=>`<div class="dzcard"><div class="dzh"><b>${x[0]}</b>${x[4]==='Ready'?PILL('ok','Ready'):PILL('na','Next')}</div><div class="muted dzd">${x[1]}</div><div class="dzh"><small class="muted">${x[3]||'—'}</small>${x[2]?`<button class="btn sm p" onclick="go('${x[2]}')">Open</button>`:'<button class="btn sm" disabled>Soon</button>'}</div></div>`).join('')}</div>`);
+  return h+dzRegTable(D.slice().sort((a,b)=>(b.date||'').localeCompare(a.date||'')).slice(0,8),'Recent designs'); };
+{ const _r=PAGES.dzReg; PAGES.dzReg=()=>{ let h=_r(); return dzLv()>=2?h.replace('+ New slab design</button>','+ New slab design</button><button class="btn sm p" onclick="dzNew(\'Wall\')">+ Wall · aluminium</button><button class="btn sm p" onclick="dzNew(\'Column\')">+ Column / wall · H-beam</button>'):h; }; }
+(()=>{ const g=NAV_CO.find(x=>x.g==='Design'); if(g){ const i=g.items.findIndex(x=>x[0]==='dzSlab'); g.items.splice(i+1,0,['dzWall','Wall Design · Aluminium'],['dzCol','Column / Wall Design']); }
+  ICONS.dzWall='<rect x="4" y="3" width="16" height="18" rx="1"/><path d="M4 9h16M4 15h16M12 3v18"/>'; ICONS.dzCol='<rect x="8" y="3" width="8" height="18"/><path d="M5 7h14M5 12h14M5 17h14"/>'; })();
+try{ setNav(); }catch(e){}
+
+{ const _s=PAGES.dzSlab; PAGES.dzSlab=()=>{ const h=_s(); try{ const c=CO.get(), D=c.dzDes.filter(x=>!x.del&&x.el==='Slab'), d=D.find(x=>x.id===state.ui.dzSel)||D.filter(x=>x.status!=='Superseded').slice(-1)[0]; if(d) return h+dzSig(d); }catch(e){} return h; }; }
+
+/* ================= DESIGN · CALCULATION REPORT (company letterhead) ================= */
+const DZ_STD={Slab:'IS 14687 : 1999 · IS 875 (Pt 2)',Wall:'CIRIA 108 · IS 8147 · IS 800',Column:'CIRIA 108 · IS 800 · IS 4990'};
+function dzRepHdr(c,d){ const p=PRJ.list.find(x=>x.id===d.site), r=d.rep||{}, a=d.in||{};
+  const subj=d.el==='Beam'?`DESIGN OF FORMWORK FOR BEAM ${a.b||''} × ${a.D||''} MM`:d.el==='Slab'?`DESIGN OF FORMWORK FOR ${d.t||''} MM THK. SLAB`:d.el==='Wall'?`DESIGN OF ALUMINIUM WALL FORMWORK · ${a.H||''} M POUR`:`DESIGN OF ${String(a.kind||'Column').toUpperCase()} FORMWORK · ${a.H||''} M POUR`;
+  return {company:r.company??(c.name||state.meta.company||''),project:r.project??(p?p.name:''),client:r.client??'',location:r.location??(d.area||''),subject:r.subject??subj,std:r.std??DZ_STD[d.el],prep:r.prep??(d.by||''),chk:r.chk??(d.chk||''),app:r.app??(d.appBy||''),date:r.date??todayStr()}; }
+function dzRepSet(id,k,v){ const c=CO.get(), d=c.dzDes.find(x=>x.id===id); if(!d) return; d.rep=Object.assign({},d.rep||{},{[k]:v}); coSave(c); dzRepOpen(id); }
+function dzRepClose(){ const o=document.getElementById('dzrep'); if(o) o.remove(); document.body.classList.remove('dzrep-on'); }
+function dzRepBody(c,d){ const f=(x,n=3)=>dz3(x,n), S=[]; let n=0;
+  const sec=(t,rows)=>S.push({t:(++n)+'.0 '+t,rows}), R=(l,ref,v,u,o={})=>Object.assign({l,ref,v,u},o);
+  if(d.el==='Slab'){ const r=dzRun(c,d); if(r.err) return {err:r.err};
+    sec('LOAD CALCULATION (IS: 14687 & IS: 875)',[R('Slab thickness (t)','',d.t,'mm'),R('Density of wet concrete (ρ)','[IS 14687, Cl. 7.3.1.1(b)]',f(r.L.rho,1),'kN/m³'),R('Self weight of concrete','(t × ρ) ÷ 1000',f(r.Wc,2),'kN/m²'),R('Self weight of formwork','[IS 14687, Cl. 7.3.1.2]',f(r.L.sw,2),'kN/m²'),R('Construction live load','[IS 875 (Pt 2), Table 2]',f(r.L.ll,2),'kN/m²'),R('Total design area load (W)','',f(r.W,2),'kN/m²',{b:1})]);
+    const mem=(t,x,X,wl,wv,nx)=>sec(t,[R(x.n,x.src||'','','',{h:1}),R('Allowable bending moment','',f(x.M,3),x.g==='Sheathing'?'kNm/m':'kNm'),R('Allowable shear force','',f(x.V,2),x.g==='Sheathing'?'kN/m':'kN'),R('EI','',f(x.EI,2),x.g==='Sheathing'?'kNm²/m':'kNm²'),R('Allowable deflection','Span/'+x.Ln+' or '+x.ab+' mm','',''),
+      ...(wl?[R('Design line load (w)',wl,f(wv,3),'kN/m')]:[]),R('Safe span against BM','√(M ÷ ('+x.kM+' × w))',f(X.Lm),'m'),R('Safe span against SF','V ÷ ('+x.kV+' × w)',f(X.Lv),'m'),R('Safe span against deflection',x.kD+' × w × L⁴ ÷ EI',f(X.Ld),'m'),R('Maximum safe '+nx,'governs: '+X.gov,f(X.L),'m',{b:1}),R('Provided '+nx,'',f(X.prov,2),'m',{b:1,ok:X.ok})]);
+    mem('DESIGN OF SHEATHING',r.ply,r.A,'W × 1 m',r.W,'secondary spacing (c/c)'); mem('DESIGN OF SECONDARY MEMBER',r.sec,r.B,'W × '+r.p1,r.W*r.p1,'primary spacing (c/c)'); mem('DESIGN OF PRIMARY MEMBER',r.pri,r.C,'W × '+r.p2,r.W*r.p2,'support spacing (c/c)');
+    sec('CHECK FOR SUPPORT',[R(r.sup.n,r.sup.src||'','','',{h:1}),R('Load on one vertical','W × '+r.p2+' × '+r.p3,f(r.load,2),'kN'),R('Safe working load','',f(r.sup.cap,1),'kN'),R('Utilisation','load ÷ SWL',Math.round(r.ut*100)+' %','',{b:1,ok:r.ut<=1})]);
+    sec('RESULT',[R('Grid adopted (X × Y)','',r.p2+' × '+r.p3,'m',{b:1}),R('Secondary spacing','',f(r.p1,2),'m'),R('Formwork system',[r.ply.n,r.sec.n,r.pri.n,r.sup.n].join(' + '),'',''),R('Design status','',r.ok?'SAFE':'UNSAFE','',{b:1,ok:r.ok})]);
+    return {S,ok:r.ok}; }
+  const r=dzEval(c,d); if(r.err) return {err:r.err}; const a=r.a, L=dzLoad(c), C1=d.el==='Column'?r.C1:1;
+  sec('LATERAL CONCRETE PRESSURE (CIRIA REPORT 108)',[R('Density of concrete (D)','[IS 14687, Cl. 7.3.1.1(b)]',f(L.rho,1),'kN/m³'),R('Shape coefficient (C1)',d.el==='Column'?a.kind:'Wall',C1,''),R('Rate of rise (R)','',a.R,'m/hr'),R('Constituent coefficient (C2)','',a.C2,''),R('Concrete temperature (T)','',a.T,'°C'),R('Temperature coefficient (K)','(36 ÷ (T + 16))²',f(r.pr.K,2),''),R('Pour height (H)','',a.H,'m'),
+    R('P (CIRIA)','D [C1√R + C2·K·√(H − C1√R)]',f(r.pr.cal,1),'kN/m²'),R('Full liquid head','D × H',f(r.pr.hyd,1),'kN/m²'),R('Design pressure (P)',r.pr.full?'full liquid head':'min of above · rounded up',r.P,'kN/m²',{b:1})]);
+  if(d.el==='Wall') sec('PANEL, WALLER AND TIE · INPUTS',[R('Skin','grade '+a.g,a.t,'mm'),R('Rib spacing (skin span)','',a.b,'mm'),R('Plate coefficients B / A','a/b table',a.pB+' / '+a.pA,''),R('Panel width','',a.W,'m'),R('Side channel Z / Av / I','',fmtN(a.Zc)+' / '+a.Av+' / '+fmtN(a.Ic),'mm³ · mm² · mm⁴'),R('Waller spacing (vertical)','',a.Lw,'m'),R('Tie spacing (horizontal)','',a.Lt,'m'),R('Waller Z / Av / I','fy '+a.fy,fmtN(a.Zw)+' / '+a.Aw+' / '+fmtN(a.Iw),'mm³ · mm² · mm⁴')]);
+  else sec('SYSTEM AND SPACING · INPUTS',[R('Sheathing',r.ply.src||'',r.ply.n,''),R('H-beam',r.hb.src||'',r.hb.n,''),R('H-beam flange width','',a.fl,'mm'),R('H-beam spacing (c/c)','',a.sp,'m'),R('Ply effective span (e)','c/c − flange + ply thk',f(r.e,3),'m'),R('Waler spacing (H-beam span)','',a.L,'m'),R('Cantilever · bottom / top','',a.cb+' / '+a.ct,'m'),R('Waler',r.wal.src||'',r.wal.n,''),R('Tie spacing (waler span)','',a.Lt,'m'),R('Tie',r.tie.src||'',r.tie.n,'')]);
+  const G=[...new Set(r.ck.map(x=>x.g))]; G.forEach(g=>{ const rows=[]; r.ck.filter(x=>x.g===g).forEach(x=>{ const dp=x.u==='mm'||x.u.startsWith('kN')?2:1; rows.push(R('Check against '+x.n,x.f,f(x.a,dp),x.u),R('Allowable','',f(x.al,dp),x.u),R('Ratio','actual ÷ allowable',f(x.r,2),'',{b:1,ok:x.r<=1+1e-9})); }); sec('DESIGN OF '+g.toUpperCase(),rows); });
+  sec('RESULT',[R('Checks','',r.ck.length+' · '+r.fail+' fail','',{}),R('Formwork system',r.sys,'',''),...(d.el==='Wall'||!num(a.full)?[R('Pour condition','rate of rise ≤ '+a.R+' m/hr · concrete ≥ '+a.T+' °C','','')]:[]),R('Design status','',r.ok?'SAFE':'UNSAFE','',{b:1,ok:r.ok})]);
+  return {S,ok:r.ok}; }
+function dzRepOpen(id){ const c=CO.get(), d=c.dzDes.find(x=>x.id===id); if(!d) return; const H=dzRepHdr(c,d), B=dzRepBody(c,d);
+  const fld=(k,l,w)=>`<label>${l}<input value="${esc(H[k]||'')}" style="width:${w||160}px" onchange="dzRepSet('${id}','${k}',this.value)"></label>`;
+  const row=x=>x.h?`<tr><td colspan="5" class="rp-h">${esc(x.l)}${x.ref?` <span>${esc(x.ref)}</span>`:''}</td></tr>`:`<tr class="${x.b?'rp-b':''}"><td>${esc(x.l)}</td><td class="rp-f">${esc(String(x.ref??''))}</td><td class="rp-eq">${x.v!==''&&x.v!=null?'=':''}</td><td class="rp-v ${x.ok===false?'rp-bad':x.ok?'rp-ok':''}">${esc(String(x.v??''))}${x.ok===true?' ✓':x.ok===false?' ✗':''}</td><td>${esc(x.u||'')}</td></tr>`;
+  const body=B.err?`<p>${esc(B.err)}</p>`:B.S.map(s=>`<h3>${esc(s.t)}</h3><table class="rp-t"><tbody>${s.rows.map(row).join('')}</tbody></table>`).join('');
+  const html=`<div class="rp-bar"><div class="rp-fl">${fld('company','Company',200)}${fld('project','Project',200)}${fld('client','Client',160)}${fld('location','Location / element',170)}${fld('subject','Subject',330)}${fld('std','Design standard',220)}${fld('prep','Prepared by',140)}${fld('chk','Checked by',140)}${fld('app','Approved by',140)}<label>Date<input type="date" value="${esc(H.date)}" onchange="dzRepSet('${id}','date',this.value)"></label></div><div class="rp-act"><button class="btn p" onclick="window.print()">🖨 Print / Save PDF</button><button class="btn" onclick="dzRepClose()">Close</button></div></div>
+   <div class="rp-page"><table class="rp-wrap"><thead><tr><td><div class="rp-top"><div><div class="rp-co">${esc(H.company||'Company name')}</div><div class="rp-sub">Formwork design calculation</div></div><div class="rp-meta">Design standard: <b>${esc(H.std)}</b><br>Doc no: <b>${esc(d.no)} R${d.rev||0}</b> · Date: <b>${fmtD(H.date)}</b></div></div></td></tr></thead><tbody><tr><td>
+   <table class="rp-info"><tr><td>Project</td><td><b>${esc(H.project)}</b></td><td>Client</td><td><b>${esc(H.client)}</b></td></tr><tr><td>Location / element</td><td><b>${esc(H.location)}</b></td><td>Status</td><td><b>${esc(d.status)}${d.appAt?' · '+fmtD(d.appAt):''}</b></td></tr></table>
+   <div class="rp-subj">SUBJECT: ${esc(H.subject)}</div>${body}
+   <div class="rp-sig"><div><b>Prepared by:</b><br><span>${esc(H.prep)}</span></div><div><b>Checked by:</b><br><span>${esc(H.chk)}</span></div><div><b>Approved by:</b><br><span>${esc(H.app)}</span></div></div></td></tr></tbody></table></div>`;
+  let o=document.getElementById('dzrep'); if(!o){ o=document.createElement('div'); o.id='dzrep'; document.body.appendChild(o); } const sc=o.scrollTop; o.innerHTML=html; o.scrollTop=sc; document.body.classList.add('dzrep-on'); }
+{ const btn=id=>`<button class="btn p" onclick="dzRepOpen('${id}')">🖨 Generate calculation report</button>`;
+  const _a=dzActs; dzActs=function(d,ed){ return _a(d,ed).replace('<button class="btn" onclick="window.print()">Print calculation sheet</button>',btn(d.id)+'<button class="btn" onclick="window.print()">Print screen</button>'); };
+  const _s=PAGES.dzSlab; PAGES.dzSlab=()=>{ const h=_s(); try{ const c=CO.get(), D=c.dzDes.filter(x=>!x.del&&x.el==='Slab'), d=D.find(x=>x.id===state.ui.dzSel)||D.filter(x=>x.status!=='Superseded').slice(-1)[0]; if(d) return h.replace('<button class="btn" onclick="window.print()">Print calculation sheet</button>',btn(d.id)+'<button class="btn" onclick="window.print()">Print screen</button>'); }catch(e){} return h; }; }
+
+/* ================= DEFLECTION CRITERION · Excel (L/360 · 6 mm) or IS 14687 (3 mm) ================= */
+const dzDefl=c=>(c&&c.dzDefl)==='is3'?'is3':'excel';
+const dzDRef=c=>String((c&&c.dzDeflRef)||'').trim();
+const DZ_DEFL_T={get excel(){ const r=dzDRef(CO.get()); return 'ply L/270 or 1.5 mm · members L/360 or 6 mm'+(r?' · '+r:''); },is3:'ply L/270 or 1.5 mm · members L/360 or 3 mm · IS 14687 cl. 7.5'};
+function dzDRefSet(v){ const c=CO.get(); if(!dzCanCrit(c)) return toast('Criteria are locked.'); coHist(c,'Deflection reference',dzDRef(c),v); c.dzDeflRef=String(v||'').trim(); coSave(c); }
+function dzDeflSet(v){ const c=CO.get(); if(!dzCanCrit(c)) return toast('Criteria are locked.'); coHist(c,'Deflection criterion',DZ_DEFL_T[dzDefl(c)],DZ_DEFL_T[v]); c.dzDefl=v; coSave(c); toast('Deflection limit: '+(v==='is3'?'L/360 or 3 mm':'L/360 or 6 mm')); }
+{ const _m=dzMats; dzMats=function(c){ const L=_m(c); if(dzDefl(c)==='is3') L.forEach(y=>{ if(['Secondary','Primary'].includes(y.g)) y.ab=Math.min(num(y.ab)||6,3); }); return L; }; }
+{ const _al=alRun; alRun=function(c,d){ const r=_al(c,d); if(dzDefl(c)==='is3') r.ck.forEach(x=>{ if(x.u==='mm'&&x.g!=='Skin'){ x.al=Math.min(x.al,3); x.r=x.al>0?x.a/x.al:9; } }); r.ok=r.ck.every(x=>x.r<=1+1e-9); r.fail=r.ck.filter(x=>x.r>1+1e-9).length; r.tight=r.ck.filter(x=>x.r>0.95&&x.r<=1+1e-9).length; return r; }; }
+{ const _p=PAGES.dzCrit; PAGES.dzCrit=()=>{ let h=_p(); if(!dzLv()) return h; const c=CO.get(), ed=dzCanCrit(c), v=dzDefl(c);
+  const box=panel('Deflection limit',`<div class="chips">${['excel','is3'].map(k=>`<button class="btn ${v===k?'p':''}" ${ed?'':'disabled'} onclick="dzDeflSet('${k}')">${v===k?'● ':'○ '}${k==='excel'?'L/360 or 6 mm'+(dzDRef(c)?' · '+esc(dzDRef(c)):''):'L/360 or 3 mm · IS 14687 cl. 7.5'}</button>`).join('')}</div><div class="frm"><label>Reference for the 6 mm limit (as written in your sheet)<input class="coi" style="width:420px" ${ed?'':'disabled'} placeholder="e.g. IS 14687 : 1999 · company practice · consultant spec" value="${esc(dzDRef(c))}" onchange="dzDRefSet(this.value)"></label></div>`
+   +simpleTable([['Member'],['L/360 or 6 mm'+(dzDRef(c)?' · '+esc(dzDRef(c)):'')],['L/360 or 3 mm · IS 14687']],[['Plywood / sheathing','L/270 or 1.5 mm','L/270 or 1.5 mm'],['Secondary · H-beam','L/360 or 6 mm','L/360 or 3 mm'],['Primary · ISMC · waler','L/360 or 6 mm','L/360 or 3 mm'],['Aluminium side channel · waller','L/270','L/270 or 3 mm']].map(r=>`<tr><td class="calc">${r[0]}</td><td class="calc ${v==='excel'?'':'muted'}">${v==='excel'?'<b>'+r[1]+'</b>':r[1]}</td><td class="calc ${v==='is3'?'':'muted'}">${v==='is3'?'<b>'+r[2]+'</b>':r[2]}</td></tr>`))
+   +'<p class="note">Applies to every design. 3 mm changes results only for spans above 1.08 m (L/360 = 3 mm). The criterion in use is printed on each calculation report.</p>');
+  const i=h.indexOf('<div class="panel"><div class="ph"><span>Design criteria · Sheathing'); return i>=0?h.slice(0,i)+box+h.slice(i):h+box; }; }
+{ const _b=dzRepBody; dzRepBody=function(c,d){ const B=_b(c,d); if(B&&B.S&&B.S[0]) B.S[0].rows.push({l:'Deflection criterion',ref:DZ_DEFL_T[dzDefl(c)],v:'',u:''}); return B; }; }
+{ const _h=PAGES.dzHome; PAGES.dzHome=()=>{ const h=_h(); if(!dzLv()) return h; const c=CO.get(); return h.replace(/(criteria (?:open|locked[^<]*))/,'$1 · defl. '+(dzDefl(c)==='is3'?'IS 3 mm':'Excel 6 mm')); }; }
+
+/* ================= BEAM DESIGN · bottom + sides ================= */
+DZ_STD.Beam='IS 14687 · IS 875 (Pt 2) · IS 883 · IS 800';
+const dzTSh=c=>(c&&c.dzTShear)==='sheet'?'sheet':'is';
+DZ_DEF.push(
+ {id:'dm-t23',g:'Secondary',n:'Timber 2"×3"',stock:'Timber 2x3',tim:{A:3554.8,Z:28592.7,I:689941.7,fb:9.5,fv:0.84,E:11650},kM:0.107,kV:0.625,kD:0.0066,Ln:360,ab:1.5,src:'IS 883 · fb 9.5 · q 0.84 · E 11,650',ok:0,
+   comp:[['Timber','Grade C · IS 883 Table 1'],['Section','2" × 3" (A 3,555 mm² · Z 28,593 mm³ · I 6,89,942 mm⁴)'],['Bending fb','9.5 N/mm²'],['Horizontal shear q','0.84 N/mm²'],['E','11,650 N/mm²'],['Continuous span','M 0.107 wL² · V 0.625 wL · δ 0.0066 wL⁴/EI']]},
+ {id:'dm-t34',g:'Secondary',n:'Timber 3"×4"',stock:'Timber 3x4',tim:{A:7741.9,Z:131096.5,I:6659702.8,fb:9.5,fv:0.84,E:11650},kM:0.107,kV:0.625,kD:0.0066,Ln:360,ab:1.5,src:'IS 883 · fb 9.5 · q 0.84 · E 11,650',ok:0,
+   comp:[['Timber','Grade C · IS 883 Table 1'],['Section','3" × 4" (A 7,742 mm² · Z 1,31,097 mm³ · I 66,59,703 mm⁴)'],['Bending fb','9.5 N/mm²'],['Horizontal shear q','0.84 N/mm²'],['E','11,650 N/mm²']]},
+ {id:'dm-tie73',g:'Tie',n:'Tie rod (test report 7.3 T)',stock:'Tie rod',cap:73,src:'Test report 7.3 T',ok:0});
+{ const _m=dzMats; dzMats=function(c){ const L=_m(c), sh=dzTSh(c); L.forEach(y=>{ if(y.tim){ const t=y.tim; y.M=t.fb*t.Z/1e6; y.V=(sh==='is'?2/3:1)*t.fv*t.A/1e3; y.EI=t.E*t.I/1e9; y.miss=false; } }); return L; }; }
+function dzTShSet(v){ const c=CO.get(); if(!dzCanCrit(c)) return toast('Criteria are locked.'); c.dzTShear=v; coSave(c); toast('Timber shear: '+(v==='is'?'IS 883 · ⅔ × A × q':'A × q')); }
+DZ_IN.Beam={b:450,D:600,ts:150,ply:'dm-ply12',sec:'dm-sq5036',pri:'dm-ismc1',sup:'dm-cup',p1:0.25,p2:1.25,p3:1.25,pb:'full',R:0.5,T:30,C2:0.45,sply:'dm-ply12',ster:'dm-t23',ssec:'dm-t34',tie:'dm-tie73',s1:0.3,s2:0.8,s3:0.9};
+DZ_PRE.Beam='FW-BEAM-'; DZ_PG.Beam='dzBeam';
+function beamRun(c,d){ const a=Object.assign(dzCl(DZ_IN.Beam),d.in||{}), L=dzLoad(c), g=id=>dzMat(c,id);
+  const M={ply:g(a.ply),sec:g(a.sec),pri:g(a.pri),sup:g(a.sup),sply:g(a.sply),ster:g(a.ster),ssec:g(a.ssec),tie:g(a.tie)};
+  if(Object.values(M).some(x=>!x)) return {err:'Select all materials.'}; const mi=Object.values(M).filter(x=>x.miss); if(mi.length) return {err:'EI missing for '+mi.map(x=>x.n).join(', ')+' · enter it in Design Criteria.'};
+  const D=a.D/1000, b=a.b/1000, W=L.rho*D+L.sw+L.ll, Ws=L.rho*a.ts/1000+L.sw+L.ll;
+  const wp=Ws*a.p2+2*Math.max(W-Ws,0)*Math.min(b,a.p3)*a.p2/a.p3;
+  const B=[dzMem(M.ply,W,a.p1),dzMem(M.sec,W*a.p1,a.p2),dzMem(M.pri,wp,a.p3)];
+  const cup=W*b*a.p2/2+Ws*Math.max(a.p3-b,0)/2*a.p2, cupOk=cup<=num(M.sup.cap)+1e-9;
+  const pr=ciria(L.rho,1,a.R,a.C2,a.T,D,a.pb==='full'), P=pr.use;
+  const S=[dzMem(M.sply,P,a.s1),dzMem(M.ster,P*a.s1,a.s2),dzMem(M.ssec,P*a.s2,a.s3)], tl=P*a.s2*a.s3, tieOk=tl<=num(M.tie.cap)+1e-9;
+  const ok=B.every(x=>x.ok)&&cupOk&&S.every(x=>x.ok)&&tieOk;
+  return {a,L,M,W,Ws,wp,B,cup,cupOk,pr,P,S,tl,tieOk,ok,okB:B.every(x=>x.ok)&&cupOk,okS:S.every(x=>x.ok)&&tieOk,fail:B.concat(S).filter(x=>!x.ok).length+(cupOk?0:1)+(tieOk?0:1),
+    sys:`Bottom: ${M.ply.n} @ ${a.p1} + ${M.sec.n} @ ${a.p2} + ${M.pri.n} @ ${a.p3} + ${M.sup.n} · Sides: ${M.sply.n} @ ${a.s1} + ${M.ster.n} @ ${a.s2} + ${M.ssec.n} @ ${a.s3} + ${M.tie.n}`,grid:a.p2+' × '+a.p3}; }
+{ const _e=dzEval; dzEval=function(c,d){ return d.el==='Beam'?beamRun(c,d):_e(c,d); }; }
+{ const _a=dzApprove; dzApprove=function(id){ const c=CO.get(), d=c.dzDes.find(x=>x.id===id); if(!d||d.el!=='Beam') return _a(id); if(dzLv()<3) return toast('Approval needs Design: Approve.');
+  const r=beamRun(c,d); if(r.err||!r.ok) return toast('Design is not safe · cannot approve.'); const un=Object.values(r.M).filter(m=>!m.ok);
+  if(un.length&&!confirm('Not verified: '+[...new Set(un.map(m=>m.n))].join(', ')+'. Approve anyway?')) return; d.status='Approved'; d.appBy=audWho(); d.appAt=todayStr(); coSave(c); toast('Design approved.'); }; }
+const dzBmHd=[['Member'],['Load w (kN/m)',1],['Safe · BM',1],['Safe · SF',1],['Safe · defl.',1],['Max safe span',1],['Provided',1],['Result']];
+const dzBmRow=(lab,r)=>`<tr${r.ok?'':' class="tkrow"'}><td class="calc"><b>${lab}</b><br><small class="muted">${esc(r.x?r.x.n:'')}</small></td><td class="calc r">${dz3(r.w,2)}</td><td class="calc r">${dz3(r.Lm)}</td><td class="calc r">${dz3(r.Lv)}</td><td class="calc r">${dz3(r.Ld)}</td><td class="calc r"><b>${dz3(r.L)}</b> <small class="muted">${r.gov}</small></td><td class="calc r"><b>${dz3(r.prov,2)}</b></td><td class="calc">${r.ok?PILL('ok','OK'):PILL('bd','UNSAFE')}</td></tr>`;
+{ const _m=dzMem; dzMem=function(x,w,prov){ const r=_m(x,w,prov); r.x=x; return r; }; }
+PAGES.dzBeam=()=>{ if(!dzLv()) return dzLocked(); const {c,d,h,ed}=dzHead('Beam','beam design'); if(!d) return h+panel('Beam design','<p class="note">No beam design yet. Click "+ New beam design".</p>');
+  d.in=Object.assign(dzCl(DZ_IN.Beam),d.in||{}); const a=d.in, M=dzMats(c), opt=(...G)=>M.filter(x=>G.includes(x.g)).map(x=>[x.id,x.n+(x.ok?'':' (verify)')+(x.miss?' · EI missing':'')]);
+  const inp=dzInTable(d,ed,[['—','Beam'],['b','Beam width b','mm',5],['D','Beam depth D (incl. slab)','mm',5],['ts','Slab thickness beside beam','mm',5],
+   ['—','Bottom'],['ply','Plywood','',0,opt('Sheathing')],['p1','Secondary spacing (ply span)','m',0.05],['sec','Secondary','',0,opt('Secondary')],['p2','Primary spacing (secondary span)','m',0.05],['pri','Primary','',0,opt('Primary','Secondary')],['p3','Support spacing (primary span)','m',0.05],['sup','Support','',0,opt('Support')],
+   ['—','Sides'],['pb','Pressure basis','',0,[['full','Full liquid head (D × depth)'],['ciria','CIRIA (rate of rise controlled)']]],...(a.pb==='full'?[]:[['R','Rate of rise','m/hr'],['T','Concrete temperature','°C',1],['C2','C2 · constituent','',0,[[0.3,'0.3 · OPC, no retarder'],[0.45,'0.45 · retarder / blended'],[0.6,'0.6 · blended + retarder']]]]),
+   ['sply','Side plywood','',0,opt('Sheathing')],['s1','Tertiary spacing (ply span)','m',0.05],['ster','Tertiary','',0,opt('Secondary')],['s2','Secondary spacing (tertiary span)','m',0.05],['ssec','Side secondary','',0,opt('Secondary','Primary')],['s3','Tie spacing (secondary span)','m',0.05],['tie','Tie','',0,opt('Tie')]]);
+  const r=beamRun(c,d); if(r.err) return h+dzDocPanel(d,ed)+`<div class="grid2">`+panel('Inputs',inp)+panel('Result',`<p class="note">${r.err}</p>`)+`</div>`;
+  let o=h+`<div class="kpis">${kpi('Bottom load W',dz3(r.W,1)+' kN/m²',`${r.L.rho} × ${a.D/1000} + ${r.L.sw} + ${r.L.ll}`)}${kpi('Side pressure P',r.P+' kN/m²',r.pr.full?'full liquid head':'CIRIA · '+a.R+' m/hr')}${kpi('Bottom',r.okB?'All OK':'UNSAFE','ply · secondary · primary · support',r.okB?'good':'bad')}${kpi('Sides',r.okS?'All OK':'UNSAFE','ply · tertiary · secondary · tie',r.okS?'good':'bad')}</div>`+(r.ok?'':`<div class="banner">${PILL('bd','UNSAFE')} <span>Reduce the spacing shown in red, or change material.</span></div>`)+dzDocPanel(d,ed);
+  o+=`<div class="grid2">`+panel('Inputs',inp)+panel('Side pressure',simpleTable([['Item'],['Value',1],['Unit']],[['Density D',r.L.rho,'kN/m³'],['Depth (pour height)',a.D/1000,'m'],['Full liquid head D × depth',dz3(r.pr.hyd,1),'kN/m²'],['CIRIA (C1 1.0) · '+a.R+' m/hr · '+a.T+' °C',dz3(Math.min(r.pr.cal,r.pr.hyd),1),'kN/m²'],['<b>Design pressure P</b>','<b>'+r.P+'</b>','kN/m²']].map(x=>`<tr><td class="calc">${x[0]}</td><td class="calc r">${x[1]}</td><td class="calc">${x[2]}</td></tr>`))
+   +`<p class="note">Beam sides are poured with the slab · full liquid head is the safe default. Timber shear: ${dzTSh(c)==='is'?'IS 883 · V = ⅔ × A × q':'V = A × q'} (Design Criteria). Primary load: slab ${dz3(r.Ws,2)} × spacing as UDL + beam (W − slab) × b as point load, taken as equivalent UDL 2P ÷ L.</p>`)+`</div>`;
+  o+=panel('Beam bottom · W = '+dz3(r.W,2)+' kN/m²',simpleTable(dzBmHd,[dzBmRow('Plywood (bottom)',r.B[0]),dzBmRow('Secondary',r.B[1]),dzBmRow('Primary',r.B[2])])+simpleTable([['Support'],['Load per vertical',1],['Working'],['SWL',1],['Result']],[`<tr${r.cupOk?'':' class="tkrow"'}><td class="calc"><b>${esc(r.M.sup.n)}</b></td><td class="calc r"><b>${dz3(r.cup,2)} kN</b></td><td class="calc muted">W × b × ${a.p2} ÷ 2 + slab ${dz3(r.Ws,2)} × (${a.p3} − b) ÷ 2 × ${a.p2}</td><td class="calc r">${dz3(r.M.sup.cap,1)} kN</td><td class="calc">${r.cupOk?PILL('ok','OK'):PILL('bd','UNSAFE')}</td></tr>`]));
+  o+=panel('Beam sides · P = '+r.P+' kN/m²',simpleTable(dzBmHd,[dzBmRow('Plywood (side)',r.S[0]),dzBmRow('Tertiary',r.S[1]),dzBmRow('Secondary',r.S[2])])+simpleTable([['Tie'],['Load',1],['Working'],['Allowed',1],['Result']],[`<tr${r.tieOk?'':' class="tkrow"'}><td class="calc"><b>${esc(r.M.tie.n)}</b></td><td class="calc r"><b>${dz3(r.tl,2)} kN</b></td><td class="calc muted">P × ${a.s2} × ${a.s3}</td><td class="calc r">${dz3(r.M.tie.cap,1)} kN</td><td class="calc">${r.tieOk?PILL('ok','OK'):PILL('bd','UNSAFE')}</td></tr>`])+dzActs(d,ed));
+  return o; };
+{ const _b=dzRepBody; dzRepBody=function(c,d){ if(d.el!=='Beam') return _b(c,d); const r=beamRun(c,d); if(r.err) return {err:r.err}; const a=r.a, f=(x,n=3)=>dz3(x,n), S=[]; let n=0;
+  const sec=(t,rows)=>S.push({t:(++n)+'.0 '+t,rows}), R=(l,ref,v,u,o={})=>Object.assign({l,ref,v,u},o);
+  const mem=(t,X,wl,nx)=>{ const x=X.x; sec(t,[R(x.n,x.src||'','','',{h:1}),R('Allowable bending moment','',f(x.M,3),x.g==='Sheathing'?'kNm/m':'kNm'),R('Allowable shear force','',f(x.V,2),x.g==='Sheathing'?'kN/m':'kN'),R('EI','',f(x.EI,2),x.g==='Sheathing'?'kNm²/m':'kNm²'),R('Allowable deflection','Span/'+x.Ln+' or '+x.ab+' mm','',''),R('Design line load (w)',wl,f(X.w,3),'kN/m'),R('Safe span against BM','√(M ÷ ('+x.kM+' × w))',f(X.Lm),'m'),R('Safe span against SF','V ÷ ('+x.kV+' × w)',f(X.Lv),'m'),R('Safe span against deflection',x.kD+' × w × L⁴ ÷ EI',f(X.Ld),'m'),R('Maximum safe '+nx,'governs: '+X.gov,f(X.L),'m',{b:1}),R('Provided '+nx,'',f(X.prov,2),'m',{b:1,ok:X.ok})]); };
+  sec('LOAD CALCULATION · BEAM BOTTOM (IS: 14687 & IS: 875)',[R('Beam size b × D','',a.b+' × '+a.D,'mm'),R('Density of wet concrete','[IS 14687, Cl. 7.3.1.1(b)]',f(r.L.rho,1),'kN/m³'),R('Self weight of concrete','ρ × D',f(r.L.rho*a.D/1000,2),'kN/m²'),R('Self weight of formwork','[IS 14687, Cl. 7.3.1.2]',f(r.L.sw,2),'kN/m²'),R('Construction live load','[IS 875 (Pt 2), Table 2]',f(r.L.ll,2),'kN/m²'),R('Total design load (W)','',f(r.W,2),'kN/m²',{b:1}),R('Slab load beside beam ('+a.ts+' mm)','',f(r.Ws,2),'kN/m²'),R('Deflection criterion',DZ_DEFL_T[dzDefl(c)],'',''),R('Timber shear',dzTSh(c)==='is'?'IS 883 · ⅔ × A × q':'A × q','','')]);
+  mem('DESIGN OF PLYWOOD · BEAM BOTTOM',r.B[0],'W × 1 m','secondary spacing');
+  mem('DESIGN OF SECONDARY · BEAM BOTTOM',r.B[1],'W × '+a.p1,'primary spacing');
+  mem('DESIGN OF PRIMARY · BEAM BOTTOM',r.B[2],'slab × '+a.p2+' + 2 × beam point load ÷ L','support spacing');
+  sec('CHECK FOR SUPPORT',[R(r.M.sup.n,r.M.sup.src||'','','',{h:1}),R('Load on one vertical','W·b·'+a.p2+'÷2 + slab·('+a.p3+'−b)÷2·'+a.p2,f(r.cup,2),'kN'),R('Safe working load','',f(r.M.sup.cap,1),'kN'),R('Utilisation','',Math.round(r.cup/r.M.sup.cap*100)+' %','',{b:1,ok:r.cupOk})]);
+  sec('BEAM SIDES · LATERAL PRESSURE',[R('Pour height (beam depth)','',f(a.D/1000,3),'m'),R('Full liquid head','D × depth',f(r.pr.hyd,1),'kN/m²'),...(r.pr.full&&a.pb==='full'?[]:[R('CIRIA 108 (C1 1.0)','R '+a.R+' m/hr · T '+a.T+' °C · C2 '+a.C2,f(Math.min(r.pr.cal,r.pr.hyd),1),'kN/m²')]),R('Design pressure (P)',a.pb==='full'?'full liquid head':'CIRIA',r.P,'kN/m²',{b:1})]);
+  mem('DESIGN OF PLYWOOD · BEAM SIDE',r.S[0],'P × 1 m','tertiary spacing'); mem('DESIGN OF TERTIARY · BEAM SIDE',r.S[1],'P × '+a.s1,'secondary spacing'); mem('DESIGN OF SECONDARY · BEAM SIDE',r.S[2],'P × '+a.s2,'tie spacing');
+  sec('CHECK FOR TIE',[R(r.M.tie.n,r.M.tie.src||'','','',{h:1}),R('Load on one tie','P × '+a.s2+' × '+a.s3,f(r.tl,2),'kN'),R('Allowable load','',f(r.M.tie.cap,1),'kN'),R('Utilisation','',Math.round(r.tl/r.M.tie.cap*100)+' %','',{b:1,ok:r.tieOk})]);
+  sec('RESULT',[R('Formwork system',r.sys,'',''),R('Design status','',r.ok?'SAFE':'UNSAFE','',{b:1,ok:r.ok})]); return {S,ok:r.ok}; }; }
+{ const _p=PAGES.dzCrit; PAGES.dzCrit=()=>{ let h=_p(); if(!dzLv()) return h; const c=CO.get(), ed=dzCanCrit(c), v=dzTSh(c);
+  const box=panel('Timber shear (IS 883)',`<div class="chips">${[['is','IS 883 · V = ⅔ × A × q'],['sheet','V = A × q']].map(([k,l])=>`<button class="btn ${v===k?'p':''}" ${ed?'':'disabled'} onclick="dzTShSet('${k}')">${v===k?'● ':'○ '}${l}</button>`).join('')}</div><p class="note">IS 883: horizontal shear stress = 3V ÷ 2bd, so allowable V = ⅔ × b × d × q. Applies to timber members (2"×3", 3"×4").</p>`);
+  const i=h.indexOf('<div class="panel"><div class="ph"><span>Design criteria · Sheathing'); return i>=0?h.slice(0,i)+box+h.slice(i):h+box; }; }
+(()=>{ const g=NAV_CO.find(x=>x.g==='Design'); if(g){ const i=g.items.findIndex(x=>x[0]==='dzCol'); g.items.splice(i+1,0,['dzBeam','Beam Design']); } ICONS.dzBeam='<path d="M3 8h18v5H3z"/><path d="M6 13v7M18 13v7M3 8l3-3h12l3 3"/>'; })();
+{ const _r=PAGES.dzReg; PAGES.dzReg=()=>{ const h=_r(); return dzLv()>=2?h.replace('+ Column / wall · H-beam</button>','+ Column / wall · H-beam</button><button class="btn sm p" onclick="dzNew(\'Beam\')">+ Beam</button>'):h; }; }
+try{ setNav(); }catch(e){}
 
 </script>
 </body>
