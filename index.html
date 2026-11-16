@@ -625,6 +625,33 @@ select.dzin{width:auto;max-width:230px;text-align:left}
 .rp-fig{break-inside:avoid;page-break-inside:avoid;margin:4px 0 10px}.rp-fig svg{width:100%;height:auto;max-width:100%;border:1px solid #d5dce4;border-radius:4px;margin-bottom:6px}.rp-fig table.sheet{font-size:11px}.rp-fig .note{font-size:10.5px;color:#444}
 @media print{.rp-fig{break-inside:avoid}}
 #dzrep .rp-f{white-space:pre-line;line-height:1.45}
+#dzrep .rp-note{margin:14px 0 6px;padding:6px 10px;border:1px solid #c9a227;background:#fdf6dc;font-size:12px;font-weight:600}
+.tdc .tdtop{display:flex;flex-wrap:wrap;align-items:center;gap:10px 16px;justify-content:space-between}
+.tdc .tdtop h3{margin:0}
+.tdprog{min-width:160px;font-size:13px}.tdbar{height:6px;background:#e3e8ed;border-radius:3px;margin-top:3px}.tdbar i{display:block;height:100%;background:#2f9e5b;border-radius:3px}
+.tdsrch{width:100%;max-width:320px;margin:10px 0 8px;padding:7px 10px;border:1px solid #cfd6dd;border-radius:6px;font-size:14px}
+.tdchips{display:flex;flex-wrap:wrap;gap:6px}
+.tdch{border:1px solid #cfd6dd;background:#fff;border-radius:18px;padding:6px 12px;font-size:13px;cursor:pointer}
+.tdch.dn{background:#e8f5ec;border-color:#b9dcc5;color:#17733a}
+.tdch.on{background:#22384d;border-color:#22384d;color:#fff}
+.tdst{display:inline-flex;align-items:center;border:1px solid #cfd6dd;border-radius:6px;overflow:hidden;background:#fff}
+.tdst button{border:0;background:#eef1f4;width:30px;height:32px;font-size:17px;cursor:pointer}
+.tdst input{width:52px;border:0;text-align:center;font-size:14px;height:32px;-moz-appearance:textfield}
+.tdst input::-webkit-inner-spin-button{-webkit-appearance:none}
+.tdt td{vertical-align:middle}.tdt th.c{text-align:center}
+.tdchg{color:#1d5fa8;font-weight:700}
+@media (max-width:640px){
+ .tdt thead{display:none}
+ .tdt,.tdt tbody{display:block!important;width:100%!important;min-width:0!important}
+ .tdt tr{display:grid!important;grid-template-columns:minmax(0,1fr) minmax(0,1fr)!important;height:auto!important;gap:6px 10px;padding:10px 4px;border-bottom:1px solid #dde3e8}
+ .tdt td{display:block!important;border:0!important;padding:0!important;text-align:left!important;height:auto!important;min-width:0!important;max-width:none!important;width:auto!important;white-space:normal!important;overflow:visible!important}
+ .tdt td.tdn{grid-column:1/-1;font-size:15px}
+ .tdt td[data-l]::before{content:attr(data-l);display:block;font-size:11px;color:#5d6a76;margin-bottom:2px}
+ .tdt td[data-l="With him now"],.tdt td[data-l="After save"]{font-size:15px;font-weight:700}
+ .tdst{display:flex;width:100%;min-width:0}.tdst input{flex:1;width:auto;min-width:0}.tdst button{width:40px;height:38px}
+ .tdc .qact{flex-direction:column;align-items:stretch}.tdc .qact .qsave{width:100%}
+ .tw:has(.tdt){overflow:visible}
+}
 </style>
 </head>
 <body>
@@ -634,7 +661,7 @@ select.dzin{width:auto;max-width:230px;text-align:left}
 <input type="file" id="restoreFile" accept=".json" style="display:none" onchange="if(this.files[0])restoreBackup(this.files[0]);this.value=''">
 <input type="file" id="fsPick" style="display:none" onchange="fsOpenFile(this.files[0]);this.value=''">
 
-<script>window.__FORMTRACK_PWA=true; window.__FORMTRACK_VER="2026.11.15-2141"; window.__FORMTRACK_VERNAME="15 Nov 21:41"; window.__FT_TRIAL_FROM=1793358725887; window.__FT_OWNER_KEYS=["FTK1.KFWlfr8L9B9vCV5zDqch0g==.dbjdxh8PZxOLP1CNQ2z3RabZkTuh7AORMJY1xre+tWo=", "FTK1.Osl5ooyWCagTRuMdk06Obg==.rchABMlUZsicdxq192DnzmUcdgRXTqVE0LzUln8iqDY="]; window.__FT_ACCESS_PUB="SC1QzgBryXETIvpdPX-L1vNG0PfXbclYD1uqU4rGGy0"; window.__FT_BLOCKED=[];</script>
+<script>window.__FORMTRACK_PWA=true; window.__FORMTRACK_VER="2026.11.16-1552"; window.__FORMTRACK_VERNAME="16 Nov 15:52"; window.__FT_TRIAL_FROM=1793358725887; window.__FT_OWNER_KEYS=["FTK1.KFWlfr8L9B9vCV5zDqch0g==.dbjdxh8PZxOLP1CNQ2z3RabZkTuh7AORMJY1xre+tWo=", "FTK1.Osl5ooyWCagTRuMdk06Obg==.rchABMlUZsicdxq192DnzmUcdgRXTqVE0LzUln8iqDY="]; window.__FT_ACCESS_PUB="SC1QzgBryXETIvpdPX-L1vNG0PfXbclYD1uqU4rGGy0"; window.__FT_BLOCKED=[];</script>
 <script>
 /* FormTrack */
 const STORE_KEY = 'formtrack_data_v2';
@@ -4447,8 +4474,58 @@ function qbView(kind){ const today=todayStr(), cons=state.contractors; if(!cons.
     <div class="tw"><table class="sheet qbt"><thead><tr><th>Contractor</th><th>System</th><th>Area</th><th class="r">Carpenters</th><th class="r">Helpers</th></tr></thead><tbody>${cons.map(c=>{ const t=last(c); return `<tr><td class="v"><b>${esc(c.name)}</b></td><td><select id="qb_s_${c.id}">${sOpt(t.systemId)}</select></td><td><select id="qb_a_${c.id}">${aOpt(t.areaId)}</select></td><td><input id="qb_c_${c.id}" type="number" inputmode="numeric" class="qbn" value="${t.carpenters||''}"></td><td><input id="qb_h_${c.id}" type="number" inputmode="numeric" class="qbn" value="${t.helpers||''}"></td></tr>`; }).join('')}</tbody></table></div>
     <div class="qact"><small class="muted" style="flex:1">Filled with each contractor's last day – change only what is different, clear the ones not working.</small><button class="btn p qsave" onclick="qbSave('lb')">Save all</button></div></div>`;
 }
-PAGES.quick=()=>{ const mode=['bis','blb'].includes(state.ui.qMode)?state.ui.qMode:'one';
-  const tabs=`<div class="chips dtabs">${[['one','One by one'],['bis','Batch – store issue'],['blb','Batch – labour']].map(([k,l])=>`<button class="btn ${mode===k?'p':''}" onclick="setUI('qMode','${k}')">${l}</button>`).join('')}</div>`;
+
+/* ================= TODAY · by contractor (one screen: issue / return / damage / missing / labour) ================= */
+const TD_T=[['i','Issue','Issued to contractor'],['g','Return good','Returned good'],['d','Return damaged','Returned damaged'],['m','Missing','Missing']];
+const TDX={add:{}};
+function tdDate(){ return state.ui.tdDate||todayStr(); }
+function tdDone(cid,d){ return state.storeTx.some(t=>t.contractorId===cid&&t.date===d)||state.labour.some(t=>t.contractorId===cid&&t.date===d); }
+function tdCons(){ const d=tdDate(), cut=new Date(Date.now()-30*864e5).toISOString().slice(0,10), act={};
+  state.storeTx.concat(state.labour).forEach(t=>{ if(t.contractorId&&t.date>=cut) act[t.contractorId]=(act[t.contractorId]||0)+1; });
+  return state.contractors.slice().sort((a,b)=>(act[b.id]||0)-(act[a.id]||0)||String(a.name).localeCompare(String(b.name))).map(c=>({c,done:tdDone(c.id,d),n:act[c.id]||0})); }
+function tdItems(cid){ const S=SK.mat, ids=new Set(state.storeTx.filter(t=>t.contractorId===cid).map(t=>t.itemId)); (TDX.add[cid]||[]).forEach(i=>ids.add(i));
+  return S.items().filter(i=>ids.has(i.id)).map(i=>({i,hold:storeBal(i.id,cid).withCon})).sort((a,b)=>b.hold-a.hold||String(a.i.item).localeCompare(String(b.i.item))); }
+function tdStep(id,k){ const e=document.getElementById(id); if(!e) return; e.value=Math.max(0,(num(e.value)||0)+k)||''; tdAfter(e.dataset.it); }
+function tdAfter(it){ const r=document.getElementById('tdr_'+it); if(!r) return; const v=k=>num((document.getElementById('td_'+k+'_'+it)||{}).value)||0;
+  const a=num(r.dataset.h)+v('i')-v('g')-v('d')-v('m'); const o=document.getElementById('tda_'+it); if(o){ o.textContent=fmtN(a); o.className='r '+(a<-1e-9?'neg':v('i')||v('g')||v('d')||v('m')?'tdchg':''); } }
+function tdLast(cid){ const L=state.storeTx.filter(t=>t.contractorId===cid&&TD_T.some(x=>x[2]===t.type)); if(!L.length) return toast('No earlier entry for this contractor.');
+  const d=L.map(t=>t.date).sort().pop(); L.filter(t=>t.date===d).forEach(t=>{ const k=TD_T.find(x=>x[2]===t.type)[0], e=document.getElementById('td_'+k+'_'+t.itemId); if(e){ e.value=num(e.value)+num(t.qty); tdAfter(t.itemId); } });
+  const lb=state.labour.filter(t=>t.contractorId===cid).slice(-1)[0]; if(lb){ const a=document.getElementById('td_car'), b=document.getElementById('td_hel'); if(a) a.value=lb.carpenters||''; if(b) b.value=lb.helpers||''; }
+  toast('Filled from '+fmtD(d)+' – change only what is different.'); }
+function tdAdd(cid,it){ if(!it) return; (TDX.add[cid]=TDX.add[cid]||[]).push(it); render(); }
+function tdSave(cid){ const d=tdDate(), S=SK.mat, ar=qv('td_area'), sy=qv('td_sys'); let n=0, bad='';
+  tdItems(cid).forEach(({i,hold})=>{ let h=hold; TD_T.forEach(([k,,ty])=>{ const q=num(qv('td_'+k+'_'+i.id)); if(!q) return; h+=k==='i'?q:-q;
+      state.storeTx.push({id:uid(),_u:nowMs(),date:d,type:ty,itemId:i.id,qty:q,contractorId:cid,areaId:ar,systemId:sy,doc:'',remarks:'Today screen'}); n++; });
+    if(h<-1e-9) bad=i.item; });
+  const ca=num(qv('td_car')), he=num(qv('td_hel'));
+  if(ca||he){ if(!sy||!ar) return toast('Pick system and area for labour.'); state.labour.push({id:uid(),_u:nowMs(),date:d,contractorId:cid,systemId:sy,areaId:ar,element:'',carpenters:ca,helpers:he,hours:stdH(),remarks:'Today screen'}); n++; }
+  if(!n) return toast('Nothing entered for this contractor.');
+  delete TDX.add[cid]; persist(); save(); toast(`Saved ${n} entr${n>1?'ies':'y'} ✓`+(bad?` · check ${bad}: returns more than held`:''));
+  const nx=tdCons().find(x=>!x.done&&x.c.id!==cid); state.ui.tdCon=nx?nx.c.id:cid; render(); }
+function tdView(){ const C=tdCons(), d=tdDate(); if(!C.length) return `<p class="note">Add your contractors first (Store Stock page, bottom).</p>`;
+  const cid=C.some(x=>x.c.id===state.ui.tdCon)?state.ui.tdCon:(C.find(x=>!x.done)||C[0]).c.id, con=C.find(x=>x.c.id===cid).c, done=C.filter(x=>x.done).length;
+  let h=`<div class="qcard tdc"><div class="tdtop"><h3>📋 Today · by contractor <small>pick contractor → tap +/– → Save</small></h3><label>Date<input type="date" value="${d}" onchange="setUI('tdDate',this.value)"></label>
+    <div class="tdprog"><b>${done} of ${C.length}</b> entered<div class="tdbar"><i style="width:${Math.round(done/C.length*100)}%"></i></div></div></div>
+    <input class="tdsrch" placeholder="🔍 Search contractor" oninput="const q=this.value.toLowerCase();document.querySelectorAll('.tdch').forEach(b=>b.style.display=b.dataset.n.includes(q)?'':'none')">
+    <div class="tdchips">${C.map(x=>`<button class="tdch ${x.c.id===cid?'on':''} ${x.done?'dn':''}" data-n="${esc(String(x.c.name).toLowerCase())}" onclick="setUI('tdCon','${x.c.id}')">${x.done?'✓ ':''}${esc(x.c.name)}</button>`).join('')}</div></div>`;
+  const R=tdItems(cid), S=SK.mat, lb=state.labour.filter(t=>t.contractorId===cid).slice(-1)[0]||{}, li=state.storeTx.filter(t=>t.contractorId===cid&&t.areaId).slice(-1)[0]||{};
+  const st=(k,it)=>`<div class="tdst"><button tabindex="-1" onclick="tdStep('td_${k}_${it}',-1)">−</button><input id="td_${k}_${it}" data-it="${it}" type="number" inputmode="decimal" oninput="tdAfter('${it}')"><button tabindex="-1" onclick="tdStep('td_${k}_${it}',1)">+</button></div>`;
+  const sOpt=v=>`<option value="">—</option>`+qOpt(state.systems,v,x=>x.name), aOpt=v=>`<option value="">—</option>`+qOpt(state.areas,v,x=>x.name);
+  const hold=R.filter(x=>x.hold>1e-9).length;
+  h+=`<div class="qcard tdc"><div class="tdtop"><h3>${esc(con.name)} <small>${hold} item${hold===1?'':'s'} with him now${tdDone(cid,d)?' · <b class="pos">✓ entered today</b>':''}</small></h3><button class="btn" onclick="tdLast('${cid}')">↺ Same as last time</button></div>
+    <div class="qform"><label>Area<select id="td_area">${aOpt(lb.areaId||li.areaId)}</select></label><label>System<select id="td_sys">${sOpt(lb.systemId||li.systemId)}</select></label></div>
+    <div class="tw"><table class="sheet tdt"><thead><tr><th>Item</th><th class="r">With him now</th>${TD_T.map(x=>`<th class="c">${x[1]}</th>`).join('')}<th class="r">After save</th></tr></thead><tbody>
+    ${R.length?R.map(({i,hold})=>`<tr id="tdr_${i.id}" data-h="${hold}"><td class="tdn"><b>${esc(i.item)}</b> <small class="muted">${esc(S.unit(i))}</small></td><td class="r" data-l="With him now">${fmtN(hold)}</td>${TD_T.map(([k,l])=>`<td data-l="${l}">${st(k,i.id)}</td>`).join('')}<td class="r" data-l="After save" id="tda_${i.id}">${fmtN(hold)}</td></tr>`).join(''):`<tr><td colspan="7" class="muted">No material with this contractor yet – add an item below.</td></tr>`}
+    </tbody></table></div>
+    <div class="qform"><label class="wide">+ Add item<select onchange="tdAdd('${cid}',this.value)"><option value="">— pick item to issue —</option>${S.items().filter(i=>!R.some(x=>x.i.id===i.id)).map(i=>`<option value="${i.id}">${esc(i.item)} (${esc(S.unit(i))})</option>`).join('')}</select></label>
+    <label class="big">Carpenters<input id="td_car" type="number" inputmode="numeric" placeholder="${lb.carpenters??''}"></label><label class="big">Helpers<input id="td_hel" type="number" inputmode="numeric" placeholder="${lb.helpers??''}"></label></div>
+    <div class="qact"><small class="muted" style="flex:1">Empty boxes are skipped. Saves into Store movement and Labour – the normal pages update at once. Next pending contractor opens after Save.</small><button class="btn p qsave" onclick="tdSave('${cid}')">Save ${esc(con.name)}</button></div></div>`;
+  const T=state.storeTx.filter(t=>t.date===d&&t.contractorId&&TD_T.some(x=>x[2]===t.type)).slice(-12).reverse();
+  if(T.length) h+=`<div class="qcard"><h5 style="margin:0 0 6px">Entered on ${fmtD(d)}</h5><div class="qlist">${T.map(t=>`<div>${esc(conName(t.contractorId))} · ${esc(TD_T.find(x=>x[2]===t.type)[1])} · <b>${fmtN(t.qty)}</b> ${esc((storeObj(t.itemId)||{}).item||'')}</div>`).join('')}</div></div>`;
+  return h; }
+PAGES.quick=()=>{ const mode=['one','bis','blb'].includes(state.ui.qMode)?state.ui.qMode:'tdy';
+  const tabs=`<div class="chips dtabs">${[['tdy','📋 Today · by contractor'],['one','One by one'],['bis','Batch – store issue'],['blb','Batch – labour']].map(([k,l])=>`<button class="btn ${mode===k?'p':''}" onclick="setUI('qMode','${k}')">${l}</button>`).join('')}</div>`;
+  if(mode==='tdy') return tabs+tdView();
   if(mode==='bis') return tabs+qbView('is');
   if(mode==='blb') return tabs+qbView('lb');
   return tabs+quickOne(); };
@@ -5648,15 +5725,15 @@ function dzSec(x){ const B=num(x.B), D=num(x.D)||B, t=num(x.t), fy=num(x.fy)||25
   const b=B-2*t, d=D-2*t, A=B*D-b*d, I=(B*D**3-b*d**3)/12, Z=I/(D/2); return {A,I,Z,kg:A*7.85e-3,M:0.66*fy*Z/1e6,V:0.4*fy*A/1e3,EI:E*I/1e9}; }
 const DZ_DEF=[
  {id:'dm-ply12',g:'Sheathing',n:'Plywood 12 mm',stock:'Plywood 12 mm',M:0.20,V:6.16,EI:1.07,src:'Jha Table 5.1 · IS 4990 : 2011',ok:1},
- {id:'dm-ply15',g:'Sheathing',n:'Plywood 15 mm',stock:'Plywood 15 mm',M:0.25,V:7.50,EI:2.08,src:'Design App360',ok:0},
- {id:'dm-ply18',g:'Sheathing',n:'Plywood 18 mm',stock:'Plywood 18 mm',M:0.30,V:9.00,EI:3.61,src:'Design App360',ok:0},
+ {id:'dm-ply15',g:'Sheathing',n:'Plywood 15 mm',stock:'Plywood 15 mm',M:0.25,V:7.50,EI:2.08,src:'',ok:0},
+ {id:'dm-ply18',g:'Sheathing',n:'Plywood 18 mm',stock:'Plywood 18 mm',M:0.30,V:9.00,EI:3.61,src:'',ok:0},
  {id:'dm-sq5036',g:'Secondary',n:'SQ tube 50×50×3.6',stock:'SQ tube 50x50',sec:{type:'SQ tube',B:50,t:3.6,fy:250,E:200000},src:'Section calc · IS 800 (WSM)',ok:1},
- {id:'dm-h12',g:'Secondary',n:'H-12 timber beam',stock:'H-12 beam',M:4.90,V:9.10,EI:62.6,src:'Slab design sheet (275 mm) · values differ in files',ok:0},
- {id:'dm-t75',g:'Secondary',n:'Timber 75×100',stock:'Timber 75x100',M:1.187,V:4.20,EI:72.81,src:'Design App360',ok:0},
- {id:'dm-ismc1',g:'Primary',n:'ISMC 100 (single)',stock:'ISMC 100',M:5.70,V:117,EI:384,src:'Slab design sheet (11.4 ÷ 2)',ok:1},
+ {id:'dm-h12',g:'Secondary',n:'H-12 timber beam',stock:'H-12 beam',M:4.90,V:9.10,EI:62.6,src:'',ok:0},
+ {id:'dm-t75',g:'Secondary',n:'Timber 75×100',stock:'Timber 75x100',M:1.187,V:4.20,EI:72.81,src:'',ok:0},
+ {id:'dm-ismc1',g:'Primary',n:'ISMC 100 (single)',stock:'ISMC 100',M:5.70,V:117,EI:384,src:'SP 6(1) · IS 800',ok:1},
  {id:'dm-ismc2',g:'Primary',n:'ISMC 100 (double, B/B)',stock:'ISMC 100',per:2,M:11.40,V:234,EI:768,src:'2 × single',ok:1},
  {id:'dm-cup',g:'Support',n:'Cuplock vertical · 1.0 m lift',stock:'Cuplock vertical',cap:31.2,src:'Test report 62.4 kN ÷ FOS 2',ok:1},
- {id:'dm-prop',g:'Support',n:'Adjustable steel prop',stock:'Adjustable prop',cap:20.0,src:'Design App360',ok:0}];
+ {id:'dm-prop',g:'Support',n:'Adjustable steel prop',stock:'Adjustable prop',cap:20.0,src:'',ok:0}];
 const dzLoad=c=>Object.assign({rho:26,sw:0.5,ll:1.5,llRef:'IS875'},c.dzLoad||{});
 function dzMats(c){ const L=(c.dzMats&&c.dzMats.filter(x=>!x.del).length)?c.dzMats.filter(x=>!x.del):DZ_DEF.map(x=>JSON.parse(JSON.stringify(x)));
   return L.map(x=>{ const k=DZ_K[x.g]||{}, y=Object.assign({},k,x); if(y.sec){ const p=dzSec(y.sec); if(p){ y.M=p.M; y.V=p.V; y.EI=p.EI; y.kg=p.kg; } } return y; }); }
@@ -5833,6 +5910,8 @@ PAGES.dzSlab=()=>{ if(!dzLv()) return dzLocked(); const c=CO.get(), D=c.dzDes.fi
    <div class="frm">${ms('ply','Sheathing','Sheathing')}${ms('sec','Secondary','Secondary')}${ms('pri','Primary','Primary')}${ms('sup','Support','Support')}</div>
    <div class="frm">${ip('by','Designed by',d.by,150)}<label>Checked by<input class="coi" ${!ed?'disabled':''} value="${esc(d.chk||'')}" onchange="dzSet('${d.id}','chk',this.value)" style="width:150px"></label>${ip('no','Doc no.',d.no,150)}</div>`);
   if(r.err) return h+panel('Result',`<p class="note">${r.err}</p>`);
+  { const qa=(n,u,m)=>`<tr><td class="calc"><b>${esc(n)}</b></td><td class="calc r">${u}</td><td class="calc r">${dz3(m.L,2)} m</td><td class="calc">${m.gov}</td><td class="calc">${m.ok?PILL('ok','✓ Safe'):PILL('bd','✗ Unsafe')}</td></tr>`;
+    h+=panel('Quick answer · '+r.t+' mm slab',simpleTable([['Member'],['Span used',1],['Safe span',1],['Governed by'],['Result']],[qa(r.ply.n,r.p1+' m',r.A),qa(r.sec.n,r.p2+' m',r.B),qa(r.pri.n,r.p3+' m',r.C),`<tr><td class="calc"><b>${esc(r.sup.n)}</b></td><td class="calc r">${r.p2} × ${r.p3} m</td><td class="calc r">${dz3(r.load,1)} of ${dz3(r.sup.cap,1)} kN</td><td class="calc">${Math.round(r.ut*100)}% used</td><td class="calc">${r.ut<=1?PILL('ok','✓ Safe'):PILL('bd','✗ Unsafe')}</td></tr>`])+`<p class="note" style="margin-top:6px">${r.ok?'<b>All safe.</b> ':'<b>Not safe</b> — reduce the span shown red or change material. '}Change slab thickness above and this updates at once. Full working with formulas and references is below.</p>`); }
   const cmp=(a,b,cc,dd)=>`<tr><td class="calc">${a}</td><td class="calc r">${b}</td><td class="calc r">${cc}</td><td class="calc r">${dd}</td></tr>`, sp=x=>x?PILL('ok','Safe'):PILL('bd','Unsafe');
   const nv=(x,y)=>num(d.L)&&num(d.W)?(Math.ceil(num(d.L)/x)+1)*(Math.ceil(num(d.W)/y)+1):'—';
   h+=panel('Grid · design limit vs adopted',simpleTable([['Item'],['Design limit · ledger sizes',1],['Your standard',1],['Adopted',1]],[
@@ -5915,23 +5994,23 @@ const dzCl=x=>JSON.parse(JSON.stringify(x));
 dzSec=function(x){ const B=num(x.B), D=num(x.D)||B, t=num(x.t), fy=num(x.fy)||250, E=num(x.E)||210000; if(!B||!t||2*t>=Math.min(B,D)) return null;
   const b=B-2*t, d=D-2*t, A=B*D-b*d, I=(B*D**3-b*d**3)/12, Z=I/(D/2), Av=A*D/(B+D); return {A,Av,I,Z,kg:A*7.85e-3,M:0.66*fy*Z/1e6,V:0.4*fy*Av/1e3,EI:E*I/1e9}; };
 (()=>{ const P=id=>DZ_DEF.find(x=>x.id===id);
-  Object.assign(P('dm-ply12'),{M:0.20,V:6.16,EI:1.07,src:'IS 4990 · E 7,500 × I (12 mm)',alt:[{src:'Beam calc (deep beam)',M:0.200,V:6.16,EI:1.10,why:'EI above IS 4990'}],
+  Object.assign(P('dm-ply12'),{M:0.20,V:6.16,EI:1.07,src:'IS 4990 · E 7,500 × I (12 mm)',
     comp:[['Grade','IS 4990 shuttering · BWP'],['E (along grain)','7,500 N/mm² · IS 4990 average'],['Size','2440 × 1220 × 12 mm'],['Weight','10 kg/m²'],['EI basis','7,500 × 1000 × 12³ ÷ 12 = 1.08 kNm²/m']]});
-  Object.assign(P('dm-ismc1'),{M:5.21,V:47.0,EI:373.4,src:'IS 800 WSM · unbraced 1.25 m',alt:[{src:'Slab design sheet (11.4 ÷ 2)',M:5.70,V:117,EI:384,why:'V on full area · IS uses web only'},{src:'Beam calc (deep beam)',M:5.93,V:122,EI:0,why:'V on full area · no EI'}],
+  Object.assign(P('dm-ismc1'),{M:5.21,V:47.0,EI:373.4,src:'IS 800 WSM · unbraced 1.25 m',
     comp:[['Grade','E250 · IS 2062'],['fy','250 N/mm²'],['E','2,00,000 N/mm²'],['Section','100 × 50 · tw 4.7 · tf 7.5 mm'],['Area A','1,170 mm²'],['Ixx','18,67,000 mm⁴'],['Zxx','37,300 mm³'],['ry','14.9 mm'],['Weight','9.2 – 9.56 kg/m'],['M basis','σbc 139.7 (IS 800 cl. 6.2.4, L 1.25 m) × Z'],['V basis','0.4 fy × d × tw = 100 × 100 × 4.7']]});
-  Object.assign(P('dm-ismc2'),{M:10.42,V:94.0,EI:746.8,src:'2 × single (IS 800 WSM)',alt:[{src:'Slab design sheet',M:11.40,V:234,EI:768,why:'2 × old single'}]});
-  Object.assign(P('dm-cup'),{alt:[{src:'Beam calc (deep beam)',cap:35.0,why:'source not stated'}],comp:[['Tube','48.3 OD × 3.2'],['SWL','depends on ledger lift'],['To enter','supplier table for 1.5 m and 2.0 m lifts']]});
-  Object.assign(P('dm-h12'),{alt:[{src:'Column design sheet (H-12)',M:2.0,V:3.25,EI:101.75,why:'differs from slab sheet'}]});
+  Object.assign(P('dm-ismc2'),{M:10.42,V:94.0,EI:746.8,src:'2 × single (IS 800 WSM)'});
+  Object.assign(P('dm-cup'),{comp:[['Tube','48.3 OD × 3.2'],['SWL','depends on ledger lift'],['To enter','supplier table for 1.5 m and 2.0 m lifts']]});
+  
   const i=DZ_DEF.findIndex(x=>x.id==='dm-ply18');
-  DZ_DEF.splice(i+1,0,{id:'dm-ply12d',g:'Sheathing',n:'Plywood 12 mm densified',stock:'Plywood 12 mm',M:0.34,V:9.75,EI:1.07,src:'Column design sheet · supplier test',ok:0});
+  DZ_DEF.splice(i+1,0,{id:'dm-ply12d',g:'Sheathing',n:'Plywood 12 mm densified',stock:'Plywood 12 mm',M:0.34,V:9.75,EI:1.07,src:'',ok:0});
   const j=DZ_DEF.findIndex(x=>x.id==='dm-h12');
   DZ_DEF.splice(j+1,0,
    {id:'dm-h16',g:'Secondary',n:'H-16 timber beam',stock:'H-16 beam',M:3.0,V:6.0,EI:145,src:'Jha Table 5.1 (p. 138)',alt:[{src:'Manufacturer catalogue (Doka H16)',M:2.7,V:8.5,EI:250}],ok:1},
-   {id:'dm-h20',g:'Secondary',n:'H-20 timber beam',stock:'H-20 beam',M:5.0,V:11.0,EI:375,src:'Column design sheet · IIT test',alt:[{src:'DOKA H20 (table in sheet)',M:5.0,V:11.0,EI:450}],ok:0},
-   {id:'dm-al75',g:'Secondary',n:'Aluminium beam 75×150',stock:'Aluminium beam',M:5.40,V:22.0,EI:0,ab:3,src:'Beam calc (deep beam)',ok:0,
+   {id:'dm-h20',g:'Secondary',n:'H-20 timber beam',stock:'H-20 beam',M:5.0,V:11.0,EI:375,src:'',ok:0},
+   {id:'dm-al75',g:'Secondary',n:'Aluminium beam 75×150',stock:'Aluminium beam',M:5.40,V:22.0,EI:0,ab:3,src:'',ok:0,
      comp:[['Grade','6061-T6 ? · confirm with supplier'],['E','68,900 N/mm² · IS 8147'],['Size','75 × 150 mm'],['Weight','enter'],['Missing','I or EI · needed for deflection'],['Ply on this beam','span = c/c − 60 mm (two support lines)']]});
   DZ_DEF.push(
-   {id:'dm-tie16',g:'Tie',n:'Tie rod 16 (18×5 thread)',stock:'Tie rod 16',cap:41.6,src:'IS 800 WSM · 0.6 fy × 201 mm² (fy 345)',alt:[{src:'Column design sheet',cap:50,why:'0.87 fy is limit-state · not for working load'}],ok:1},
+   {id:'dm-tie16',g:'Tie',n:'Tie rod 16 (18×5 thread)',stock:'Tie rod 16',cap:41.6,src:'IS 800 WSM · 0.6 fy × 201 mm² (fy 345)',ok:1},
    {id:'dm-tie15',g:'Tie',n:'Tie rod 15 mm (fy 580)',stock:'Tie rod 15',cap:57.1,src:'Supplier calc R1 · 169.7 × 580 ÷ 1.5 ÷ 1.15',ok:0},
    {id:'dm-flat40',g:'Tie',n:'Flat tie 40×3 (fy 550)',stock:'Flat tie 40x3',cap:23.8,src:'Supplier calc R0 · 0.6 × 550 × 72 mm²',ok:0});
 })();
@@ -6139,7 +6218,7 @@ function dzRepOpen(id){ const c=CO.get(), d=c.dzDes.find(x=>x.id===id); if(!d) r
    <div class="rp-page"><table class="rp-wrap"><thead><tr><td><div class="rp-top"><div><div class="rp-co">${esc(H.company||'Company name')}</div><div class="rp-sub">Formwork design calculation</div></div><div class="rp-meta">Design standard: <b>${esc(H.std)}</b><br>Doc no: <b>${esc(d.no)} R${d.rev||0}</b> · Date: <b>${fmtD(H.date)}</b></div></div></td></tr></thead><tbody><tr><td>
    <table class="rp-info"><tr><td>Project</td><td><b>${esc(H.project)}</b></td><td>Client</td><td><b>${esc(H.client)}</b></td></tr><tr><td>Location / element</td><td><b>${esc(H.location)}</b></td><td>Status</td><td><b>${esc(d.status)}${d.appAt?' · '+fmtD(d.appAt):''}</b></td></tr></table>
    <div class="rp-subj">SUBJECT: ${esc(H.subject)}</div>${body}
-   <div class="rp-sig"><div><b>Prepared by:</b><br><span>${esc(H.prep)}</span></div><div><b>Checked by:</b><br><span>${esc(H.chk)}</span></div><div><b>Approved by:</b><br><span>${esc(H.app)}</span></div></div></td></tr></tbody></table></div>`;
+   <div class="rp-note">Note: This calculation is a design aid. It must be checked by a competent engineer before use on site.</div><div class="rp-sig"><div><b>Prepared by:</b><br><span>${esc(H.prep)}</span></div><div><b>Checked by:</b><br><span>${esc(H.chk)}</span></div><div><b>Approved by:</b><br><span>${esc(H.app)}</span></div></div></td></tr></tbody></table></div>`;
   let o=document.getElementById('dzrep'); if(!o){ o=document.createElement('div'); o.id='dzrep'; document.body.appendChild(o); } const sc=o.scrollTop; o.innerHTML=html; o.scrollTop=sc; document.body.classList.add('dzrep-on'); }
 { const btn=id=>`<button class="btn p" onclick="dzRepOpen('${id}')">🖨 Generate calculation report</button>`;
   const _a=dzActs; dzActs=function(d,ed){ return _a(d,ed).replace('<button class="btn" onclick="window.print()">Print calculation sheet</button>',btn(d.id)+'<button class="btn" onclick="window.print()">Print screen</button>'); };
@@ -6276,7 +6355,7 @@ const dzLlTxt=c=>{ const L=dzLoad(c), r=DZ_LL[L.llRef]; return r?(L.llRef==='DOC
   h=h.replace('<td class="calc muted">IS 875 (Part 2) Table 2</td>',`<td class="calc"><select class="coi" ${ed?'':'disabled'} onchange="dzLlRef(this.value)"><option value="">— choose reference —</option>${Object.entries(DZ_LL).map(([k,x])=>`<option value="${k}" ${L.llRef===k?'selected':''}>${x.t}</option>`).join('')}</select>${L.llRef==='DOC'?` <input class="coi" ${ed?'':'disabled'} style="width:180px" placeholder="document no." value="${esc(L.llDoc||'')}" onchange="dzLlDoc(this.value)">`:''} ${/⚠/.test(dzLlTxt(c))?PILL('wn',dzLlTxt(c).split('⚠')[1].trim()):PILL('ok','Referenced')}</td>`);
   const lib=panel('Design references',simpleTable([['Reference'],['Title'],['Used for']],Object.values(DZ_REF).map(r=>`<tr><td class="calc"><b>${esc(r.t)}</b></td><td class="calc">${esc(r.n)}</td><td class="calc muted">${esc(r.u)}</td></tr>`))
     +simpleTable([['Member type'],['Formula set']],Object.entries(DZ_KREF).map(([g,t])=>`<tr><td class="calc"><b>${g}</b></td><td class="calc">${esc(t)}</td></tr>`))+'<p class="note">Only codes, handbooks and manufacturer documents are accepted as sources. A value without one is flagged ⚠ until you enter the test report or catalogue number.</p>');
-  const mr=panel('Material references',simpleTable([['Material'],['Reference'],['Values without code'],['Document no. (test report / catalogue)'],['Status']],M.map(x=>`<tr${x.srcOK?'':' class="tkrow"'}><td class="calc"><b>${esc(x.n)}</b><br><small class="muted">${x.g}</small></td><td class="calc" style="white-space:normal;max-width:330px">${esc(dzRefTxt(x)||'—')}</td><td class="calc">${x.need.length?esc(x.need.join(', ')):'—'}</td><td class="calc">${ed?`<input class="coi" style="width:210px" placeholder="${x.need.length?'e.g. TR-2026-014 / catalogue p. 12':'optional'}" value="${esc(x.doc||'')}" onchange="dzDocSet('${x.id}',this.value)">`:esc(x.doc||'—')}</td><td class="calc">${x.srcOK?PILL('ok','Referenced'):PILL('wn','Source needed')}</td></tr>`)));
+  const mr=panel('Material references',simpleTable([['Material'],['Reference'],['Values without code'],['Document no. (test report / catalogue)'],['Status']],M.map(x=>`<tr${x.srcOK?'':' class="tkrow"'}><td class="calc"><b>${esc(x.n)}</b><br><small class="muted">${x.g}</small></td><td class="calc" style="white-space:normal;max-width:330px">${esc(dzRefTxt(x)||'—')}</td><td class="calc">${x.need.length?esc(x.need.join(', ')):'—'}</td><td class="calc">${ed?`<input class="coi" style="width:210px" placeholder="${x.need.length?'e.g. TR-2026-014 / catalogue p. 12':'optional'}" value="${esc(x.doc||'')}" onchange="dzDocSet('${x.id}',this.value)">`:esc(x.doc||'—')}</td><td class="calc">${x.srcOK?PILL('ok','Referenced'):PILL('bd','Source needed')}</td></tr>`)));
   const i=h.indexOf('<div class="panel"><div class="ph"><span>Deflection limit'); return i>=0?h.slice(0,i)+lib+mr+h.slice(i):h+lib+mr; }; }
 function dzRefsUsed(c,d){ const S=new Set(['IS14687']), M=[]; const add=id=>{ const m=dzMat(c,id); if(m){ M.push(m); (m.refs||[]).forEach(r=>S.add(r[0])); } };
   if(d.el==='Slab'){ [d.ply,d.sec,d.pri,d.sup].forEach(add); S.add('HURD'); S.add('ROARK'); }
@@ -6805,6 +6884,375 @@ function cantUse(id,D,sN,run,gy,nu,ue,gx,ud,np,rDn){ const c=CO.get(), d=c.dzDes
     :`<p class="note">No ISMC 100–200 back-to-back option passes with this overhang. Reduce the overhang, or prop the tip.</p>`)+`<p class="note">Tried ISMC 100–200 (SP 6(1) sections) × needle spacing 0.4–1.8 m × Cuplock grid 0.6–1.8 m along edge and 0.6–1.5 m along needle (ply, secondary and primary still checked). 2nd layer beam (2 × ISMC) added when needle spacing ≠ Cuplock grid. For each, the fewest U-bars that pass (always required + 1, equal spacing first, then first U-bar 200 mm from slab edge). Steel = needles + 2nd layer + U-bars + Cuplock verticals (≈10 kg each) for ${a.len} m edge. Verify section values with your SP 6(1) copy.</p>`;
   const p=panel('Make it safe · lightest all-green options',body);
   const k0='<div class="panel"><div class="ph"><span>Needles'; const i0=state.ui.dzDet?h.indexOf(k0):-1; return i0>=0?h.slice(0,i0)+p+h.slice(i0):h+p; }; }
+
+
+/* ================= EXECUTION TRACKER · stages, maps, targets, look-ahead (Nov 2026) ================= */
+const TK_TYPES=[
+ ['t_ftg','Footing','Foundation','nos','each footing',[['Excavation',1],['PCC',1],['Steel',2],['Shuttering',1],['Cast',1],['De-shuttering',1]]],
+ ['t_pc','Pile cap','Foundation','nos','each pile cap',[['Steel',2],['Side shuttering',1],['Cast',1],['De-shuttering',1]]],
+ ['t_plb','Plinth / tie beam','Foundation','rmt','each beam run',[['Steel',2],['Shuttering',2],['Cast',1],['De-shuttering',1]]],
+ ['t_rw','Retaining wall','Vertical','panels','panel × lift',[['Steel',2],['Shutter side 1',1],['Shutter side 2',1],['Cast',1],['De-shuttering',1]]],
+ ['t_core','Core / shear wall','Vertical','floor lifts','one lift per floor',[['Steel',1],['Shuttering',1],['Cast',1],['Climb',1]]],
+ ['t_col','Column','Vertical','nos','each column / set per floor',[['Steel',1],['Shuttering',1],['Cast',1],['De-shuttering',0.5]]],
+ ['t_slab','Slab / beam','Horizontal','sqm · pours','pours per floor',[['Shuttering',3],['Steel',3],['Cast',1],['De-shuttering',7]]],
+ ['t_ps','Pour strip','Horizontal','nos','each strip',[['Stop-end',1],['Steel',1],['Cast',1],['De-shuttering',7]]],
+ ['t_stair','Staircase','Horizontal','flights','each flight per floor',[['Shuttering',2],['Steel',1],['Cast',1],['De-shuttering',7]]],
+ ['t_ped','Pedestal','Industrial','nos','each pedestal on grid',[['Steel',1],['Shuttering',1],['Cast',1],['De-shuttering',1]]],
+ ['t_gsp','Grade slab panel','Industrial','panels','each panel',[['Side forms',1],['Steel',1],['Cast',1],['De-shuttering',1]]],
+ ['t_trench','Cable trench','Industrial','rmt','stretch by chainage',[['Steel',1],['Shuttering',1],['Cast',1],['De-shuttering',1]]],
+ ['t_vsub','Villa substructure','Villa','villas','each villa',[['Excavation',1],['PCC',1],['Footing',3],['Plinth beam',3],['Backfill',2]]],
+ ['t_vslab','Villa slab (one floor)','Villa','villas','each villa per floor',[['Steel',2],['Shuttering',2],['Cast',1],['De-shuttering',7]]]];
+const TK_REASONS=['Rebar late','Labour short','Concrete late','Crane / hoist busy','Material not available','Rain','Design / drawing hold','Inspection pending','Steel gang busy','Pump breakdown','Client hold'];
+const TK_KINDS={villa:'Villa project',tower:'Residential high-rise',commercial:'Commercial',industrial:'Industrial',other:'Other'};
+function tkS(){ if(!state.trk||typeof state.trk!=='object'||Array.isArray(state.trk)) state.trk={}; const t=state.trk;
+  if(!Array.isArray(t.types)||!t.types.length) t.types=TK_TYPES.map(x=>({id:x[0],name:x[1],group:x[2],unit:x[3],split:x[4],stages:x[5].map(s=>({n:s[0],d:s[1]}))}));
+  if(!Array.isArray(t.reasons)||!t.reasons.length) t.reasons=TK_REASONS.slice();
+  ['areas','items','targets','log'].forEach(k=>{ if(!Array.isArray(t[k])) t[k]=[]; }); return t; }
+const tkType=id=>tkS().types.find(x=>x.id===id)||{id,name:'?',stages:[{n:'Done',d:1}],unit:''};
+const tkArea=id=>tkS().areas.find(a=>a.id===id);
+const tkItemsOf=aid=>tkS().items.filter(i=>i.a===aid);
+const tkSave=()=>{ save(); };
+const tkQ=n=>n==='Cast'?'Not cast':n==='De-shuttering'?'Not de-shuttered':n;
+const tkLevels=aid=>{ const L=[]; tkItemsOf(aid).forEach(i=>{ if(!L.includes(i.lv)) L.push(i.lv); }); return L; };
+/* status of one item: current stage, since when, late days */
+function tkNow(it,today){ today=today||todayStr(); const T=tkType(it.t), S=T.stages, st=it.s||{};
+  let i=0; while(i<S.length&&st[i]&&st[i][1]) i++;
+  if(i>=S.length) return {k:'done',i:S.length,n:'Completed',late:0,end:(st[S.length-1]||[])[1]||''};
+  const started=!!(st[i]&&st[i][0]); const anyStarted=Object.keys(st).some(k=>st[k]&&(st[k][0]||st[k][1]));
+  if(!anyStarted){ const late=it.ps&&it.ps<today?dayDiff(it.ps,today):0; return {k:'no',i:0,n:'Not started',late,since:''}; }
+  const since=started?st[i][0]:((st[i-1]||[])[1]||'');
+  const used=since?dayDiff(since,today)+(started?1:0):0, std=Math.max(0.5,num(S[i].d)||1);
+  return {k:'wip',i,n:S[i].n,started,since,late:Math.max(0,Math.ceil(used-std)),std};
+}
+const tkLateAll=aid=>tkItemsOf(aid).filter(i=>tkNow(i).late>0);
+function tkStageEnd(it,name){ const S=tkType(it.t).stages, j=S.findIndex(s=>s.n===name); return j<0?'':((it.s||{})[j]||[])[1]||''; }
+function tkStageStart(it,name){ const S=tkType(it.t).stages, j=S.findIndex(s=>s.n===name); return j<0?'':((it.s||{})[j]||[])[0]||''; }
+/* keep Daily Progress (execution log) in step: a cast element with sqm becomes one execution row */
+function tkSyncExec(it){ const A=tkArea(it.a); if(!A||!A.sysId||!num(it.q)) return; const cast=tkStageEnd(it,'Cast'), id='tk_'+it.id; const ex=state.execution.find(e=>e.id===id);
+  if(!cast){ if(ex){ state.execution=state.execution.filter(e=>e.id!==id); state.deleted[id]=Date.now(); } return; }
+  const sh=tkStageStart(it,'Shuttering')||tkStageStart(it,'Side shuttering')||tkStageStart(it,'Side forms')||((it.s||{})[0]||[])[0]||'', de=tkStageEnd(it,'De-shuttering');
+  const row=ex||{id}; Object.assign(row,{_u:Date.now(),date:cast,systemId:A.sysId,areaId:A.exArea||'',element:tkType(it.t).name,sqm:num(it.q),shutDate:sh,deshutDate:de,remarks:'Tracker · '+it.n});
+  if(!ex) state.execution.push(row); }
+/* --------- styles --------- */
+(()=>{ if(document.getElementById('tkcss')) return; const s=document.createElement('style'); s.id='tkcss'; s.textContent=`
+.tkq{display:grid;grid-template-columns:repeat(auto-fill,minmax(120px,1fr));gap:6px;margin-bottom:10px}
+.tkq button{border:2px solid #e3e8ed;background:#fbfaf7;border-radius:8px;padding:6px 10px;text-align:left;cursor:pointer;color:inherit;font:inherit}
+.tkq button.on{border-color:#1e3a5f;background:#eaf1f8}.tkq button small{display:block;font-size:12px;color:#5d6a76}.tkq button b{font-size:19px}.tkq button b.r{color:#dc2626}
+.tkt{display:flex;flex-wrap:wrap;gap:3px}.tkt .x{width:44px;height:30px;border-radius:4px;font-size:10.5px;display:flex;align-items:center;justify-content:center;cursor:pointer;line-height:1.1;text-align:center;overflow:hidden}
+.tk-on{background:#1e3a5f;color:#fff;border:1px solid #1e3a5f}.tk-late{background:#dc2626;color:#fff;border:1px solid #dc2626}.tk-off{background:#f1f3f5;color:#8a96a3;border:1px solid #e3e8ed}.tk-wip{background:#fff;color:#1e3a5f;border:2px solid #1e3a5f}.tk-sel{outline:3px solid #f59e0b;outline-offset:1px}
+.tklad td.c{padding:2px}.tklad .x{border-radius:5px;padding:4px 6px;font-size:11.5px;text-align:center;line-height:1.25;cursor:pointer;min-width:74px}
+.tkg{display:grid;gap:5px}.tkg .x{border-radius:5px;height:44px;font-size:10.5px;display:flex;flex-direction:column;align-items:center;justify-content:center;cursor:pointer;line-height:1.15;text-align:center}
+.tkg .ax{font-size:11px;font-weight:700;color:#5d6a76;display:flex;align-items:center;justify-content:center}
+.tkleg{font-size:12px;color:var(--muted,#5d6a76);margin-top:8px;display:flex;gap:14px;flex-wrap:wrap}.tkleg i{display:inline-block;width:16px;height:10px;border-radius:2px;margin-right:4px;vertical-align:middle}
+.tkch{display:flex;flex-wrap:wrap;gap:6px;margin:4px 0 10px}.tkch button{border:1.5px solid #c9d0d7;background:#fff;border-radius:16px;padding:5px 12px;font:inherit;font-size:13px;cursor:pointer;color:inherit}.tkch button.on{background:#1e3a5f;color:#fff;border-color:#1e3a5f}
+.tklab{font-size:12px;font-weight:700;letter-spacing:.05em;color:#5d6a76;margin-top:8px}
+.tkbar{position:relative;height:12px;background:#e7eaee;border-radius:6px;min-width:160px}.tkbar i{position:absolute;left:0;top:0;height:12px;border-radius:6px}.tkbar em{position:absolute;top:-3px;width:2px;height:18px;background:#111}
+.tkgantt td.d{padding:0;border-left:1px solid #eef0f2;width:26px}.tkgantt td.d div{height:16px;margin:0 1px;border-radius:3px}
+.tkcard{border:1px solid #e3e8ed;border-radius:10px;padding:10px 12px;background:#fff;margin-top:10px}
+.tkbig{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-bottom:14px}.tkbig button{background:#1e3a5f;color:#fff;border:0;border-radius:12px;padding:16px 14px;text-align:left;font:inherit;font-size:16px;font-weight:700;cursor:pointer}.tkbig button small{display:block;font-weight:400;font-size:12px;opacity:.8;margin-top:4px}
+@media(max-width:700px){.tkbig{grid-template-columns:1fr 1fr}.tkq{grid-template-columns:repeat(2,1fr)}}
+.tkal{display:flex;justify-content:space-between;align-items:center;gap:10px;padding:9px 4px;border-bottom:1px solid #eef0f2}.tkal:last-child{border:0}.tkdot{display:inline-block;width:9px;height:9px;border-radius:50%;background:#dc2626;margin-right:7px}
+.tkmore{columns:4 220px;column-gap:18px}.tkmore .g{break-inside:avoid;margin-bottom:12px}.tkmore .g>b{display:block;font-size:11.5px;letter-spacing:.08em;color:#5d6a76;border-bottom:1px solid #e3e8ed;padding-bottom:3px;margin-bottom:3px}
+.tkmore .p{display:flex;justify-content:space-between;align-items:center;padding:4px 6px;border-radius:6px;font-size:13.5px;cursor:pointer}.tkmore .p.m{background:#eaf1f8;font-weight:700;color:#1e3a5f}.tkmore .p em{font-style:normal;font-size:11px;color:#9aa5b1}
+.tkrole{display:grid;grid-template-columns:repeat(3,1fr);gap:10px}.tkrole button{border:2px solid #e3e8ed;background:#fff;border-radius:12px;padding:12px;text-align:left;font:inherit;cursor:pointer;color:inherit}.tkrole button.on{border-color:#1e3a5f;background:#eaf1f8}.tkrole small{display:block;color:#5d6a76;font-size:12px;margin-top:4px}
+@media(max-width:700px){.tkrole{grid-template-columns:1fr}}`; document.head.appendChild(s); })();
+const tkCls=(it,q)=>{ const n=tkNow(it); if(n.late>0) return 'tk-late'; if(q==null) return n.k==='done'?'tk-on':n.k==='wip'?'tk-wip':'tk-off'; return tkMatch(n,q)?'tk-on':'tk-off'; };
+const tkMatch=(n,q)=>q==='late'?n.late>0:q==='done'?n.k==='done':q==='no'?n.k==='no':(n.k==='wip'&&n.n===q);
+const tkLegend=(q)=>`<div class="tkleg">${q==null?`<span><i class="tk-on"></i>completed</span><span><i class="tk-wip"></i>working (stage shown)</span>`:`<span><i class="tk-on"></i>matches the question</span>`}<span><i class="tk-late"></i>late</span><span><i class="tk-off"></i>${q==null?'not started':'others'}</span></div>`;
+/* question buttons for a set of items */
+function tkQBar(items,q,setter){ const T=[]; items.forEach(i=>tkType(i.t).stages.forEach(s=>{ if(!T.includes(s.n)) T.push(s.n); }));
+  const N=items.map(i=>tkNow(i)), c=f=>N.filter(f).length;
+  const B=[['late','🔴 Late',c(n=>n.late>0),1],...T.map(s=>[s,tkQ(s),c(n=>n.k==='wip'&&n.n===s)]),['done','Completed',c(n=>n.k==='done')],['no','Not started',c(n=>n.k==='no')]];
+  return `<div class="tkq">${B.map(b=>`<button class="${q===b[0]?'on':''}" onclick="${setter}('${String(b[0]).replace(/'/g,"\\'")}')"><small>${esc(b[1])}</small><b class="${b[3]?'r':''}">${b[2]}</b></button>`).join('')}<button class="${q==null||q===''?'on':''}" onclick="${setter}('')"><small>All · by stage</small><b>${items.length}</b></button></div>`; }
+function tkQSet(v){ state.ui.tkQ=v||''; persist(); render(); }
+/* ---------- helpers for forms ---------- */
+const tkV=id=>{ const e=document.getElementById(id); return e?e.value.trim():''; };
+const tkIn=(id,l,v,w,ph,type)=>`<label style="display:inline-flex;flex-direction:column;font-size:12px;color:var(--muted,#5d6a76);gap:3px;margin:0 10px 8px 0">${l}<input id="${id}" ${type?`type="${type}"`:''} value="${esc(v==null?'':String(v))}" placeholder="${esc(ph||'')}" style="width:${w||110}px;padding:6px 8px;border:1px solid #c9d0d7;border-radius:6px;font:inherit;font-size:14px"></label>`;
+const tkSel=(id,l,opts,v,w)=>`<label style="display:inline-flex;flex-direction:column;font-size:12px;color:var(--muted,#5d6a76);gap:3px;margin:0 10px 8px 0">${l}<select id="${id}" style="width:${w||160}px;padding:6px 8px;border:1px solid #c9d0d7;border-radius:6px;font:inherit;font-size:14px">${opts.map(o=>`<option value="${esc(o[0])}" ${o[0]===v?'selected':''}>${esc(o[1])}</option>`).join('')}</select></label>`;
+const tkTypeOpts=()=>tkS().types.map(t=>[t.id,t.name]);
+function tkExpand(txt){ const out=[]; String(txt||'').split(/[,\n]+/).map(s=>s.trim()).filter(Boolean).forEach(s=>{ const m=s.match(/^(.*?)(\d+)\s*(?:-|to|–)\s*(?:\1)?(\d+)$/i); if(m){ const a=+m[2], b=+m[3], w=m[2].length; for(let k=Math.min(a,b);k<=Math.max(a,b)&&out.length<3000;k++) out.push(m[1]+String(k).padStart(w,'0')); } else out.push(s); }); return out; }
+/* ================= PAGE · Work Stages & Cycle ================= */
+PAGES.tkStages=()=>{ const T=tkS(); const used=id=>T.items.filter(i=>i.t===id).length;
+  let h=`<p class="note hint">One list for every element: stages in order with standard days. Daily Progress, maps, targets and the look-ahead all use this list. Write stages as <b>Steel 2, Shuttering 1, Cast 1, De-shuttering 1</b>.</p>`;
+  h+=panel('Element types · stages in order · standard days',`<div class="tw"><table class="sheet"><thead><tr><th>Element</th><th>Group</th><th>Counted in</th><th>Stages in order · standard days</th><th class="r">Cycle</th><th class="r">Used</th><th></th></tr></thead><tbody>${T.types.map(t=>`<tr>
+   <td><input value="${esc(t.name)}" onchange="tkTypeSet('${t.id}','name',this.value)" style="width:150px;font-weight:700"></td>
+   <td><input value="${esc(t.group||'')}" onchange="tkTypeSet('${t.id}','group',this.value)" style="width:100px"></td>
+   <td><input value="${esc(t.unit||'')}" onchange="tkTypeSet('${t.id}','unit',this.value)" style="width:90px"></td>
+   <td><input value="${esc(t.stages.map(s=>s.n+' '+s.d).join(', '))}" onchange="tkTypeSet('${t.id}','stages',this.value)" style="width:100%;min-width:380px"></td>
+   <td class="r"><b>${fmtN(t.stages.reduce((a,s)=>a+num(s.d),0),1)} d</b></td><td class="r">${used(t.id)}</td>
+   <td>${used(t.id)?'':`<button class="btn sm" onclick="tkTypeDel('${t.id}')">Delete</button>`}</td></tr>`).join('')}</tbody></table></div>
+   <div style="margin-top:8px"><button class="btn sm p" onclick="tkTypeAdd()">+ New element type</button> <span class="note">Stage names: Steel · Shuttering · Cast · De-shuttering (plus Excavation, PCC, Climb where needed).</span></div>`);
+  h+=panel('Delay reasons · used in Daily Progress',`<textarea id="tkReasons" rows="4" style="width:100%;font:inherit;padding:8px;border:1px solid #c9d0d7;border-radius:6px">${esc(T.reasons.join(', '))}</textarea><div style="margin-top:6px"><button class="btn sm p" onclick="tkReasonsSave()">Save reasons</button></div>`);
+  return h; };
+function tkTypeSet(id,k,v){ const t=tkType(id); if(k==='stages'){ const S=String(v).split(',').map(x=>x.trim()).filter(Boolean).map(x=>{ const m=x.match(/^(.*?)\s+([\d.]+)\s*d?$/i); return m?{n:m[1].trim(),d:num(m[2])}:{n:x,d:1}; }); if(!S.length) return toast('Add at least one stage'); t.stages=S; } else t[k]=v; tkSave(); }
+function tkTypeAdd(){ tkS().types.push({id:'t'+uid(),name:'New element',group:'',unit:'nos',split:'',stages:[{n:'Steel',d:1},{n:'Shuttering',d:1},{n:'Cast',d:1},{n:'De-shuttering',d:1}]}); tkSave(); }
+function tkTypeDel(id){ const T=tkS(); T.types=T.types.filter(t=>t.id!==id); tkSave(); }
+function tkReasonsSave(){ tkS().reasons=tkV('tkReasons').split(/[,\n]+/).map(s=>s.trim()).filter(Boolean); tkSave(); toast('Delay reasons saved'); }
+/* ================= PAGE · Areas · floors · pours (setup) ================= */
+function tkPickArea(id){ state.ui.tkA=id; state.ui.tkLv=''; state.ui.tkSel=[]; state.ui.tkCard=''; persist(); render(); }
+const tkCurA=()=>{ const T=tkS(); let a=T.areas.find(x=>x.id===state.ui.tkA); if(!a&&T.areas.length) a=T.areas[0]; return a; };
+const tkAreaChips=(fn)=>`<div class="tkch">${tkS().areas.map(a=>`<button class="${(tkCurA()||{}).id===a.id?'on':''}" onclick="${fn||'tkPickArea'}('${a.id}')">${esc(a.name)}</button>`).join('')||'<span class="note">No areas yet — add one on <a href="#" onclick="go(\'tkSetup\');return false">Areas · floors · pours</a>.</span>'}</div>`;
+PAGES.tkSetup=()=>{ const T=tkS(), A=tkCurA();
+  let h=`<p class="note hint">Add each area once (villa block, tower, commercial block, shed). Then add floors, villas, grid elements, pours or walls. Daily Progress, maps and targets use these.</p>`;
+  h+=panel('Areas',`${T.areas.length?simpleTable([['Area'],['Type'],['Levels',1],['Elements',1],['Completed',1],['Late',1],['Linked to Daily Progress'],['']],T.areas.map(a=>{ const I=tkItemsOf(a.id), N=I.map(i=>tkNow(i)); return `<tr ${A&&A.id===a.id?'style="background:#eaf1f8"':''}><td><a href="#" onclick="tkPickArea('${a.id}');return false"><b>${esc(a.name)}</b></a></td><td>${TK_KINDS[a.kind]||a.kind}</td><td class="r">${tkLevels(a.id).length}</td><td class="r">${I.length}</td><td class="r">${N.filter(n=>n.k==='done').length}</td><td class="r" style="${N.some(n=>n.late)?'color:#dc2626;font-weight:700':''}">${N.filter(n=>n.late>0).length}</td><td>${a.sysId?esc(sysName(a.sysId))+(a.exArea?' · '+esc(areaName(a.exArea)):''):'<span class="muted">—</span>'}</td><td><button class="btn sm" onclick="tkAreaDel('${a.id}')">Delete</button></td></tr>`; })):''}
+   <div style="margin-top:10px">${tkIn('tkNa','New area name','','',  'e.g. Tower A')}${tkSel('tkNk','Project type',Object.entries(TK_KINDS),'tower')}${tkSel('tkNs','System (optional)',[['','—'],...state.systems.map(s=>[s.id,s.name])],'',170)}${tkSel('tkNe','Area in Daily Progress (optional)',[['','—'],...state.areas.map(s=>[s.id,s.name])],'',190)}<button class="btn p" onclick="tkAreaAdd()">+ Add area</button></div>
+   <p class="note">Link a system and area if you want each <b>Cast</b> pour with sqm to appear in the Daily Progress execution log by itself (for hire charges and cost per sqm).</p>`);
+  if(!A) return h;
+  const kind=A.kind, lv=tkLevels(A.id);
+  let f='';
+  if(kind==='villa') f+=`<div class="tklab">ADD VILLAS</div>${tkIn('tkVn','How many villas',A.vn||'',90)}${tkIn('tkVs','Start no.',1,70)}${tkIn('tkVp','Prefix','V-',60)}${tkIn('tkVf','Floors (slabs)','GF, FF, Roof',150)}${tkIn('tkVq','Slab sqm per villa per floor','',90)}<button class="btn p" onclick="tkGenVilla()">Add villas</button>`;
+  if(kind==='tower'){ const FT=A.ftypes||[];
+    f+=`<div class="tklab">FLOOR TYPES · make once</div>${simpleTable([['Type'],['Pour sqm (comma)'],['Columns',1],['Core wall'],['Cycle days',1],['']],FT.map(t=>`<tr><td><input value="${esc(t.name)}" onchange="tkFtSet('${t.id}','name',this.value)" style="width:150px"></td><td><input value="${esc(t.pours)}" onchange="tkFtSet('${t.id}','pours',this.value)" style="width:200px"></td><td class="r"><input value="${esc(t.cols)}" onchange="tkFtSet('${t.id}','cols',this.value)" style="width:60px"></td><td><select onchange="tkFtSet('${t.id}','core',this.value==='1')"><option value="1" ${t.core?'selected':''}>Yes</option><option value="0" ${t.core?'':'selected'}>No</option></select></td><td class="r"><input value="${esc(t.cycle)}" onchange="tkFtSet('${t.id}','cycle',this.value)" style="width:50px"></td><td><button class="btn sm" onclick="tkFtDel('${t.id}')">Delete</button></td></tr>`))}
+     <button class="btn sm" onclick="tkFtAdd()">+ New floor type</button>
+     <div class="tklab" style="margin-top:12px">ADD FLOORS</div>${tkIn('tkFf','From floor no.','',70,'e.g. 5')}${tkIn('tkFt','To floor no.','',70,'e.g. 20')}${tkIn('tkFp','Name prefix','L',50)}${tkSel('tkFy','Floor type',FT.map(t=>[t.id,t.name]),'',170)}${tkIn('tkFd','First floor start','',130,'','date')}<button class="btn p" onclick="tkGenFloors()">Add floors</button>
+     <span class="note">Plan dates are filled floor after floor by the cycle days. For GF / podium / transfer floors make their own type.</span>`; }
+  if(kind==='commercial'||kind==='industrial'||kind==='other'||kind==='tower'){ const G=A.grid||{cols:'ABCDEFGHJK',rows:6};
+    f+=`<div class="tklab" style="margin-top:12px">GRID · for pile caps, footings, columns, pedestals</div>${tkIn('tkGc','Grid letters',G.cols,150)}${tkIn('tkGr','Grid rows',G.rows,60)}
+     <div>${tkIn('tkEl','Level','Foundation',110)}${tkSel('tkEt','Element',tkTypeOpts(),'t_pc',170)}${tkIn('tkEp','Name prefix','PC',60)}${tkIn('tkEd','Plan start (optional)','',130,'','date')}<button class="btn p" onclick="tkGenGrid()">Add on every grid point</button></div>
+     <div class="tklab" style="margin-top:8px">POURS ON A LEVEL</div>${tkIn('tkPl','Level','GF',90)}${tkIn('tkPq','Pour sqm (comma)','',240,'e.g. 480, 520, 450')}${tkIn('tkPd','Plan start of P1','',130,'','date')}${tkIn('tkPg','Days between pours',2,60)}<button class="btn p" onclick="tkGenPours()">Add pours</button>
+     <div class="tklab" style="margin-top:8px">WALL · panels × lifts</div>${tkIn('tkWl','Level','Foundation',110)}${tkIn('tkWp','Prefix','RW',50)}${tkIn('tkWn','Panels',8,60)}${tkIn('tkWh','Lifts',3,60)}<button class="btn p" onclick="tkGenWall()">Add wall</button>`; }
+  f+=`<div class="tklab" style="margin-top:12px">ADD A LIST · any element</div>${tkIn('tkLl','Level / group','',110,'e.g. Plinth')}${tkSel('tkLt','Element',tkTypeOpts(),'t_plb',170)}${tkIn('tkLn','Names','',260,'e.g. Grid A, Grid B  or  EF-1 to EF-12')}${tkIn('tkLq','Qty / sqm each','',80)}${tkIn('tkLd','Plan start (optional)','',130,'','date')}<button class="btn p" onclick="tkGenList()">Add</button>`;
+  h+=panel(esc(A.name)+' · '+(TK_KINDS[kind]||kind),f);
+  if(lv.length) h+=panel(esc(A.name)+' · levels',simpleTable([['Level / group'],['Elements'],['Count',1],['Qty',1],['Completed',1],['']],lv.map(l=>{ const I=tkItemsOf(A.id).filter(i=>i.lv===l); const ty=[...new Set(I.map(i=>tkType(i.t).name))].join(', ');
+     return `<tr><td><b>${esc(l)}</b></td><td>${esc(ty)}</td><td class="r">${I.length}</td><td class="r">${fmtN(I.reduce((a,i)=>a+num(i.q),0))}</td><td class="r">${I.filter(i=>tkNow(i).k==='done').length}</td><td><button class="btn sm" onclick="tkLvDel('${esc(l).replace(/'/g,"\\'")}')">Delete</button></td></tr>`; })));
+  return h; };
+function tkAreaAdd(){ const n=tkV('tkNa'); if(!n) return toast('Type the area name'); const a={id:'a'+uid(),name:n,kind:tkV('tkNk')||'other',sysId:tkV('tkNs'),exArea:tkV('tkNe')}; if(a.kind==='tower') a.ftypes=[{id:'f'+uid(),name:'Typical T1',pours:'260, 270, 260, 260',cols:60,core:true,cycle:7}]; tkS().areas.push(a); state.ui.tkA=a.id; tkSave(); toast('Area added'); }
+function tkAreaDel(id){ const a=tkArea(id); if(!a||!confirm('Delete "'+a.name+'" and all its elements and progress?')) return; const T=tkS(); T.areas=T.areas.filter(x=>x.id!==id); T.items=T.items.filter(i=>i.a!==id); T.targets=T.targets.filter(t=>t.a!==id); tkSave(); }
+function tkLvDel(l){ const A=tkCurA(); if(!A||!confirm('Delete level "'+l+'" and its progress?')) return; const T=tkS(); T.items=T.items.filter(i=>!(i.a===A.id&&i.lv===l)); tkSave(); }
+const tkPush=(A,o)=>{ tkS().items.push(Object.assign({id:'i'+uid()+Math.random().toString(36).slice(2,5),a:A.id,s:{}},o)); };
+function tkGenVilla(){ const A=tkCurA(), n=Math.round(num(tkV('tkVn'))), s0=Math.round(num(tkV('tkVs'))||1), p=tkV('tkVp'), F=tkV('tkVf').split(',').map(x=>x.trim()).filter(Boolean), q=num(tkV('tkVq'));
+  if(!n||n>3000) return toast('Type how many villas (up to 3000)'); const w=String(s0+n-1).length<3?3:String(s0+n-1).length;
+  for(let k=0;k<n;k++){ const u=p+String(s0+k).padStart(w,'0'); tkPush(A,{lv:'Substructure',t:'t_vsub',n:u,u}); F.forEach(fl=>tkPush(A,{lv:fl+' slab',t:'t_vslab',n:u,u,q})); }
+  A.vn=(num(A.vn)||0)+n; tkSave(); toast(n+' villas added'); }
+function tkFtAdd(){ const A=tkCurA(); (A.ftypes=A.ftypes||[]).push({id:'f'+uid(),name:'New type',pours:'250, 250',cols:40,core:true,cycle:7}); tkSave(); }
+function tkFtSet(id,k,v){ const t=(tkCurA().ftypes||[]).find(x=>x.id===id); if(!t) return; t[k]=v; tkSave(); }
+function tkFtDel(id){ const A=tkCurA(); A.ftypes=(A.ftypes||[]).filter(x=>x.id!==id); tkSave(); }
+function tkGenFloors(){ const A=tkCurA(), a=Math.round(num(tkV('tkFf'))), b=Math.round(num(tkV('tkFt'))), p=tkV('tkFp'), ft=(A.ftypes||[]).find(x=>x.id===tkV('tkFy')), d0=tkV('tkFd');
+  if(!ft) return toast('Make a floor type first'); if(isNaN(a)||isNaN(b)||b<a||b-a>150) return toast('Check the floor numbers'); const P=String(ft.pours).split(',').map(num).filter(x=>x>0), cy=Math.max(1,num(ft.cycle)||7);
+  for(let k=a;k<=b;k++){ const L=p+k, ps=d0?addDays(d0,(k-a)*cy):''; if(ft.core) tkPush(A,{lv:L,t:'t_core',n:L+' core',ps}); tkPush(A,{lv:L,t:'t_col',n:L+' columns',q:0,c:num(ft.cols),ps});
+    P.forEach((q,j)=>tkPush(A,{lv:L,t:'t_slab',n:L+' P'+(j+1),x:j,q,ps:ps?addDays(ps,Math.round(j*cy/Math.max(1,P.length))):''})); }
+  tkSave(); toast((b-a+1)+' floors added'); }
+function tkGenGrid(){ const A=tkCurA(), cols=tkV('tkGc').replace(/[^A-Za-z]/g,'').toUpperCase().split(''), rows=Math.round(num(tkV('tkGr'))), lv=tkV('tkEl')||'Level', t=tkV('tkEt'), p=tkV('tkEp'), d=tkV('tkEd');
+  if(!cols.length||!rows||cols.length*rows>1500) return toast('Check grid letters and rows'); A.grid={cols:cols.join(''),rows};
+  cols.forEach((c,x)=>{ for(let y=0;y<rows;y++) tkPush(A,{lv,t,n:(p?p+'-':'')+c+(y+1),x,y,g:1,ps:d}); }); tkSave(); toast(cols.length*rows+' elements added on the grid'); }
+function tkGenPours(){ const A=tkCurA(), lv=tkV('tkPl')||'GF', Q=tkV('tkPq').split(',').map(num).filter(x=>x>0), d=tkV('tkPd'), gap=Math.max(0,num(tkV('tkPg')));
+  if(!Q.length) return toast('Type the pour sqm, e.g. 480, 520'); Q.forEach((q,j)=>tkPush(A,{lv,t:'t_slab',n:lv+'-P'+(j+1),x:j,q,ps:d?addDays(d,j*gap):''})); tkSave(); toast(Q.length+' pours added'); }
+function tkGenWall(){ const A=tkCurA(), lv=tkV('tkWl')||'Wall', p=tkV('tkWp')||'RW', n=Math.round(num(tkV('tkWn'))), h=Math.round(num(tkV('tkWh')));
+  if(!n||!h||n*h>600) return toast('Check panels and lifts'); for(let x=0;x<n;x++) for(let y=0;y<h;y++) tkPush(A,{lv,t:'t_rw',n:p+'-'+(x+1)+' lift '+(y+1),x,y,w:1}); tkSave(); toast(n*h+' wall boxes added'); }
+function tkGenList(){ const A=tkCurA(), lv=tkV('tkLl')||'General', t=tkV('tkLt'), N=tkExpand(tkV('tkLn')), q=num(tkV('tkLq')), d=tkV('tkLd');
+  if(!N.length) return toast('Type the names'); N.forEach(n=>tkPush(A,{lv,t,n,q,ps:d})); tkSave(); toast(N.length+' elements added'); }
+/* ================= PAGE · Daily Progress by stage (3 taps) ================= */
+function tkLvSet(l){ state.ui.tkLv=l; state.ui.tkSel=[]; state.ui.tkCard=''; persist(); render(); }
+function tkTog(id){ const S=new Set(state.ui.tkSel||[]); S.has(id)?S.delete(id):S.add(id); state.ui.tkSel=[...S]; persist(); render(); }
+function tkSelAll(on){ const A=tkCurA(); state.ui.tkSel=on?tkItemsOf(A.id).filter(i=>i.lv===tkCurLv(A)&&tkNow(i).k!=='done').map(i=>i.id):[]; persist(); render(); }
+function tkSelRange(){ const A=tkCurA(), r=tkV('tkRg'); if(!r) return; const m=r.match(/^\s*(.+?)\s*(?:to|-|–)\s*(.+?)\s*$/i); const I=tkItemsOf(A.id).filter(i=>i.lv===tkCurLv(A)); let pick=[];
+  if(m){ const a=I.findIndex(i=>(i.u||i.n).toLowerCase()===m[1].toLowerCase()), b=I.findIndex(i=>(i.u||i.n).toLowerCase()===m[2].toLowerCase()); if(a>=0&&b>=0) pick=I.slice(Math.min(a,b),Math.max(a,b)+1); }
+  else pick=I.filter(i=>(i.u||i.n).toLowerCase().includes(r.toLowerCase()));
+  if(!pick.length) return toast('No match — type like V-120 to V-128'); state.ui.tkSel=[...new Set([...(state.ui.tkSel||[]),...pick.map(i=>i.id)])]; persist(); render(); }
+const tkCurLv=A=>{ const L=tkLevels(A.id); return L.includes(state.ui.tkLv)?state.ui.tkLv:(L[0]||''); };
+const tkShort=it=>it.u||it.n;
+PAGES.tkEntry=()=>{ const T=tkS(), A=tkCurA(); let h=`<p class="note hint">Three taps: <b>what</b> → <b>stage</b> → <b>date</b>, then Save. Tick many at once (e.g. 9 villas cast today). Maps, targets and the look-ahead update by themselves.</p>`;
+  h+=`<div class="tklab">AREA</div>`+tkAreaChips(); if(!A) return h;
+  const L=tkLevels(A.id), lv=tkCurLv(A); h+=`<div class="tklab">LEVEL / WORK</div><div class="tkch">${L.map(l=>`<button class="${l===lv?'on':''}" onclick="tkLvSet('${esc(l).replace(/'/g,"\\'")}')">${esc(l)}</button>`).join('')}</div>`;
+  const I=tkItemsOf(A.id).filter(i=>i.lv===lv), sel=new Set(state.ui.tkSel||[]), S=I.filter(i=>sel.has(i.id));
+  h+=panel('1 · What — tap to tick ('+S.length+' ticked)',`<div style="margin-bottom:8px;display:flex;gap:6px;flex-wrap:wrap;align-items:center"><button class="btn sm" onclick="tkSelAll(1)">Tick all not completed</button><button class="btn sm" onclick="tkSelAll(0)">Clear</button><input id="tkRg" placeholder="e.g. V-120 to V-128" style="padding:5px 8px;border:1px solid #c9d0d7;border-radius:6px;width:180px"><button class="btn sm" onclick="tkSelRange()">Tick these</button></div>
+   <div class="tkt">${I.map(i=>{ const n=tkNow(i); return `<div class="x ${tkCls(i)} ${sel.has(i.id)?'tk-sel':''}" title="${esc(i.n)} · ${esc(n.n)}${n.late?' · late '+n.late+' d':''}" onclick="tkTog('${i.id}')" style="${(i.u||i.n).length>6?'width:auto;padding:0 6px':''}">${esc(tkShort(i))}</div>`; }).join('')}</div>${tkLegend(null)}`);
+  const stN=[]; (S.length?S:I).forEach(i=>tkType(i.t).stages.forEach(s=>{ if(!stN.includes(s.n)) stN.push(s.n); }));
+  const cur=S.length?tkNow(S[0]):null, st=stN.includes(state.ui.tkSt)?state.ui.tkSt:(cur&&cur.k==='wip'?cur.n:stN[0]);
+  const d=state.ui.tkD||todayStr(), act=state.ui.tkAct==='s'?'s':'e', late=S.some(i=>tkNow(i).late>0);
+  h+=panel('2 · Stage · 3 · Date',`<div class="tklab">STAGE</div><div class="tkch">${stN.map(s=>`<button class="${s===st?'on':''}" onclick="setUI('tkSt','${esc(s).replace(/'/g,"\\'")}')">${esc(s)}</button>`).join('')}</div>
+   <div class="tklab">DATE</div><div class="tkch"><button class="${d===todayStr()?'on':''}" onclick="setUI('tkD','${todayStr()}')">Today</button><button class="${d===addDays(todayStr(),-1)?'on':''}" onclick="setUI('tkD','${addDays(todayStr(),-1)}')">Yesterday</button><input type="date" value="${d}" onchange="setUI('tkD',this.value)" style="padding:4px 8px;border:1px solid #c9d0d7;border-radius:16px"></div>
+   <div class="tklab">STATUS</div><div class="tkch"><button class="${act==='s'?'on':''}" onclick="setUI('tkAct','s')">Started</button><button class="${act==='e'?'on':''}" onclick="setUI('tkAct','e')">Finished</button></div>
+   <div class="tklab">DELAY REASON ${late?'<span style="color:#dc2626">· needed — some ticked items are late</span>':'(only if late)'}</div><select id="tkWhy" style="padding:6px 8px;border:1px solid #c9d0d7;border-radius:6px;min-width:220px"><option value="">—</option>${T.reasons.map(r=>`<option>${esc(r)}</option>`).join('')}</select>
+   <div style="margin-top:12px"><button class="btn p" ${S.length?'':'disabled'} onclick="tkSaveEntry('${esc(st).replace(/'/g,"\\'")}')">Save ${S.length?'· '+S.length+' element'+(S.length>1?'s':''):''}</button> <span class="note">${S.length?esc(S.slice(0,6).map(tkShort).join(', '))+(S.length>6?' …':''):'Tick what you finished first.'}</span></div>`);
+  const LG=T.log.slice(-15).reverse(); if(LG.length) h+=panel('Last entries',simpleTable([['Date'],['Area'],['Level'],['Elements'],['Stage'],['Status'],['Reason']],LG.map(g=>`<tr><td>${fmtD(g.d)}</td><td>${esc((tkArea(g.a)||{}).name||'')}</td><td>${esc(g.lv||'')}</td><td>${esc(g.names||'')}</td><td>${esc(g.st)}</td><td>${g.act==='s'?'Started':'Finished'}</td><td>${esc(g.why||'')}</td></tr>`)));
+  return h; };
+function tkApply(it,name,act,d,why){ const S=tkType(it.t).stages, j=S.findIndex(s=>s.n===name); if(j<0) return false; it.s=it.s||{};
+  for(let k=0;k<j&&act==='e';k++){ const o=it.s[k]||[]; if(!o[1]) it.s[k]=[o[0]||d,d,o[2]||'']; }
+  const o=it.s[j]||['','','']; if(act==='s'){ o[0]=d; } else { o[1]=d; if(!o[0]) o[0]=d; } if(why) o[2]=why; it.s[j]=o; it._u=Date.now(); tkSyncExec(it); return true; }
+function tkSaveEntry(name){ const A=tkCurA(), sel=new Set(state.ui.tkSel||[]), I=tkItemsOf(A.id).filter(i=>sel.has(i.id)), d=state.ui.tkD||todayStr(), act=state.ui.tkAct==='s'?'s':'e', why=tkV('tkWhy');
+  if(!I.length) return toast('Tick what you finished first'); if(I.some(i=>tkNow(i).late>0)&&!why&&act==='e'){ if(!confirm('Some ticked items are late. Save without a delay reason?')) return; }
+  let n=0; I.forEach(i=>{ if(tkApply(i,name,act,d,why)) n++; });
+  tkS().log.push({id:uid(),a:A.id,lv:tkCurLv(A),names:I.slice(0,8).map(tkShort).join(', ')+(I.length>8?' +'+(I.length-8):''),st:name,act,d,why,at:Date.now()}); if(tkS().log.length>400) tkS().log.splice(0,tkS().log.length-400);
+  state.ui.tkSel=[]; tkSave(); toast(n+' saved · '+name+' '+(act==='s'?'started':'finished')); }
+/* ================= PAGE · Map (villa map · floor ladder · grid plan · wall) ================= */
+function tkCardSet(id){ state.ui.tkCard=state.ui.tkCard===id?'':id; persist(); render(); }
+function tkCardHTML(A,id){ const it=tkS().items.find(i=>i.id===id); if(!it) return ''; const group=it.u?tkItemsOf(A.id).filter(i=>i.u===it.u):[it];
+  return `<div class="tkcard"><b style="font-size:16px">${esc(it.u||it.n)}</b> <span class="note">${esc(A.name)}</span>${group.map(g=>{ const S=tkType(g.t).stages, n=tkNow(g);
+    return `<div style="margin-top:8px"><b>${esc(g.lv)}</b> · ${esc(tkType(g.t).name)} · <span style="color:${n.late?'#dc2626':'#1e3a5f'};font-weight:700">${esc(n.k==='wip'?n.n+(n.started?' since '+fmtD(n.since):' · waiting'):n.n)}${n.late?' · late '+n.late+' d':''}</span>
+    ${simpleTable([['Stage'],['Std days',1],['Start'],['End'],['Days',1],['Reason']],S.map((s,j)=>{ const o=(g.s||{})[j]||[]; const dd=o[0]&&o[1]?dayDiff(o[0],o[1])+1:''; return `<tr><td>${esc(s.n)}</td><td class="r">${s.d}</td><td>${fmtD(o[0]||'')}</td><td>${fmtD(o[1]||'')}</td><td class="r" style="${dd&&dd>s.d?'color:#dc2626;font-weight:700':''}">${dd}</td><td>${esc(o[2]||'')}</td></tr>`; }))}
+    ${n.k==='wip'?`<div style="margin-top:6px">${n.started?'':`<button class="btn sm" onclick="tkQuick('${g.id}','s')">Start ${esc(n.n)} today</button> `}<button class="btn sm p" onclick="tkQuick('${g.id}','e')">Finish ${esc(n.n)} today</button></div>`:n.k==='no'?`<div style="margin-top:6px"><button class="btn sm p" onclick="tkQuick('${g.id}','s')">Start ${esc(tkType(g.t).stages[0].n)} today</button></div>`:''}</div>`; }).join('')}</div>`; }
+function tkQuick(id,act){ const it=tkS().items.find(i=>i.id===id); if(!it) return; const n=tkNow(it), name=tkType(it.t).stages[n.k==='no'?0:n.i].n;
+  tkApply(it,name,act,todayStr(),''); tkS().log.push({id:uid(),a:it.a,lv:it.lv,names:tkShort(it),st:name,act,d:todayStr(),at:Date.now()}); tkSave(); toast(name+' '+(act==='s'?'started':'finished')); }
+function tkLadder(A){ const I=tkItemsOf(A.id), L=tkLevels(A.id).filter(l=>I.some(i=>i.lv===l&&i.t==='t_slab')).sort((a,b)=>(parseInt(String(b).replace(/\D/g,''))||0)-(parseInt(String(a).replace(/\D/g,''))||0));
+  if(!L.length) return ''; const maxP=Math.max(...L.map(l=>I.filter(i=>i.lv===l&&i.t==='t_slab').length)); const hasCore=I.some(i=>i.t==='t_core'), hasCol=I.some(i=>i.t==='t_col');
+  const box=it=>{ if(!it) return '<td class="c"></td>'; const n=tkNow(it); const c=n.late>0?'tk-late':n.k==='done'?'tk-on':n.k==='wip'?'tk-wip':'tk-off';
+    const t=n.k==='done'?(tkStageEnd(it,'Cast')?'Cast '+fmtD(tkStageEnd(it,'Cast')).slice(0,5):'Done'):n.k==='wip'?n.n+(n.late?' · late':''):'—'; return `<td class="c"><div class="x ${c}" onclick="tkCardSet('${it.id}')" title="${esc(it.n)}"><b>${esc(it.n.split(' ').pop())}</b><br>${esc(t)}</div></td>`; };
+  const rows=L.map(l=>{ const F=I.filter(i=>i.lv===l), P=F.filter(i=>i.t==='t_slab').sort((a,b)=>num(a.x)-num(b.x)); const st=F.flatMap(i=>Object.values(i.s||{}).map(o=>o[0]).filter(Boolean)).sort()[0]||'', ce=P.map(i=>tkStageEnd(i,'Cast'));
+    const cyc=st&&ce.length&&ce.every(Boolean)?dayDiff(st,ce.sort().pop())+1:'', pl=F.map(i=>i.ps).filter(Boolean).sort()[0]||'';
+    const late=F.some(i=>tkNow(i).late>0);
+    return `<tr><td><b>${esc(l)}</b></td><td style="font-size:12px">${pl?fmtD(pl):''}</td>${hasCore?box(F.find(i=>i.t==='t_core')):''}${hasCol?box(F.find(i=>i.t==='t_col')):''}${Array.from({length:maxP},(_,j)=>box(P[j])).join('')}<td class="r" style="${late?'color:#dc2626;font-weight:700':''}">${cyc?cyc+' d':late?'late':''}</td></tr>`; }).join('');
+  return `<div class="tw tklad"><table class="sheet"><thead><tr><th>Floor</th><th>Plan start</th>${hasCore?'<th>Core</th>':''}${hasCol?'<th>Columns</th>':''}${Array.from({length:maxP},(_,j)=>`<th>Pour ${j+1}</th>`).join('')}<th class="r">Cycle</th></tr></thead><tbody>${rows}</tbody></table></div>${tkLegend(null)}`; }
+function tkGridHTML(I,q){ const X=Math.max(...I.map(i=>num(i.x)))+1, Y=Math.max(...I.map(i=>num(i.y)))+1, A=tkArea(I[0].a), G=(A.grid&&A.grid.cols)||'ABCDEFGHJKLMNPQRSTUVWXYZ', wall=I.some(i=>i.w);
+  const at=(x,y)=>I.find(i=>num(i.x)===x&&num(i.y)===y);
+  let h=`<div class="tkg" style="grid-template-columns:40px repeat(${X},minmax(46px,64px))"><div></div>${Array.from({length:X},(_,x)=>`<div class="ax">${wall?esc((I.find(i=>num(i.x)===x)||{n:''}).n.split(' ')[0]):esc(G[x]||x+1)}</div>`).join('')}`;
+  const ys=Array.from({length:Y},(_,y)=>wall?Y-1-y:y);
+  ys.forEach(y=>{ h+=`<div class="ax">${wall?'Lift '+(y+1):y+1}</div>`; for(let x=0;x<X;x++){ const it=at(x,y); if(!it){ h+='<div></div>'; continue; } const n=tkNow(it);
+    h+=`<div class="x ${q==null&&n.k==='wip'&&!n.late?'tk-wip':tkCls(it,q)}" onclick="tkCardSet('${it.id}')" title="${esc(it.n)} · ${esc(n.n)}"><b>${esc(wall?'':it.n.split('-').pop())}</b>${n.late?'late':q==null&&n.k==='wip'?esc(n.n):''}</div>`; } });
+  return h+'</div>'; }
+PAGES.tkMap=()=>{ const A=tkCurA(); let h=`<p class="note hint">Tap one question — the map shows only those. Dark blue = matches the question · red = late · grey = others. Tap any box for its card.</p>`+tkAreaChips(); if(!A) return h;
+  const I0=tkItemsOf(A.id); if(!I0.length) return h+`<p class="note">No elements yet. Add them on <a href="#" onclick="go('tkSetup');return false">Areas · floors · pours</a>.</p>`;
+  const L=tkLevels(A.id), towerL=A.kind==='tower'&&I0.some(i=>i.t==='t_slab'); const opts=towerL?['__all']:[];
+  L.forEach(l=>{ const TT=[...new Set(I0.filter(i=>i.lv===l).map(i=>i.t))]; if(TT.length>1&&!towerL) TT.forEach(t=>opts.push(l+'||'+t)); else opts.push(l); });
+  const lv=opts.includes(state.ui.tkLv)?state.ui.tkLv:(opts.find(o=>o.split('||')[0]===state.ui.tkLv)||opts[0]);
+  const lab=o=>o==='__all'?'All floors':o.includes('||')?o.split('||')[0]+' · '+tkType(o.split('||')[1]).name:o;
+  h+=`<div class="tkch">${opts.map(l=>`<button class="${l===lv?'on':''}" onclick="tkLvSet('${esc(l).replace(/'/g,"\\'")}')">${esc(lab(l))}</button>`).join('')}</div>`;
+  if(lv==='__all'){ h+=panel(esc(A.name)+' · floors × pours',tkLadder(A)); if(state.ui.tkCard) h+=tkCardHTML(A,state.ui.tkCard); return h; }
+  const [lv0,ty0]=lv.split('||'), I=I0.filter(i=>i.lv===lv0&&(!ty0||i.t===ty0)); let q=state.ui.tkQ||null; if(q&&!['late','done','no'].includes(q)&&!I.some(i=>tkType(i.t).stages.some(s=>s.n===q))) q=null;
+  let body=tkQBar(I,q,'tkQSet');
+  if(I.some(i=>i.g||i.w)) body+=tkGridHTML(I.filter(i=>i.g||i.w),q);
+  if(I.some(i=>!i.g&&!i.w)) body+=`<div class="tkt" style="margin-top:6px">${I.filter(i=>!i.g&&!i.w).map(i=>{ const n=tkNow(i); return `<div class="x ${q==null&&n.k==='wip'&&!n.late?'tk-wip':tkCls(i,q)}" onclick="tkCardSet('${i.id}')" title="${esc(i.n)} · ${esc(n.n)}${n.late?' · late '+n.late+' d':''}" style="${tkShort(i).length>6?'width:auto;padding:0 6px':''}">${esc(tkShort(i).replace(/^V-0*/,''))}</div>`; }).join('')}</div>`;
+  body+=tkLegend(q);
+  h+=panel(esc(A.name)+' · '+esc(lab(lv))+' · '+I.length+' '+(A.kind==='villa'?'villas':'elements')+(q?' · showing '+esc(q==='late'?'late':q==='done'?'completed':q==='no'?'not started':tkQ(q)):''),body);
+  if(state.ui.tkCard) h+=tkCardHTML(A,state.ui.tkCard);
+  return h; };
+/* ================= PAGE · Status sheet (Excel-like) ================= */
+PAGES.tkSheet=()=>{ const A=tkCurA(); let h=tkAreaChips(); if(!A) return h; const I0=tkItemsOf(A.id), L=tkLevels(A.id);
+  const lv=L.includes(state.ui.tkSL)?state.ui.tkSL:'', show=state.ui.tkSS||'all', qs=(state.ui.tkSQ||'').toLowerCase();
+  let I=I0.filter(i=>!lv||i.lv===lv); const N=new Map(I.map(i=>[i.id,tkNow(i)]));
+  I=I.filter(i=>{ const n=N.get(i.id); return show==='all'||(show==='late'&&n.late>0)||(show==='wip'&&n.k==='wip')||(show==='no'&&n.k==='no')||(show==='done'&&n.k==='done')||(n.k==='wip'&&n.n===show); }).filter(i=>!qs||(i.n+' '+(i.u||'')).toLowerCase().includes(qs));
+  const SN=[]; I.forEach(i=>tkType(i.t).stages.forEach(s=>{ if(!SN.includes(s.n)) SN.push(s.n); }));
+  const allSN=[]; I0.forEach(i=>tkType(i.t).stages.forEach(s=>{ if(!allSN.includes(s.n)) allSN.push(s.n); }));
+  h+=`<div style="display:flex;gap:10px;flex-wrap:wrap;align-items:flex-end;margin-bottom:10px">${tkSel('tkSLs','Level',[['','All levels'],...L.map(l=>[l,l])],lv)}${tkSel('tkSSs','Show',[['all','All'],['late','Late only'],['wip','Working'],['no','Not started'],['done','Completed'],...allSN.map(s=>[s,'Now at: '+tkQ(s)])],show,200)}${tkIn('tkSQs','Search','',150,'e.g. V-125')}<button class="btn sm p" onclick="state.ui.tkSL=tkV('tkSLs');state.ui.tkSS=tkV('tkSSs');state.ui.tkSQ=tkV('tkSQs');persist();render()">Show</button></div>`;
+  const late=I.filter(i=>N.get(i.id).late>0).length;
+  h+=`<p style="font-size:15px;margin:0 0 8px"><b>${I.length}</b> shown · <b style="color:#dc2626">${late} late</b> · ${I.length-late} on time</p>`;
+  const R=I.slice(0,500).sort((a,b)=>N.get(b.id).late-N.get(a.id).late).map(i=>{ const n=N.get(i.id), S=tkType(i.t).stages, why=Object.values(i.s||{}).map(o=>o[2]).filter(Boolean).pop()||'';
+    return `<tr ${n.late?'style="background:#fdecec"':''}><td><a href="#" onclick="go('tkMap');state.ui.tkLv='${esc(i.lv).replace(/'/g,"\\'")}';tkCardSet('${i.id}');return false"><b>${esc(tkShort(i))}</b></a></td><td>${esc(i.lv)}</td>${SN.map(sn=>{ const j=S.findIndex(s=>s.n===sn); if(j<0) return '<td class="muted">·</td>'; const o=(i.s||{})[j]||[]; return `<td>${o[1]?'✓ '+fmtD(o[1]).slice(0,5):o[0]?'<b>'+esc(sn)+'</b> '+fmtD(o[0]).slice(0,5):''}</td>`; }).join('')}<td>${esc(n.k==='wip'?tkQ(n.n):n.n)}</td><td class="r" style="${n.late?'color:#dc2626;font-weight:700':''}">${n.late?n.late+' d':'—'}</td><td>${esc(why)}</td></tr>`; });
+  h+=panel(esc(A.name)+' · status sheet',`<div class="tw"><table class="sheet"><thead><tr><th>Element</th><th>Level</th>${SN.map(s=>`<th>${esc(s)}</th>`).join('')}<th>Now</th><th class="r">Late</th><th>Reason</th></tr></thead><tbody>${R.join('')||'<tr><td colspan="9" class="muted">Nothing to show.</td></tr>'}</tbody></table></div>${I.length>500?'<p class="note">First 500 shown — use the filters.</p>':''}`);
+  return h; };
+/* ================= PAGE · Monthly target ================= */
+const tkMonDays=m=>{ const [y,mo]=m.split('-').map(Number); return new Date(y,mo,0).getDate(); };
+function tkDone(aid,lv,st,m,ty){ return tkItemsOf(aid).filter(i=>(!lv||i.lv===lv)&&(!ty||i.t===ty)&&String(tkStageEnd(i,st)).slice(0,7)===m).length; }
+function tkFrac(m){ const t=todayStr(), tm=t.slice(0,7); return m<tm?1:m>tm?0:num(t.slice(8,10))/tkMonDays(m); }
+function tkTgtAdd(){ const A=tkCurA(), m=state.ui.month||thisMonth(), n=num(tkV('tkTn')); if(!n) return toast('Type the target number'); tkS().targets.push({id:'g'+uid(),a:A.id,m,lv:tkV('tkTl'),ty:tkV('tkTy'),st:tkV('tkTs'),n}); tkSave(); }
+function tkTgtDel(id){ const T=tkS(); T.targets=T.targets.filter(t=>t.id!==id); tkSave(); }
+function tkTgtCopy(){ const A=tkCurA(), m=state.ui.month||thisMonth(), [y,mo]=m.split('-').map(Number), pm=ymd(new Date(y,mo-2,1)).slice(0,7), T=tkS(); const P=T.targets.filter(t=>t.a===A.id&&t.m===pm); if(!P.length) return toast('No targets last month');
+  P.forEach(t=>{ if(!T.targets.some(x=>x.a===A.id&&x.m===m&&x.lv===t.lv&&(x.ty||'')===(t.ty||'')&&x.st===t.st)) T.targets.push(Object.assign({},t,{id:'g'+uid(),m})); }); tkSave(); toast('Copied '+P.length+' targets'); }
+function tkTgtSet(id,v){ const t=tkS().targets.find(x=>x.id===id); if(t){ t.n=num(v); tkSave(); } }
+const tkUnit=(A,lv,ty)=>A.kind==='villa'?'villas':(()=>{ const I=tkItemsOf(A.id).filter(i=>(!lv||i.lv===lv)&&(!ty||i.t===ty)); return I.length&&I.every(i=>i.t==='t_slab')?'pours':I.length&&I.every(i=>i.t==='t_core')?'floor lifts':'nos'; })();
+PAGES.tkTarget=()=>{ const A=tkCurA(), m=state.ui.month||thisMonth(), f=tkFrac(m); let h=monthBar()+tkAreaChips(); if(!A) return h;
+  const T=tkS(), R=T.targets.filter(t=>t.a===A.id&&t.m===m), L=tkLevels(A.id), SN=[]; tkItemsOf(A.id).forEach(i=>tkType(i.t).stages.forEach(s=>{ if(!SN.includes(s.n)) SN.push(s.n); }));
+  const rows=R.map(t=>{ const d=tkDone(A.id,t.lv,t.st,m,t.ty), sb=t.n*f, beh=d<sb-0.05*t.n-1e-9, ah=d>sb+0.5; const bal=Math.max(0,t.n-d), wl=Math.max(1,(tkMonDays(m)-num(todayStr().slice(8,10)))/7);
+    return {t,d,sb,beh,html:`<tr><td><b>${esc(t.lv||'All levels')}</b>${t.ty?' · '+esc(tkType(t.ty).name):''}</td><td>${esc(t.st)}</td><td>${esc(tkUnit(A,t.lv,t.ty))}</td><td class="r"><input value="${t.n}" onchange="tkTgtSet('${t.id}',this.value)" style="width:60px;text-align:right;font-weight:700"></td><td class="r">${d}</td><td class="r">${fmtN(sb,1)}</td><td class="r">${fmtN(bal)}</td><td class="r">${m===thisMonth()?fmtN(bal/wl,1):'—'}</td>
+      <td><div class="tkbar"><i style="width:${Math.min(100,t.n?d/t.n*100:0)}%;background:${beh?'#dc2626':'#1e3a5f'}"></i>${m===thisMonth()?`<em style="left:${f*100}%"></em>`:''}</div></td><td style="font-weight:700;color:${beh?'#dc2626':'#1e3a5f'}">${beh?'Behind':ah?'Ahead':'On track'}</td><td><button class="btn sm" onclick="tkTgtDel('${t.id}')">✕</button></td></tr>`}; });
+  const beh=rows.filter(r=>r.beh);
+  h+=`<div class="kpis">${kpi('Targets this month',R.length)}${kpi('Done so far',rows.reduce((a,r)=>a+r.d,0),'all target rows')}${kpi('Should be by today',fmtN(rows.reduce((a,r)=>a+r.sb,0),1),m===thisMonth()?'day '+todayStr().slice(8,10)+' of '+tkMonDays(m):'')}${kpi('Behind',beh.length,beh.map(r=>(r.t.lv?r.t.lv+' ':'')+r.t.st).slice(0,3).join(', '),beh.length?'bad':'')}</div>`;
+  h+=panel(esc(A.name)+' · target vs done · '+monthLabel(m),`<div class="tw"><table class="sheet"><thead><tr><th>Level / work</th><th>Stage finished</th><th>Unit</th><th class="r">Target</th><th class="r">Done</th><th class="r">Should be by today</th><th class="r">Balance</th><th class="r">Need per week</th><th>Progress (black line = today)</th><th>Status</th><th></th></tr></thead><tbody>${rows.map(r=>r.html).join('')||'<tr><td colspan="11" class="muted">No targets for this month yet — add below or copy last month.</td></tr>'}</tbody></table></div>
+   <div style="margin-top:10px">${tkSel('tkTl','Level / work',[['','All levels'],...L.map(l=>[l,l])],'',170)}${tkSel('tkTy','Element',[['','All elements'],...[...new Set(tkItemsOf(A.id).map(i=>i.t))].map(t=>[t,tkType(t).name])],'',170)}${tkSel('tkTs','Stage finished',SN.map(s=>[s,s]),SN.includes('Cast')?'Cast':SN[0],170)}${tkIn('tkTn','Target','',80)}<button class="btn p" onclick="tkTgtAdd()">+ Add target</button> <button class="btn" onclick="tkTgtCopy()">Copy last month</button></div>
+   <p class="note">Done = elements whose stage finished in this month (from Daily Progress). Should be by today = target × day / days in month.</p>`);
+  const N=tkItemsOf(A.id).map(i=>tkNow(i)), groups=[['Not started',N.filter(n=>n.k==='no').length,'#c9d0d7'],...SN.map(s=>[tkQ(s),N.filter(n=>n.k==='wip'&&n.n===s).length,'#8fa6c0']).filter(g=>g[1]),['Completed',N.filter(n=>n.k==='done').length,'#1e3a5f']], tot=N.length||1;
+  h+=`<div style="display:grid;grid-template-columns:1fr 1fr;gap:16px">`+panel('Whole area · where all '+N.length+' are now',simpleTable([['Now at'],['Count',1],['']],groups.map(g=>`<tr><td>${esc(g[0])}</td><td class="r"><b>${g[1]}</b></td><td style="width:55%"><div style="height:12px;width:${Math.max(0.5,g[1]/tot*100)}%;background:${g[2]};border-radius:3px"></div></td></tr>`)));
+  const keys=[...new Set(T.targets.filter(t=>t.a===A.id).map(t=>t.lv+'|'+t.st+'|'+(t.ty||'')))].slice(0,4), [y,mo]=m.split('-').map(Number), MS=[-2,-1,0,1,2].map(k=>ymd(new Date(y,mo-1+k,1)).slice(0,7));
+  h+=panel('Target plan by month',keys.length?`<div class="tw"><table class="sheet"><thead><tr><th>Month</th>${keys.map(k=>`<th colspan="2" style="text-align:center">${esc(k.split('|')[0]||'All')}${k.split('|')[2]?' · '+esc(tkType(k.split('|')[2]).name):''} · ${esc(k.split('|')[1])}</th>`).join('')}</tr><tr><th></th>${keys.map(()=>'<th class="r">Target</th><th class="r">Done</th>').join('')}</tr></thead><tbody>${MS.map(mm=>`<tr ${mm===m?'style="background:#eaf1f8"':''}><td><b>${monthLabel(mm)}</b></td>${keys.map(k=>{ const [l,s,ty]=k.split('|'), t=T.targets.find(x=>x.a===A.id&&x.m===mm&&x.lv===l&&x.st===s&&(x.ty||'')===ty), d=mm<=thisMonth()?tkDone(A.id,l,s,mm,ty):null; return `<td class="r">${t?t.n:'—'}</td><td class="r" style="${t&&d!=null&&mm<thisMonth()&&d<t.n?'color:#dc2626;font-weight:700':''}">${d==null?'—':d}</td>`; }).join('')}</tr>`).join('')}</tbody></table></div><p class="note">Short months are shown in red.</p>`:'<p class="note">Add targets to see the plan by month.</p>')+`</div>`;
+  return h; };
+/* ================= PAGE · 2-week look-ahead ================= */
+function tkShift(aid){ const t=todayStr(); let sh=0; tkItemsOf(aid).forEach(i=>{ if(!i.ps) return; const n=tkNow(i); if(n.k==='done') return; const st=Object.values(i.s||{}).map(o=>o[0]).filter(Boolean).sort()[0];
+  if(st) sh=Math.max(sh,dayDiff(i.ps,st)+n.late); else if(i.ps<t) sh=Math.max(sh,dayDiff(i.ps,t)); }); return Math.max(0,sh); }
+PAGES.tkLook=()=>{ const t=todayStr(), D=Array.from({length:14},(_,k)=>addDays(t,k)), T=tkS(); const R=[], GR=new Map();
+  T.areas.forEach(A=>{ const sh=tkShift(A.id); tkItemsOf(A.id).forEach(i=>{ const n=tkNow(i); if(n.k==='done') return; const S=tkType(i.t).stages, rest=S.slice(n.k==='no'?0:n.i).reduce((a,s)=>a+Math.max(1,Math.ceil(num(s.d))),0);
+    const st0=Object.values(i.s||{}).map(o=>o[0]).filter(Boolean).sort()[0]; let now=st0?t:(i.ps?addDays(i.ps,sh):''); if(!now&&n.k!=='wip') return; if(!now) now=t; if(now<t) now=t;
+    const end=addDays(now,rest-1); if(now>D[13]) return; if(!i.ps){ const k=A.id+'|'+i.lv+'|'+n.n+'|'+(n.late>0?1:0); let g=GR.get(k); if(!g){ g={A,i,n,now,end,base:'',shift:0,crit:n.late>0,cnt:0,late:0}; GR.set(k,g); R.push(g); } g.cnt++; if(n.late>g.late) g.late=n.late; if(end>g.end) g.end=end; return; }
+    R.push({A,i,n,now,end,base:i.ps||'',shift:i.ps&&!st0?dayDiff(i.ps,addDays(i.ps,sh)):0,crit:A.kind==='tower'||n.late>0}); }); });
+  R.sort((a,b)=>a.now.localeCompare(b.now)||b.n.late-a.n.late); const rows=R.slice(0,60);
+  let h=`<div class="kpis">${kpi('Working or starting in 14 days',R.reduce((a,r)=>a+(r.cnt||1),0),R.length+' rows')}${kpi('Critical · no spare days',R.filter(r=>r.crit).reduce((a,r)=>a+(r.cnt||1),0),'towers and late items','bad')}${kpi('Pushed later than plan',R.filter(r=>r.shift>0).length,'',R.some(r=>r.shift>0)?'bad':'')}${kpi('Late now',R.filter(r=>r.n.late>0).reduce((a,r)=>a+(r.cnt||1),0),'',R.some(r=>r.n.late>0)?'bad':'')}</div>`;
+  const cell=(r,d)=>{ const on=d>=r.now&&d<=r.end, bE=r.base?addDays(r.base,dayDiff(r.now,r.end)):'', base=r.shift>0&&r.base&&d>=r.base&&d<=bE&&!on; return `<td class="d" ${d===t?'style="background:#fff7e6"':''}>${on?`<div style="background:${r.crit?'#dc2626':'#1e3a5f'}"></div>`:base?'<div style="border:1.5px dashed #9aa5b1"></div>':''}</td>`; };
+  h+=panel('What is working and what starts next · 14 days',`<div class="tw tkgantt"><table class="sheet"><thead><tr><th>Area</th><th>Element</th><th>Level</th><th>Next stage</th><th class="r">Plan</th><th class="r">Now</th><th class="r">Shift</th>${D.map(d=>`<th style="text-align:center;padding:2px;${d===t?'background:#fde9c4':''}">${['S','M','T','W','T','F','S'][new Date(d+'T00:00:00').getDay()]}<br>${d.slice(8)}</th>`).join('')}<th>Why</th></tr></thead><tbody>${rows.map(r=>`<tr><td><b>${esc(r.A.name)}</b></td><td>${r.cnt?'<b>'+r.cnt+'</b> '+(r.A.kind==='villa'?'villas':'elements'):esc(tkShort(r.i))}</td><td>${esc(r.i.lv)}</td><td>${esc(r.n.k==='no'?tkType(r.i.t).stages[0].n:r.n.n)}${(r.cnt?r.late:r.n.late)?` <b style="color:#dc2626">late ${r.cnt?'up to '+r.late:r.n.late} d</b>`:''}</td><td class="r">${r.base?fmtD(r.base).slice(0,5):'—'}</td><td class="r"><b>${fmtD(r.now).slice(0,5)}</b></td><td class="r" style="${r.shift>0?'color:#dc2626;font-weight:700':''}">${r.shift>0?'+'+r.shift+' d':'—'}</td>${D.map(d=>cell(r,d)).join('')}<td style="font-size:12px;color:#5d6a76">${esc(Object.values(r.i.s||{}).map(o=>o[2]).filter(Boolean).pop()||'')}</td></tr>`).join('')||'<tr><td colspan="22" class="muted">Nothing planned. Add plan start dates when you add floors, grid elements or pours.</td></tr>'}</tbody></table></div>
+   <div class="tkleg"><span><i style="background:#1e3a5f"></i>planned work</span><span><i style="background:#dc2626"></i>critical (late here = next floor late)</span><span><i style="border:1.5px dashed #9aa5b1"></i>where it was in the plan</span><span>When work is late, the later plan dates move by themselves.</span></div>${R.length>60?'<p class="note">First 60 shown.</p>':''}`);
+  try{ const low=state.storeItems.map(i=>[i,storeBal(i.id)]).filter(([i,b])=>num(i.minStock)&&b.inStore<num(i.minStock)); h+=panel('Material below minimum in store · raise PR or transfer before the work starts',simpleTable([['Item'],['In store',1],['With contractors',1],['Minimum',1],['']],low.map(([i,b])=>`<tr><td><b>${esc(i.item)}</b></td><td class="r" style="color:#dc2626;font-weight:700">${fmtN(b.inStore)} ${esc(i.unit||'')}</td><td class="r">${fmtN(b.withCon)}</td><td class="r">${fmtN(i.minStock)}</td><td><button class="btn sm p" onclick="go('prpo')">Raise PR</button></td></tr>`)),'set minimum stock on Store Inventory'); }catch(e){}
+  return h; };
+/* ================= PAGE · All projects (company) ================= */
+function tkWith(st,fn){ const old=state; try{ state=st; return fn(); }finally{ state=old; } }
+function tkProjSum(st){ return tkWith(st,()=>{ const T=tkS(), m=thisMonth(), f=tkFrac(m); return T.areas.map(A=>{ const I=tkItemsOf(A.id), N=I.map(i=>tkNow(i)); const R=T.targets.filter(t=>t.a===A.id&&t.m===m); const tg=R.reduce((a,t)=>a+t.n,0), dn=R.reduce((a,t)=>a+Math.min(t.n,tkDone(A.id,t.lv,t.st,m,t.ty)),0);
+  return {A,n:I.length,done:N.filter(x=>x.k==='done').length,late:N.filter(x=>x.late>0).length,wip:N.filter(x=>x.k==='wip').length,tg,dn,sb:tg*f}; }); }); }
+PAGES.tkAll=()=>{ prjSync(); const P=PRJ.list.map(p=>({p,st:p.id===PRJ.cur?state:readProject(p.id)})).filter(x=>x.st); const S=P.map(x=>({p:x.p,a:tkProjSum(x.st)})); const all=S.flatMap(s=>s.a);
+  const tg=all.reduce((a,x)=>a+x.tg,0), dn=all.reduce((a,x)=>a+x.dn,0), sb=all.reduce((a,x)=>a+x.sb,0), beh=all.filter(x=>x.tg&&x.dn<x.sb-0.05*x.tg);
+  let h=`<div class="kpis">${kpi('Sites',P.length,all.length+' areas')}${kpi('Month target done',tg?Math.round(dn/tg*100)+'%':'—',tg?'should be '+Math.round(sb/tg*100)+'% by today':'add targets')}${kpi('Areas behind',beh.length+' of '+all.filter(x=>x.tg).length,'',beh.length?'bad':'')}${kpi('Late now',all.reduce((a,x)=>a+x.late,0),'elements across all sites',all.some(x=>x.late)?'bad':'')}</div>`;
+  h+=panel('All projects · every area',simpleTable([['Site'],['Area'],['Type'],['Whole area'],['Done %',1],['This month',1],['Should be',1],['Late',1],['Status']],all.length?S.flatMap(s=>s.a.map(x=>{ const pc=x.n?x.done/x.n:0, b=x.tg&&x.dn<x.sb-0.05*x.tg;
+    return `<tr><td>${esc(s.p.name)}</td><td><b>${esc(x.A.name)}</b></td><td>${TK_KINDS[x.A.kind]||''}</td><td style="min-width:160px">${bar(pc)}</td><td class="r">${Math.round(pc*100)}% <small class="muted">${x.done}/${x.n}</small></td><td class="r">${x.tg?x.dn+' / '+x.tg:'—'}</td><td class="r">${x.tg?fmtN(x.sb,1):'—'}</td><td class="r" style="${x.late?'color:#dc2626;font-weight:700':''}">${x.late}</td><td style="font-weight:700;color:${b?'#dc2626':'#1e3a5f'}">${x.tg?(b?'Behind':'On track'):'—'}</td></tr>`; })):[]),'from the execution tracker of each site on this device');
+  return h; };
+/* ================= EASY MODE · roles, Today, More pages, pins ================= */
+const TK_ROLES={
+ site:{name:'Site formwork department',who:'Site formwork engineer · supervisor · store',menu:[['Today',[['home','Today']]],['Progress',[['tkEntry','Daily Progress (stages)'],['tkMap','Villa / floor map'],['tkSheet','Status sheet'],['tkTarget','Monthly target'],['tkLook','2-week look-ahead']]],['Material',[['tkIssue','Issue / return'],['ledger','Material Inward / Outward'],['siReq','My requests'],['storeMove','Transfers & Returns']]],['Design',[['dzHome','Formwork design'],['dzSlab','Slab design']]]]},
+ ho:{name:'HO formwork department',who:'Head office team · all sites',menu:[['Today',[['home','Today · all sites']]],['Sites',[['tkAll','All projects'],['tkTarget','Monthly target'],['qsum','Site summary']]],['Material',[['prpo','PR & PO · approvals'],['coReq','Material requisitions'],['coSur','Surplus material'],['dehire','De-hire planning']]],['Money',[['rent','Hire charges'],['invoices','Vendor bills']]],['Check',[['health','Data check'],['dzReg','Design register']]]]},
+ hod:{name:'HoD · Head of Department',who:'Sees everything · decides',menu:[['Overview',[['home','Company today'],['tkAll','All projects']]],['Review',[['meeting','Review meeting'],['tkTarget','Monthly target'],['tkLate','Late & behind list']]],['Money',[['dashboard','Cost & rent'],['prpo','PR & PO']]],['Reports',[['qsum','Site summary'],['coReport','Performance report']]]]}};
+const tkLS=(k,v)=>{ try{ if(v===undefined) return localStorage.getItem(k); if(v===null) localStorage.removeItem(k); else localStorage.setItem(k,v); }catch(e){} return null; };
+const tkRole=()=>{ const r=tkLS('ft_role'); return TK_ROLES[r]?r:''; };
+const tkAllOn=()=>tkLS('ft_allpages')==='1';
+const tkPins=()=>{ try{ return JSON.parse(tkLS('ft_pins')||'[]'); }catch(e){ return []; } };
+function tkPin(k){ const P=new Set(tkPins()); P.has(k)?P.delete(k):P.add(k); tkLS('ft_pins',JSON.stringify([...P])); render(); }
+function tkSetRole(r){ tkLS('ft_role',r||null); tkLS('ft_rolechk','1'); const m=document.getElementById('tkrolem'); if(m) m.remove(); if(r){ tkLS('ft_allpages',null); state.route='home'; } persist(); render(); document.getElementById('main').scrollTop=0; }
+function tkSetAll(on){ tkLS('ft_allpages',on?'1':null); tkLS('ft_rolechk','1'); const m=document.getElementById('tkrolem'); if(m) m.remove(); render(); }
+function tkAllPages(){ const M=new Map(), G=[]; const add=(g,k,l)=>{ if(!PAGES[k]||k==='quick'||k==='more') return; if(M.has(k)) return; M.set(k,l); let x=G.find(y=>y.g===g); if(!x){ x={g,items:[]}; G.push(x); } x.items.push([k,l]); };
+  const dzOk=k=>!/^dz/.test(k)||(typeof dzLv!=='function'||dzLv()); NAV_SITE.forEach(g=>g.items.forEach(([k,l])=>dzOk(k)&&add(g.g,k,l))); if(coAllowed()) NAV_CO.forEach(g=>g.items.forEach(([k,l])=>dzOk(k)&&add(g.g==='Overview'?'Company':g.g,k,l))); return {M,G}; }
+function tkNavApply(){ document.body.classList.toggle('tkeasy',!!tkRole()&&!tkAllOn()); if(!tkRole()||tkAllOn()) return;
+  const {M,G}=tkAllPages(), R=TK_ROLES[tkRole()], used=new Set(), out=[];
+  R.menu.forEach(([g,items])=>{ const it=items.filter(([k])=>PAGES[k]&&(M.has(k)||['home','tkLate','tkIssue'].includes(k))); it.forEach(([k])=>used.add(k)); if(it.length) out.push({g,items:it}); });
+  const pins=tkPins().filter(k=>M.has(k)&&!used.has(k)); if(pins.length){ out.push({g:'Pinned',items:pins.map(k=>[k,M.get(k)])}); pins.forEach(k=>used.add(k)); }
+  if(state&&state.route&&!used.has(state.route)&&M.has(state.route)&&state.route!=='more'){ out.push({g:'Open now',items:[[state.route,M.get(state.route)]]}); used.add(state.route); }
+  const n=[...M.keys()].filter(k=>!used.has(k)).length; out.push({g:'More',items:[['more','More pages'],['quick','Quick Entry']]});
+  NAV.length=0; out.forEach(x=>NAV.push(x)); }
+PAGES.more=()=>{ const {G}=tkAllPages(), role=tkRole(), inMenu=new Set((role?TK_ROLES[role].menu.flatMap(g=>g[1].map(x=>x[0])):[])), P=new Set(tkPins()), n=G.reduce((a,g)=>a+g.items.length,0);
+  let h=panel('My menu',`<div class="tkrole">${Object.entries(TK_ROLES).map(([k,r])=>`<button class="${role===k&&!tkAllOn()?'on':''}" onclick="tkSetRole('${k}')"><b>${role===k&&!tkAllOn()?'✓ ':''}${esc(r.name)}</b><small>${esc(r.who)}</small></button>`).join('')}</div>
+   <div style="margin-top:10px;display:flex;gap:10px;align-items:center;flex-wrap:wrap"><button class="btn ${tkAllOn()||!role?'p':''}" onclick="tkSetAll(${tkAllOn()?0:1})">${tkAllOn()||!role?'✓ ':''}Show all pages in menu (like before)</button>${role&&tkAllOn()?`<button class="btn" onclick="tkSetAll(0)">Back to my short menu</button>`:''}<span class="note">Changing role changes only the menu. Data is the same for everyone. Permissions stay in Users &amp; Permissions.</span></div>`);
+  h+=panel('All pages · '+n,`<input id="tkMs" placeholder="Search any page: hire charges, vendor bill, stock…" oninput="tkMoreFind(this.value)" style="width:100%;padding:9px 12px;border:1px solid #c9d0d7;border-radius:8px;font:inherit;margin-bottom:12px">
+   <div class="tkmore">${G.map(g=>`<div class="g"><b>${esc(String(g.g).toUpperCase())}</b>${g.items.map(([k,l])=>`<div class="p ${inMenu.has(k)||P.has(k)?'m':''}" data-s="${esc((l+' '+g.g).toLowerCase())}"><span onclick="go('${k}')">${esc(l)}</span><em onclick="${inMenu.has(k)?'':`tkPin('${k}')`}">${inMenu.has(k)?'in my menu':P.has(k)?'★ pinned':'☆ pin'}</em></div>`).join('')}</div>`).join('')}</div>`);
+  return h; };
+function tkMoreFind(v){ v=String(v||'').toLowerCase(); document.querySelectorAll('.tkmore .p').forEach(e=>{ e.style.display=!v||e.dataset.s.includes(v)?'':'none'; }); }
+PAGES.tkIssue=()=>tdView();
+PAGES.tkLate=()=>{ state.ui.tkSS='late'; return PAGES.tkSheet(); };
+function tkRoleModal(){ if(document.getElementById('tkrolem')||tkLS('ft_rolechk')||tkRole()) return; if(document.getElementById('wsStart')||document.getElementById('lockscr')||(typeof LOCKED!=='undefined'&&LOCKED)||(typeof TRIAL_END!=='undefined'&&TRIAL_END)){ setTimeout(tkRoleModal,1500); return; } const d=document.createElement('div'); d.id='tkrolem'; d.className='cfm';
+  d.innerHTML=`<div class="cfm-box wide" role="dialog" aria-modal="true" aria-label="Who are you"><p><b style="font-size:18px">Who are you?</b><br><span style="color:var(--muted);font-size:13px">Pick once — the menu then shows only your work. All pages stay under “More pages”. You can change this any time.</span></p>
+   <div class="tkrole">${Object.entries(TK_ROLES).map(([k,r])=>`<button onclick="tkSetRole('${k}')"><b>${esc(r.name)}</b><small>${esc(r.who)}</small></button>`).join('')}</div>
+   <div class="acts" style="margin-top:12px"><button class="btn" onclick="tkSetAll(1)">Keep all pages (like before)</button></div></div>`; document.body.appendChild(d); }
+/* ---------- Today (home) per role ---------- */
+function tkAttention(){ const A=[]; tkS().areas.forEach(a=>{ const G=new Map(); tkItemsOf(a.id).forEach(i=>{ const n=tkNow(i); if(n.late>0){ const k=i.lv; const g=G.get(k)||{n:0,max:0,st:n.n}; g.n++; g.max=Math.max(g.max,n.late); G.set(k,g); } });
+   G.forEach((g,lv)=>A.push({w:g.n*10+g.max,t:`<b>${g.n} late</b> · ${esc(a.name)} · ${esc(lv)} <span class="muted">· oldest ${g.max} d · ${esc(tkQ(g.st))}</span>`,b:'Open',f:`state.ui.tkA='${a.id}';state.ui.tkLv='${esc(lv).replace(/'/g,"\\'")}';state.ui.tkQ='late';go('tkMap')`})); });
+  try{ state.storeItems.forEach(i=>{ const b=storeBal(i.id); if(num(i.minStock)&&b.inStore<num(i.minStock)) A.push({w:5,t:`<b>${esc(i.item)}</b> below minimum · ${fmtN(b.inStore)} of ${fmtN(i.minStock)} ${esc(i.unit||'')}`,b:'Raise PR',p:1,f:`go('prpo')`}); }); }catch(e){}
+  try{ const l=state.prpo.filter(p=>prStatus(p)[0]==='bd').length; if(l) A.push({w:8,t:`<b>${l} PR / PO late</b> · past required date`,b:'Open',f:`go('prpo')`}); }catch(e){}
+  return A.sort((a,b)=>b.w-a.w); }
+const tkAlHTML=A=>A.length?A.slice(0,6).map(x=>`<div class="tkal"><div><span class="tkdot"></span>${x.t}</div><button class="btn sm ${x.p?'p':''}" onclick="${x.f}">${x.b}</button></div>`).join(''):'<p class="note">Nothing needs attention right now.</p>';
+const tkWaitAp=()=>state.prpo.filter(p=>(p.prNo||p.item)&&!p.poNo&&!p.apDate&&!p.receivedDate);
+PAGES.home=()=>{ const role=tkRole()||'site', t=todayStr(); let h=`<p class="note" style="margin-top:0">${new Date().toLocaleDateString('en-IN',{weekday:'long',day:'numeric',month:'short'})} · ${esc(TK_ROLES[role].name)} · <a href="#" onclick="go('more');return false">change</a></p>`;
+  if(role==='site'){ h+=`<div class="tkbig"><button onclick="go('tkEntry')">Progress<small>element → stage → date</small></button><button onclick="go('tkIssue')">Material<small>issue / return to contractor</small></button><button onclick="go('labour')">Labour<small>carpenters &amp; helpers</small></button><button onclick="go('${PAGES.siReq?'siReq':'prpo'}')">Request<small>ask store or HO</small></button></div>`;
+    const At=tkAttention(); h+=panel('Needs your attention · '+At.length,tkAlHTML(At));
+    const W=[], WG=new Map(); tkS().items.forEach(i=>{ const n=tkNow(i); if(!(n.k==='wip'||(n.k==='no'&&i.ps&&i.ps<=addDays(t,3)))) return; const k=i.a+'|'+i.lv+'|'+n.n; let g=WG.get(k); if(!g){ g=[i,n,0,0]; WG.set(k,g); W.push(g); } g[2]++; g[3]=Math.max(g[3],n.late); }); W.sort((a,b)=>b[3]-a[3]);
+    const LG=tkS().log.slice(-4).reverse();
+    h+=`<div style="display:grid;grid-template-columns:1.3fr 1fr;gap:14px">`+panel("Today's work · from progress and plan",W.length?simpleTable([['Area'],['Element'],['Now'],['']],W.slice(0,10).map(([i,n,c,l])=>`<tr><td>${esc((tkArea(i.a)||{}).name||'')}</td><td><b>${c>1?c+' '+((tkArea(i.a)||{}).kind==='villa'?'villas':'elements'):esc(tkShort(i))}</b> <small class="muted">${esc(i.lv)}</small></td><td style="${l?'color:#dc2626;font-weight:700':''}">${esc(n.k==='no'?'starts '+fmtD(i.ps).slice(0,5):n.n+(l?' · late up to '+l+' d':''))}</td><td><button class="btn sm" onclick="state.ui.tkA='${i.a}';state.ui.tkLv='${esc(i.lv).replace(/'/g,"\\'")}';state.ui.tkQ='${esc(n.k==='wip'?n.n:'no').replace(/'/g,"\\'")}';state.ui.tkCard='${c>1?'':i.id}';go('tkMap')">Open</button></td></tr>`)):'<p class="note">No work in progress yet. Set up areas on <a href="#" onclick="go(\'tkSetup\');return false">Areas · floors · pours</a>.</p>')
+      +panel('Repeat a recent entry',LG.length?LG.map(g=>`<div class="tkal"><div>${esc(g.names)} · ${esc(g.st)} <small class="muted">${fmtD(g.d)}</small></div><button class="btn sm" onclick="state.ui.tkA='${g.a}';state.ui.tkLv='${esc(g.lv||'').replace(/'/g,"\\'")}';state.ui.tkSt='${esc(g.st).replace(/'/g,"\\'")}';state.ui.tkSel=[];go('tkEntry')">Repeat</button></div>`).join(''):'<p class="note">Your last entries show here.</p>')+`</div>`;
+    return h; }
+  const B=sideBadges(), WA=tkWaitAp();
+  if(role==='ho'){ const late=tkS().items.filter(i=>tkNow(i).late>0).length;
+    h+=`<div class="kpis">${kpi('PR to approve',WA.length,'',WA.length?'warn':'')}${kpi('Bills to check',(B.invoices||[0])[0],'difference above tolerance',(B.invoices||[0])[0]?'bad':'')}${kpi('Late elements',late,'all areas',late?'bad':'')}${kpi('Data check',(B.health||[0])[0],'problems found',(B.health||[0])[0]?'bad':'')}</div>`;
+    h+=`<div style="display:grid;grid-template-columns:1fr 1fr;gap:14px">`+panel('Approve · '+WA.length,WA.length?WA.slice(0,8).map(p=>`<div class="tkal"><div><b>${esc(p.prNo||'PR')}</b> · ${esc(p.item||'')} · ${fmtN(p.qty)} ${esc(p.unit||'')} <small class="muted">${p.requiredBy?'needed '+fmtD(p.requiredBy):''}</small></div><span><button class="btn sm p" onclick="tkApprove('${p.id}')">Approve</button></span></div>`).join(''):'<p class="note">Nothing waiting for approval.</p>')
+      +panel('Needs attention',tkAlHTML(tkAttention()))+`</div>`;
+    return h+PAGES.tkAll(); }
+  h+=PAGES.tkAll(); h+=panel('Waiting for decision',`<div class="tkal"><div><b>${WA.length}</b> purchase requests waiting for HO approval</div><button class="btn sm" onclick="go('prpo')">Open</button></div><div class="tkal"><div><b>${(B.invoices||[0])[0]}</b> vendor bills with a difference</div><button class="btn sm" onclick="go('invoices')">Open</button></div>`); return h; };
+/* ---------- PR approval step (HO) ---------- */
+function tkApprove(id){ const p=state.prpo.find(x=>x.id===id); if(!p) return; p.apDate=todayStr(); p.apBy=(TK_ROLES[tkRole()]||{name:''}).name||state.meta.user||''; p._u=Date.now(); save(); toast('Approved — raise the PO next'); }
+{ const _pr=PAGES.prpo; PAGES.prpo=()=>{ const WA=tkWaitAp(), AP=state.prpo.filter(p=>p.apDate&&!p.poNo&&!p.receivedDate);
+  let h=''; if(WA.length||AP.length) h+=panel('Step 3 · HO approval before PO',`${WA.length?simpleTable([['PR no.'],['Item'],['PR qty',1],['Required by'],['First check'],['']],WA.map(p=>`<tr><td><b>${esc(p.prNo||'—')}</b></td><td>${esc(p.item||'')}</td><td class="r">${fmtN(p.qty)} ${esc(p.unit||'')}</td><td>${fmtD(p.requiredBy||'')}</td><td>${PAGES.coSur&&coAllowed()?`<a href="#" onclick="go('coSur');return false">Free at another site? → transfer, no PO</a>`:'<span class="muted">check other sites</span>'}</td><td><button class="btn sm p" onclick="tkApprove('${p.id}')">Approve</button></td></tr>`)):''}
+    ${AP.length?`<p class="note">${AP.length} approved · waiting for PO: ${AP.slice(0,6).map(p=>esc((p.prNo||'')+' '+(p.item||''))).join(', ')}</p>`:''}`,'PR → approve → PO → received → used');
+  return h+_pr(); }; }
+/* ---------- wire into menus ---------- */
+(()=>{ const ov=NAV_SITE.find(g=>g.g==='Overview'); if(ov){ ov.items.unshift(['home','Today']); ov.items.splice(2,0,['tkAll','All projects (progress)']); }
+  const st=NAV_SITE.find(g=>g.g==='Setup'); if(st) st.items.push(['tkStages','Work Stages & Cycle'],['tkSetup','Areas · floors · pours']);
+  const i=NAV_SITE.findIndex(g=>g.g==='Daily Entry'); NAV_SITE.splice(i<0?2:i+1,0,{g:'Execution',items:[['tkEntry','Daily Progress (stages)'],['tkMap','Villa / floor map'],['tkSheet','Status sheet'],['tkTarget','Monthly target'],['tkLook','2-week look-ahead']]});
+  const f=NAV_SITE.find(g=>g.g==='File'); if(f) f.items.unshift(['more','More pages · my menu']);
+  const co=NAV_CO.find(g=>g.g==='Overview'); if(co) co.items.splice(1,0,['tkAll','All projects (progress)']);
+  const D=ICONS.dashboard; Object.assign(ICONS,{home:'<path d="M3 11l9-8 9 8"/><path d="M5 10v10h14V10"/>',tkEntry:ICONS.execution||D,tkMap:ICONS.sitemap||D,tkSheet:ICONS.qsum||D,tkTarget:ICONS.scope||D,tkLook:ICONS.planning||D,tkStages:ICONS.cycle||D,tkSetup:ICONS.setup||D,tkAll:ICONS.portfolio||D,tkIssue:ICONS.contractors||D,tkLate:ICONS.health||D,more:'<circle cx="5" cy="12" r="1.5"/><circle cx="12" cy="12" r="1.5"/><circle cx="19" cy="12" r="1.5"/>'}); })();
+{ const _sn=setNav; setNav=function(){ const r=_sn.apply(this,arguments); try{ tkNavApply(); }catch(e){ console.error(e); } return r; }; }
+(()=>{ const s=document.createElement('style'); s.textContent='body.tkeasy .wsw{display:none}'; document.head.appendChild(s); })();
+try{ setNav(); render(); setTimeout(tkRoleModal,1200); }catch(e){ console.error(e); }
 
 </script>
 </body>
