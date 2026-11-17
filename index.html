@@ -661,7 +661,7 @@ select.dzin{width:auto;max-width:230px;text-align:left}
 <input type="file" id="restoreFile" accept=".json" style="display:none" onchange="if(this.files[0])restoreBackup(this.files[0]);this.value=''">
 <input type="file" id="fsPick" style="display:none" onchange="fsOpenFile(this.files[0]);this.value=''">
 
-<script>window.__FORMTRACK_PWA=true; window.__FORMTRACK_VER="2026.11.16-1552"; window.__FORMTRACK_VERNAME="16 Nov 15:52"; window.__FT_TRIAL_FROM=1793358725887; window.__FT_OWNER_KEYS=["FTK1.KFWlfr8L9B9vCV5zDqch0g==.dbjdxh8PZxOLP1CNQ2z3RabZkTuh7AORMJY1xre+tWo=", "FTK1.Osl5ooyWCagTRuMdk06Obg==.rchABMlUZsicdxq192DnzmUcdgRXTqVE0LzUln8iqDY="]; window.__FT_ACCESS_PUB="SC1QzgBryXETIvpdPX-L1vNG0PfXbclYD1uqU4rGGy0"; window.__FT_BLOCKED=[];</script>
+<script>window.__FORMTRACK_PWA=true; window.__FORMTRACK_VER="2026.11.17-1637"; window.__FORMTRACK_VERNAME="17 Nov 16:37"; window.__FT_TRIAL_FROM=1793358725887; window.__FT_OWNER_KEYS=["FTK1.KFWlfr8L9B9vCV5zDqch0g==.dbjdxh8PZxOLP1CNQ2z3RabZkTuh7AORMJY1xre+tWo=", "FTK1.Osl5ooyWCagTRuMdk06Obg==.rchABMlUZsicdxq192DnzmUcdgRXTqVE0LzUln8iqDY="]; window.__FT_ACCESS_PUB="SC1QzgBryXETIvpdPX-L1vNG0PfXbclYD1uqU4rGGy0"; window.__FT_BLOCKED=[];</script>
 <script>
 /* FormTrack */
 const STORE_KEY = 'formtrack_data_v2';
@@ -1842,6 +1842,11 @@ PAGES.rates=()=>{
   return h;
 };
 
+function sqmTargetsPanel(m){ let h='';
+  const trows=state.targets.filter(t=>t.month===m);
+  h+=panel('Monthly targets – '+monthLabel(m),table('targets',[{key:'month',label:'Month',type:'month'},{key:'areaId',label:'Area',type:'area'},{key:'systemId',label:'System',type:'system',blank:'All systems'},{key:'targetSqm',label:'Target sqm',type:'number',r:1},
+    {label:'Achieved',r:1,calc:t=>fmtN(targetStatus(t).ach)},{label:'Progress',calc:t=>{const s=targetStatus(t); return bar(s.tgt?s.ach/s.tgt:0,s.ach>=s.tgt?'g':'');}},{label:'Status',calc:t=>{const s=targetStatus(t); return PILL(s.status,s.label);}}],{rows:trows,totals:['targetSqm']}));
+  return h; }
 PAGES.execution=()=>{
   const m=state.ui.month||thisMonth();
   const rows=state.execution.filter(e=>monthOf(e.date)===m).sort((a,b)=>(a.date||'').localeCompare(b.date||''));
@@ -1850,9 +1855,7 @@ PAGES.execution=()=>{
     {key:'date',label:'Date',type:'date'},{key:'systemId',label:'System',type:'system'},{key:'areaId',label:'Area',type:'area'},{key:'element',label:'Element',type:'element'},{key:'sqm',label:'Executed qty',type:'number',r:1},{label:'Unit',calc:e=>esc(sysUnit(e.systemId))},{key:'shutDate',label:'Shuttering start',type:'date'},{key:'deshutDate',label:'De-shuttered',type:'date'},{key:'delay',label:'Delay reason',type:'select',options:['','Material not arrived','Rebar late','Labour short','Crane / equipment','Drawing / design','Weather','Client hold','Concrete late','Other']},{label:'Cycle days',r:1,calc:e=>{ const c=exCycle(e); if(c!=null) return `<b>${c}</b>`; if(e.date&&!e.deshutDate&&dayDiff(e.date,todayStr())>=(num(state.meta.deshutDays)||3)) return PILL('wn','not de-shuttered '+dayDiff(e.date,todayStr())+' d'); return '—'; }},{key:'remarks',label:'Remarks'},
     {label:'Scope line',calc:e=>{ const sc=scopeOf(e); return sc?(num(sc.scopeSqm)?`${PILL('ok','in scope')} <small class="muted">${esc(sc.element||areaName(sc.areaId))}</small>`:PILL('na','scope not known')):PILL('na','no scope line'); }}],{rows,totals:['sqm'],unitOf:e=>sysUnit(e.systemId),qtyByUnit:1}),'entries dated in this month');
   { const A=avgCycles(); if(A.length) h+=panel('Actual cycle – shuttering start to de-shuttered',simpleTable([['System'],['Area'],['Pours',1],['Average days',1],['Fastest',1],['Slowest',1]],A.sort((x,y)=>x.avg-y.avg).map(g=>`<tr><td>${esc(sysName(g.s))}</td><td>${esc(areaName(g.a))}</td><td class="r">${g.n}</td><td class="r"><b>${fmtN(g.avg,1)}</b></td><td class="r">${g.min}</td><td class="r">${g.max}</td></tr>`)),'all months · used by the Cycle Planner'); }
-  const trows=state.targets.filter(t=>t.month===m);
-  h+=panel('Monthly targets – '+monthLabel(m),table('targets',[{key:'month',label:'Month',type:'month'},{key:'areaId',label:'Area',type:'area'},{key:'systemId',label:'System',type:'system',blank:'All systems'},{key:'targetSqm',label:'Target sqm',type:'number',r:1},
-    {label:'Achieved',r:1,calc:t=>fmtN(targetStatus(t).ach)},{label:'Progress',calc:t=>{const s=targetStatus(t); return bar(s.tgt?s.ach/s.tgt:0,s.ach>=s.tgt?'g':'');}},{label:'Status',calc:t=>{const s=targetStatus(t); return PILL(s.status,s.label);}}],{rows:trows,totals:['targetSqm']}));
+  if(!window.__noSqmTgt) h+=sqmTargetsPanel(m);
   return h;
 };
 
@@ -6005,7 +6008,7 @@ dzSec=function(x){ const B=num(x.B), D=num(x.D)||B, t=num(x.t), fy=num(x.fy)||25
   DZ_DEF.splice(i+1,0,{id:'dm-ply12d',g:'Sheathing',n:'Plywood 12 mm densified',stock:'Plywood 12 mm',M:0.34,V:9.75,EI:1.07,src:'',ok:0});
   const j=DZ_DEF.findIndex(x=>x.id==='dm-h12');
   DZ_DEF.splice(j+1,0,
-   {id:'dm-h16',g:'Secondary',n:'H-16 timber beam',stock:'H-16 beam',M:3.0,V:6.0,EI:145,src:'Jha Table 5.1 (p. 138)',alt:[{src:'Manufacturer catalogue (Doka H16)',M:2.7,V:8.5,EI:250}],ok:1},
+   {id:'dm-h16',g:'Secondary',n:'H-16 timber beam',stock:'H-16 beam',M:3.0,V:6.0,EI:145,src:'Jha Table 5.1 (p. 138)',alt:[{src:'Manufacturer catalogue (H16 beam)',M:2.7,V:8.5,EI:250}],ok:1},
    {id:'dm-h20',g:'Secondary',n:'H-20 timber beam',stock:'H-20 beam',M:5.0,V:11.0,EI:375,src:'',ok:0},
    {id:'dm-al75',g:'Secondary',n:'Aluminium beam 75×150',stock:'Aluminium beam',M:5.40,V:22.0,EI:0,ab:3,src:'',ok:0,
      comp:[['Grade','6061-T6 ? · confirm with supplier'],['E','68,900 N/mm² · IS 8147'],['Size','75 × 150 mm'],['Weight','enter'],['Missing','I or EI · needed for deflection'],['Ply on this beam','span = c/c − 60 mm (two support lines)']]});
@@ -6341,7 +6344,7 @@ const DZ_RF={
 Object.assign(DZ_K.Sheathing,{kM:0.1,kV:0.6,kD:0.0069});
 const DZ_KREF={Sheathing:'Continuous 3+ spans · M = wL²/10 · V = 0.6 wL · δ = wL⁴/145EI · Hurd (ACI SP-4)',Secondary:"Simple span · M = wL²/8 · V = wL/2 · δ = 5wL⁴/384EI · Roark's Formulas",Primary:"Simple span · M = wL²/8 · V = wL/2 · δ = 5wL⁴/384EI · Roark's Formulas"};
 const DZ_BAD=/sheet|calc|excel|app360|in sheet/i;
-{ const _g=dzMig; dzMig=function(L){ _g(L); L.forEach(s=>{ const f=DZ_RF[s.id]; if(!f||s._rv===3) return; s.refs=dzCl(f.refs); s.need=dzCl(f.need); if(s.alt) s.alt=s.alt.filter(a=>!DZ_BAD.test(a.src||'')); if(DZ_BAD.test(s.src||'')||/IIT|DOKA|Test report|IS 800|IS 4990|IS 883|Section calc|2 × single|Supplier/i.test(s.src||'')) s.src=''; if(f.k) Object.assign(s,{kM:0.1,kV:0.6,kD:0.0069}); s._rv=3; }); return L; }; }
+{ const _g=dzMig; dzMig=function(L){ _g(L); L.forEach(s=>{ const f=DZ_RF[s.id]; if(!f||s._rv===3) return; s.refs=dzCl(f.refs); s.need=dzCl(f.need); if(s.alt) s.alt=s.alt.filter(a=>!DZ_BAD.test(a.src||'')); if(DZ_BAD.test(s.src||'')||/IIT|Test report|IS 800|IS 4990|IS 883|Section calc|2 × single|Supplier/i.test(s.src||'')) s.src=''; if(f.k) Object.assign(s,{kM:0.1,kV:0.6,kD:0.0069}); s._rv=3; }); return L; }; }
 const dzRefTxt=m=>(m.refs||[]).map(([k,cl])=>(DZ_REF[k]?DZ_REF[k].t:k)+(cl?' · '+cl:'')).join(' | ');
 { const _m=dzMats; dzMats=function(c){ const L=_m(c); L.forEach(y=>{ const f=DZ_RF[y.id]; if(f&&y._rv!==3){ y.refs=dzCl(f.refs); y.need=dzCl(f.need); if(f.k) Object.assign(y,{kM:0.1,kV:0.6,kD:0.0069}); if(y.alt) y.alt=y.alt.filter(a=>!DZ_BAD.test(a.src||'')); y.src=''; } y.need=y.need||[]; y.srcOK=!y.need.length||!!String(y.doc||'').trim(); const rt=dzRefTxt(y); y.src=(rt||y.src||'—')+(y.doc?' · doc: '+y.doc:'')+(y.srcOK?'':' · ⚠ source needed: '+y.need.join(', ')); }); return L; }; }
 function dzDocSet(id,v){ const c=CO.get(); if(!dzCanCrit(c)) return toast('Criteria are locked.'); const m=dzMatsW(c).find(x=>x.id===id); if(!m) return; coHist(c,'Reference document · '+m.n,m.doc||'',v); m.doc=String(v||'').trim(); coSave(c); }
@@ -7198,8 +7201,8 @@ function tkNavApply(){ document.body.classList.toggle('tkeasy',!!tkRole()&&!tkAl
   const {M,G}=tkAllPages(), R=TK_ROLES[tkRole()], used=new Set(), out=[];
   R.menu.forEach(([g,items])=>{ const it=items.filter(([k])=>PAGES[k]&&(M.has(k)||['home','tkLate','tkIssue'].includes(k))); it.forEach(([k])=>used.add(k)); if(it.length) out.push({g,items:it}); });
   const pins=tkPins().filter(k=>M.has(k)&&!used.has(k)); if(pins.length){ out.push({g:'Pinned',items:pins.map(k=>[k,M.get(k)])}); pins.forEach(k=>used.add(k)); }
-  if(state&&state.route&&!used.has(state.route)&&M.has(state.route)&&state.route!=='more'){ out.push({g:'Open now',items:[[state.route,M.get(state.route)]]}); used.add(state.route); }
-  const n=[...M.keys()].filter(k=>!used.has(k)).length; out.push({g:'More',items:[['more','More pages'],['quick','Quick Entry']]});
+  if(state&&state.route&&!used.has(state.route)&&M.has(state.route)&&state.route!=='more'&&!(used.has('dashboard')&&['qsum','manual'].includes(state.route))){ out.push({g:'Open now',items:[[state.route,M.get(state.route)]]}); used.add(state.route); }
+  const n=[...M.keys()].filter(k=>!used.has(k)).length; out.push({g:'More',items:[['more','More pages'],['quick','Quick Entry'],...(used.has('dashboard')?[['qsum','Site Summary'],['manual','Progress Board']]:[])]});
   NAV.length=0; out.forEach(x=>NAV.push(x)); }
 PAGES.more=()=>{ const {G}=tkAllPages(), role=tkRole(), inMenu=new Set((role?TK_ROLES[role].menu.flatMap(g=>g[1].map(x=>x[0])):[])), P=new Set(tkPins()), n=G.reduce((a,g)=>a+g.items.length,0);
   let h=panel('My menu',`<div class="tkrole">${Object.entries(TK_ROLES).map(([k,r])=>`<button class="${role===k&&!tkAllOn()?'on':''}" onclick="tkSetRole('${k}')"><b>${role===k&&!tkAllOn()?'✓ ':''}${esc(r.name)}</b><small>${esc(r.who)}</small></button>`).join('')}</div>
@@ -7253,6 +7256,838 @@ function tkApprove(id){ const p=state.prpo.find(x=>x.id===id); if(!p) return; p.
 { const _sn=setNav; setNav=function(){ const r=_sn.apply(this,arguments); try{ tkNavApply(); }catch(e){ console.error(e); } return r; }; }
 (()=>{ const s=document.createElement('style'); s.textContent='body.tkeasy .wsw{display:none}'; document.head.appendChild(s); })();
 try{ setNav(); render(); setTimeout(tkRoleModal,1200); }catch(e){ console.error(e); }
+/* ---------- Site Dashboard = 3 tabs (Overview · Site Summary · Progress Board); trim site Overview menu ---------- */
+const TK_DTABS=[['dashboard','Overview','daily numbers'],['qsum','Site Summary','table + Excel'],['manual','Progress Board','present full screen']];
+const tkDashTabs=cur=>`<div class="tkdt">${TK_DTABS.map(([k,l,s])=>`<button class="${k===cur?'on':''}" onclick="go('${k}')">${l}<small>${s}</small></button>`).join('')}</div>`;
+['dashboard','qsum','manual'].forEach(k=>{ const o=PAGES[k]; if(o) PAGES[k]=function(){ return tkDashTabs(k)+o.apply(this,arguments); }; });
+(()=>{ const s=document.createElement('style'); s.textContent='.tkdt{display:flex;border-bottom:2px solid #d9d2c5;margin:0 0 14px;flex-wrap:wrap}.tkdt button{border:0;background:none;padding:9px 20px;font:inherit;font-weight:700;font-size:15px;color:var(--muted,#5d6a76);cursor:pointer;border-radius:8px 8px 0 0;text-align:left}.tkdt button small{display:block;font-weight:400;font-size:11.5px;color:#8a96a3}.tkdt button.on{color:#1e3a5f;background:#fff;border-bottom:3px solid #1e3a5f;margin-bottom:-2px}'; document.head.appendChild(s); })();
+const tkSiteTrim=()=>{ try{ return wsGet()!=='company'&&(!tkRole()||tkAllOn()||tkRole()==='site'); }catch(e){ return true; } };
+const TK_HIDE=['qsum','manual','mypages','meeting','tkAll'];
+{ const _sh=sideHTML; sideHTML=function(){ let h=_sh.apply(this,arguments); if(!tkSiteTrim()) return h;
+  TK_HIDE.forEach(k=>{ h=h.replace(new RegExp(`<button class="nl[^"]*" onclick="go\\('${k}'\\)"[\\s\\S]*?</button>`,'g'),''); });
+  if(['qsum','manual'].includes(state.route)) h=h.replace(`class="nl " onclick="go('dashboard')"`,`class="nl on" onclick="go('dashboard')"`);
+  return h; }; }
+TK_ROLES.site.menu[0]=['Overview',[['home','Today'],['dashboard','Site Dashboard'],['health','Data Check']]];
+try{ setNav(); render(); }catch(e){ console.error(e); }
+
+/* ================= MATERIAL CALCULATOR (route qe) · every value is typed by you · each result shows how ================= */
+function qeS(){ if(!state.qe||typeof state.qe!=='object'||Array.isArray(state.qe)) state.qe={}; const q=state.qe;
+  ['calcs','norms','list'].forEach(k=>{ if(!Array.isArray(q[k])) q[k]=[]; }); if(!q.nIn||typeof q.nIn!=='object') q.nIn={}; if(!q.src||typeof q.src!=='object') q.src={}; return q; }
+const QE_N=(v)=>{ if(v===''||v==null) return NaN; const n=Number(String(v).replace(/,/g,'')); return isFinite(n)?n:NaN; };
+const qf=(v,d=0)=>isFinite(v)?Number(v).toLocaleString('en-IN',{maximumFractionDigits:d,minimumFractionDigits:0}):'—';
+const q3=v=>isFinite(v)?(+v).toFixed(3).replace(/\.?0+$/,''):'—';
+/* ---- shape of an area: rectangle · triangle (3 sides) · circle · several rectangles · area + perimeter ---- */
+const QE_SHAPES=[['rect','Rectangle'],['tri','Triangle (3 sides)'],['circ','Circle'],['multi','Several rectangles'],['ap','Area + perimeter (from Drafting)']];
+function qeShape(v){ const s=v.shape||'rect', n=k=>QE_N(v[k]);
+  if(s==='rect'){ const L=n('L'),W=n('W'); return {ok:L>0&&W>0,A:L*W,P:2*(L+W),L,W,rect:1,how:`${q3(L)} × ${q3(W)}`}; }
+  if(s==='tri'){ const a=n('a'),b=n('b'),c=n('c'), p=(a+b+c)/2, A=Math.sqrt(Math.max(0,p*(p-a)*(p-b)*(p-c))); return {ok:a>0&&b>0&&c>0&&A>0,A,P:a+b+c,how:`Heron: √(s(s−a)(s−b)(s−c)), s = ${q3(p)}`}; }
+  if(s==='circ'){ const D=n('D'); return {ok:D>0,A:Math.PI*D*D/4,P:Math.PI*D,how:`π × ${q3(D)}² ÷ 4`}; }
+  if(s==='multi'){ const R=String(v.R||'').split(/[,;\n]+/).map(x=>x.trim().toLowerCase().split(/\s*[x×*]\s*/).map(Number)).filter(r=>r.length===2&&r[0]>0&&r[1]>0);
+    return {ok:R.length>0,A:R.reduce((a,r)=>a+r[0]*r[1],0),P:R.reduce((a,r)=>a+2*(r[0]+r[1]),0),R,how:R.map(r=>q3(r[0])+'×'+q3(r[1])).join(' + ')}; }
+  const A=n('A'),P=n('P'); return {ok:A>0&&P>0,A,P,how:'typed from Drafting'}; }
+const QE_SHIN=[['shape','Shape','','sel',QE_SHAPES],['L','Length','m','',0,'rect'],['W','Width','m','',0,'rect'],['a','Side a','m','',0,'tri'],['b','Side b','m','',0,'tri'],['c','Side c','m','',0,'tri'],['D','Diameter','m','',0,'circ'],['R','Rectangles, e.g. 20x13, 5x4','m','txt',0,'multi'],['A','Area','sqm','',0,'ap'],['P','Perimeter','m','',0,'ap']];
+/* ---- calculator kinds: inputs [key,label,unit,type,opts,showIfShape] and calc(v) → {res:[[label,value,how]], mat:[[item,unit,qty,how]], msg} ---- */
+const QE_K={
+ cup:{name:'Cuplock scaffolding',inp:[...QE_SHIN,['H','Floor top to slab bottom','m'],['ply','Plywood thickness','mm'],['sec','Secondary depth','mm'],['pri','Primary depth','mm'],['gx','Grid X (from design)','m'],['gy','Grid Y (from design)','m'],['lift','Ledger lift (from design)','m'],['jmin','Base jack + U-jack extension · minimum','mm'],['jmax','Base jack + U-jack extension · maximum','mm'],['st','Vertical lengths you have (length = nos), e.g. 3=120, 2.5=400','','txt'],['vname','Name of vertical','','txt'],['lname','Name of ledger','','txt']],
+  calc(v){ const S=qeShape(v), n=k=>QE_N(v[k]); const H=n('H'),ply=n('ply'),sec=n('sec'),pri=n('pri'),gx=n('gx'),gy=n('gy'),lift=n('lift'),j1=n('jmin'),j2=n('jmax');
+   if(!S.ok||!(H>0)||[ply,sec,pri,gx,gy,lift,j1,j2].some(x=>!isFinite(x))||!(gx>0&&gy>0&&lift>0)) return {msg:'Fill every value in Step 1.'};
+   const top=H-(ply+sec+pri)/1000, lo=top-j2/1000, hi=top-j1/1000;
+   const ST=String(v.st||'').split(/[,;\n]+/).map(x=>x.split(/[=:]/).map(y=>y.trim())).filter(x=>QE_N(x[0])>0).map(x=>({l:QE_N(x[0]),have:QE_N(x[1])}));
+   if(!ST.length) return {msg:'Type the vertical lengths you have.'};
+   let N,nx,ny,LX,LY,hv; if(S.rect){ nx=Math.ceil(S.L/gx)+1; ny=Math.ceil(S.W/gy)+1; N=nx*ny; hv=`${q3(S.L)} ÷ ${gx} → ${nx-1}, +1 = ${nx} · ${q3(S.W)} ÷ ${gy} → ${ny-1}, +1 = ${ny}`; }
+   else if(S.R){ N=0; LX=0; LY=0; S.R.forEach(r=>{ const a=Math.ceil(r[0]/gx)+1,b=Math.ceil(r[1]/gy)+1; N+=a*b; LX+=(a-1)*b; LY+=a*(b-1); }); hv='each rectangle counted on its own (shared edges counted twice — draw it in Drafting for exact)'; }
+   else { N=Math.ceil(S.A/(gx*gy)+S.P/(gx+gy)+1); hv=`estimate: A ÷ (gx × gy) + P ÷ (gx + gy) + 1 = ${q3(S.A)} ÷ ${q3(gx*gy)} + ${q3(S.P)} ÷ ${q3(gx+gy)} + 1 · for exact numbers draw it in Drafting`; }
+   const C=[]; const L=ST.map(s=>s.l).sort((a,b)=>b-a);
+   for(let i=0;i<L.length;i++){ if(L[i]>=lo-1e-9&&L[i]<=hi+1e-9) C.push([L[i]]); for(let j=i;j<L.length;j++){ const s2=L[i]+L[j]; if(s2>=lo-1e-9&&s2<=hi+1e-9) C.push([L[i],L[j]]); for(let k=j;k<L.length;k++){ const s3=s2+L[k]; if(s3>=lo-1e-9&&s3<=hi+1e-9) C.push([L[i],L[j],L[k]]); } } }
+   const need=c=>{ const m=new Map(); c.forEach(l=>m.set(l,(m.get(l)||0)+N)); return m; };
+   const short=c=>{ let s=0; need(c).forEach((q,l)=>{ const h=(ST.find(x=>x.l===l)||{}).have; if(isFinite(h)) s+=Math.max(0,q-h); }); return s; };
+   const uniq=new Map(); C.forEach(c=>uniq.set(c.join('+'),c)); const CC=[...uniq.values()].sort((a,b)=>a.length-b.length||short(a)-short(b)||b.reduce((x,y)=>x+y,0)-a.reduce((x,y)=>x+y,0));
+   if(!CC.length) return {msg:`No combination of your lengths fits between ${q3(lo)} m and ${q3(hi)} m. Add a length or change the jack range.`,res:[['Top of U-jack',q3(top)+' m',`${q3(H)} − ${ply/1000} − ${sec/1000} − ${pri/1000}`],['Vertical must be',`${q3(lo)} – ${q3(hi)} m`,'top − jack max … top − jack min']]};
+   const best=CC[0], vs=best.reduce((a,b)=>a+b,0), jt=best.length-1, lev=Math.ceil(vs/lift-1e-9)+1;
+   if(S.rect){ LX=(nx-1)*ny; LY=nx*(ny-1); } else if(!S.R){ const per=Math.ceil(2*S.A/(gx*gy)+S.P/(gx+gy)); LX=Math.ceil(per/2); LY=per-LX; }
+   const vn=v.vname||'Cuplock vertical', ln=v.lname||'Cuplock ledger', mat=[];
+   need(best).forEach((q,l)=>mat.push([`${vn} ${l} m`,'nos',q,`${N} verticals × ${best.filter(x=>x===l).length}`]));
+   if(gx===gy) mat.push([`${ln} ${gx} m`,'nos',(LX+LY)*lev,`(${LX} + ${LY}) × ${lev} levels`]); else { mat.push([`${ln} ${gx} m`,'nos',LX*lev,`${LX} × ${lev} levels`]); mat.push([`${ln} ${gy} m`,'nos',LY*lev,`${LY} × ${lev} levels`]); }
+   mat.push(['Base jack','nos',N,'1 per vertical'],['U-jack','nos',N,'1 per vertical']); if(jt) mat.push(['Spigot pin','nos',N*jt,`${N} × ${jt} joint${jt>1?'s':''}`]);
+   const res=[['Area',qf(S.A,2)+' sqm',S.how],['Top of U-jack',q3(top)+' m',`${q3(H)} − ${ply/1000} − ${sec/1000} − ${pri/1000}`],['Vertical must be',`${q3(lo)} – ${q3(hi)} m`,`leaves ${j1} – ${j2} mm for jacks`],
+     ['Vertical combination',best.map(q3).join(' + ')+' m',`${q3(vs)} m · leaves ${Math.round((top-vs)*1000)} mm for jacks · ${jt} joint${jt===1?'':'s'}`],['Verticals',S.rect?`${nx} × ${ny} = ${N}`:N,hv],['Ledger levels',lev,`${q3(vs)} ÷ ${lift} → ${lev-1}, + 1`]];
+   const alt=CC.slice(1,6).map(c=>`${c.map(q3).join(' + ')} m · ${c.length-1} joint${c.length===2?'':'s'}${short(c)?` · short by ${qf(short(c))}`:''}`);
+   return {res,mat,alt,warn:short(best)?`You are short by ${qf(short(best))} verticals of this combination.`:''}; }},
+ mem:{name:'Secondary / primary member',inp:[['mname','Member (runner, SQ tube, H-beam, ISMC …)','','txt'],...QE_SHIN,['dir','Members run along','','sel',[['L','Length (L)'],['W','Width (W)']],'rect'],['sp','Spacing c/c','m'],['sl','Stock length of member','m'],['lap','Overlap at joint','m']],
+  calc(v){ const S=qeShape(v), n=k=>QE_N(v[k]), sp=n('sp'), sl=n('sl'), lap=n('lap')||0; if(!S.ok||!(sp>0)||!(sl>0)||!v.mname) return {msg:'Fill every value in Step 1.'};
+   let run, lines, how; if(S.rect){ const along=v.dir==='W'?S.W:S.L, across=v.dir==='W'?S.L:S.W; lines=Math.ceil(across/sp)+1; run=along; how=`${q3(across)} ÷ ${sp} → ${lines-1}, + 1`; }
+   else { lines=null; run=null; }
+   if(S.rect){ const per=run<=sl?1:Math.ceil((run-lap)/(sl-lap)), tot=per*lines; return {res:[['Lines of member',lines,how],['Length of one line',q3(run)+' m',''],['Pieces per line',per,run<=sl?'one piece covers it':`(${q3(run)} − ${lap}) ÷ (${sl} − ${lap})`],['Running length',qf(lines*run,1)+' m',`${lines} × ${q3(run)}`]],mat:[[`${v.mname} ${q3(sl)} m`,'nos',tot,`${lines} × ${per}`]]}; }
+   const rmt=S.A/sp; return {res:[['Area',qf(S.A,2)+' sqm',S.how],['Running length',qf(rmt,1)+' m',`area ÷ spacing = ${qf(S.A,2)} ÷ ${sp}`]],mat:[[`${v.mname} ${q3(sl)} m`,'nos',Math.ceil(rmt/(sl-lap)),`${qf(rmt,1)} ÷ (${sl} − ${lap})`]]}; }},
+ ply:{name:'Plywood',inp:[['pname','Plywood (e.g. 12 mm film-faced)','','txt'],...QE_SHIN,['sw','Sheet width','mm'],['sl','Sheet length','mm']],
+  calc(v){ const S=qeShape(v), sw=QE_N(v.sw), sl=QE_N(v.sl); if(!S.ok||!(sw>0&&sl>0)) return {msg:'Fill every value in Step 1.'}; const sa=sw*sl/1e6, n=Math.ceil(S.A/sa-1e-9);
+   return {res:[['Area',qf(S.A,2)+' sqm',S.how],['One sheet',q3(sa)+' sqm',`${sw} × ${sl} mm`]],mat:[[(v.pname||'Plywood')+` ${sw}×${sl}`,'sheets',n,`${qf(S.A,2)} ÷ ${q3(sa)}`]]}; }},
+ edge:{name:'Edge / side boards',inp:[['how','Measure','','sel',[['run','Running length'],['beam','Beams (nos × length × 2 sides)']]],['run','Running length','m'],['nb','Beams','nos'],['bl','Length of one beam (clear)','m'],['dp','Board depth','m'],['sw','Plywood sheet width','mm'],['sl','Plywood sheet length','mm'],['tname','Timber section (e.g. 50×75)','','txt'],['bs','Batten spacing c/c','m'],['rr','Timber runner rows along the board','nos']],
+  calc(v){ const n=k=>QE_N(v[k]); const run=v.how==='beam'?n('nb')*n('bl')*2:n('run'), dp=n('dp'), sw=n('sw'), sl=n('sl'), bs=n('bs'), rr=n('rr')||0;
+   if(!(run>0)||!(dp>0)||!(sw>0&&sl>0)||!(bs>0)) return {msg:'Fill every value in Step 1.'}; const A=run*dp, sa=sw*sl/1e6, sh=Math.ceil(A/sa-1e-9), bat=Math.ceil(run/bs)+1, trm=bat*dp+rr*run;
+   return {res:[['Running length',q3(run)+' m',v.how==='beam'?`${n('nb')} × ${n('bl')} × 2 sides`:'typed'],['Board area',qf(A,2)+' sqm',`${q3(run)} × ${dp}`],['Battens',bat,`${q3(run)} ÷ ${bs} → ${bat-1}, + 1`]],
+    mat:[[`Plywood ${sw}×${sl}`,'sheets',sh,`${qf(A,2)} ÷ ${q3(sa)}`],[`Timber ${v.tname||''}`.trim(),'rmt',+trm.toFixed(2),`${bat} × ${dp}${rr?` + ${rr} × ${q3(run)}`:''}`]]}; }},
+ tie:{name:'Wall tie set',inp:[['L','Wall length','m'],['H','Pour height','m'],['sh','Tie spacing · horizontal','m'],['sv','Tie spacing · vertical','m'],['tl','Tie rod length (wall + both sides)','m'],['tname','Tie rod (e.g. 16 mm)','','txt'],['wn','Wing nuts per tie','nos'],['pl','Tie plates per tie','nos'],['cn','Cones / PVC sleeves per tie','nos'],['wr','Walers per tie row per face','nos'],['wname','Waler (e.g. twin ISMC 100)','','txt']],
+  calc(v){ const n=k=>QE_N(v[k]); const L=n('L'),H=n('H'),sh=n('sh'),sv=n('sv'); if(!(L>0&&H>0&&sh>0&&sv>0)) return {msg:'Fill every value in Step 1.'};
+   const c=Math.ceil(L/sh-1e-9), r=Math.ceil(H/sv-1e-9), T=c*r, M=[[`Tie rod ${v.tname||''} ${isFinite(n('tl'))?q3(n('tl'))+' m':''}`.replace(/\s+/g,' ').trim(),'nos',T,`${c} along × ${r} rows`]];
+   if(n('wn')>0) M.push(['Wing nut','nos',T*n('wn'),`${T} × ${n('wn')}`]); if(n('pl')>0) M.push(['Tie plate','nos',T*n('pl'),`${T} × ${n('pl')}`]); if(n('cn')>0) M.push(['Cone / PVC sleeve','nos',T*n('cn'),`${T} × ${n('cn')}`]);
+   if(n('wr')>0) M.push([`Waler ${v.wname||''}`.trim(),'rmt',+(r*2*n('wr')*L).toFixed(2),`${r} rows × 2 faces × ${n('wr')} × ${q3(L)}`]);
+   return {res:[['Ties along',c,`${q3(L)} ÷ ${sh}`],['Tie rows',r,`${q3(H)} ÷ ${sv}`],['Ties',T,`${c} × ${r}`]],mat:M}; }},
+ stair:{name:'Staircase & ramp (quick)',inp:[['ty','Type','','sel',[['st','Staircase flight'],['rp','Ramp']]],['fl','Flights','nos'],['wd','Width','m'],['ns','Risers in one flight','nos'],['rs','Riser','mm'],['gw','Going (tread)','mm'],['ws','Waist slab','mm'],['lL','Landing length','m'],['lW','Landing width','m'],['rL','Ramp length (plan)','m'],['rH','Ramp rise','m'],['rT','Ramp slab thickness','mm']],
+  calc(v){ const n=k=>QE_N(v[k]); const W=n('wd');
+   if(v.ty==='rp'){ const L=n('rL'),R=n('rH'),t=n('rT'); if(!(L>0&&W>0&&R>=0&&t>0)) return {msg:'Fill every value in Step 1.'}; const sl=Math.sqrt(L*L+R*R), sof=W*sl, sd=2*sl*t/1000;
+    return {res:[['Slope',`1 in ${q3(L/(R||1))} · ${q3(Math.atan2(R,L)*180/Math.PI)}°`,`${q3(R)} over ${q3(L)}`],['Sloped length',q3(sl)+' m',`√(${q3(L)}² + ${q3(R)}²)`]],mat:[['Shuttering · ramp soffit','sqm',+sof.toFixed(2),`${q3(W)} × ${q3(sl)}`],['Shuttering · ramp sides','sqm',+sd.toFixed(2),`2 × ${q3(sl)} × ${t/1000}`]]}; }
+   const F=n('fl'),N=n('ns'),r=n('rs')/1000,g=n('gw')/1000,w=n('ws')/1000; if(!(F>0&&W>0&&N>0&&r>0&&g>0&&w>0)) return {msg:'Fill every value in Step 1.'};
+   const run=(N-1)*g, rise=N*r, sl=Math.sqrt(run*run+rise*rise), sof=W*sl, ris=N*W*r, side=2*(sl*w+(N-1)*g*r/2), land=(n('lL')>0&&n('lW')>0)?n('lL')*n('lW'):0;
+   const M=[['Shuttering · stair soffit','sqm',+(F*sof).toFixed(2),`${F} × ${q3(W)} × ${q3(sl)}`],['Shuttering · riser boards','sqm',+(F*ris).toFixed(2),`${F} × ${N} × ${q3(W)} × ${r}`],['Shuttering · stringer sides','sqm',+(F*side).toFixed(2),`${F} × 2 × (${q3(sl)} × ${w} + ${N-1} × ${g} × ${r} ÷ 2)`]];
+   if(land) M.push(['Shuttering · landing soffit','sqm',+land.toFixed(2),`${n('lL')} × ${n('lW')}`]);
+   return {res:[['Flight run (plan)',q3(run)+' m',`(${N} − 1) × ${g}`],['Flight rise',q3(rise)+' m',`${N} × ${r}`],['Sloped length',q3(sl)+' m',`√(run² + rise²)`],['Angle',q3(Math.atan2(rise,run)*180/Math.PI)+'°','']],mat:M}; }}};
+/* ---- consumption norms (your own coefficients) ---- */
+const QE_BASIS=[['sqm','Per sqm'],['rmt','Per rmt'],['spc','Spacing along length'],['grid','Grid (a × b)'],['nos','Per nos'],['link','Linked to another item']];
+function qeNormQty(r,inp,seen){ seen=seen||new Set(); if(seen.has(r.id)) return {q:NaN,how:'loop'}; seen.add(r.id); const v=QE_N(r.v), v2=QE_N(r.v2), a=QE_N(inp.a), b=QE_N(inp.b), add=QE_N(r.add)||0;
+  switch(r.basis){ case 'sqm': return {q:a*v,how:`${qf(a,2)} sqm × ${r.v}`};
+   case 'rmt': return {q:a*v,how:`${qf(a,2)} m × ${r.v}`};
+   case 'spc': { const per=Math.ceil(a/v-1e-9)+add; return {q:(b||1)*per,how:`${b||1} × (${q3(a)} ÷ ${r.v} → ${Math.ceil(a/v-1e-9)}${add?` + ${add}`:''})`}; }
+   case 'grid': return {q:Math.ceil(a/(v*v2)-1e-9),how:`${qf(a,2)} sqm ÷ (${r.v} × ${r.v2})`};
+   case 'nos': return {q:a*v,how:`${qf(a)} × ${r.v}`};
+   case 'link': { const o=qeS().norms.find(x=>x.id===r.link); if(!o) return {q:NaN,how:'pick the item'}; const x=qeNormQty(o,qeS().nIn[o.id]||{},seen); return {q:x.q*v,how:`${qf(x.q)} ${esc(o.item)} × ${r.v}`}; } }
+  return {q:NaN,how:''}; }
+const QE_BIN={sqm:['Area','sqm'],rmt:['Length','m'],spc:['Length of one member','m','Members','nos'],grid:['Area','sqm'],nos:['Quantity','nos'],link:null};
+/* ---- page ---- */
+const qeCur=()=>{ const Q=qeS(); return Q.calcs.find(c=>c.id===state.ui.qeC)||null; };
+function qeAdd(kind){ const Q=qeS(), c={id:uid(),kind,name:QE_K[kind].name,v:{shape:'rect'},ex:''}; Q.calcs.push(c); state.ui.qeC=c.id; state.ui.qeTab='calc'; save(); }
+function qeDel(id){ const Q=qeS(), c=Q.calcs.find(x=>x.id===id); if(!c||!confirm('Delete calculator "'+c.name+'"? Its values are removed.')) return; Q.calcs=Q.calcs.filter(x=>x.id!==id); state.ui.qeC=''; save(); }
+function qeRen(id){ const c=qeS().calcs.find(x=>x.id===id); if(!c) return; const n=prompt('Name of this calculator',c.name); if(n&&n.trim()){ c.name=n.trim(); save(); } }
+function qeSet(k,val,nxt){ const c=qeCur(); if(!c) return; if(k==='ex') c.ex=val; else c.v[k]=val; state.ui.qeFocus=nxt||''; save(); }
+function qeGross(net,ex){ const e=QE_N(ex); return e>0?Math.ceil(net*(1+e/100)-1e-9):Math.ceil(net-1e-9); }
+function qeToList(){ const c=qeCur(); if(!c) return; const r=QE_K[c.kind].calc(c.v); if(!r.mat||!r.mat.length){ toast('Nothing to add yet'); return; } const Q=qeS(), d=todayStr();
+  Q.list=Q.list.filter(x=>x.from!==c.id); r.mat.forEach(m=>Q.list.push({id:uid(),item:m[0],unit:m[1],net:m[2],ex:c.ex||'',gross:m[1]==='rmt'||m[1]==='sqm'?+((m[2]*(1+(QE_N(c.ex)||0)/100)).toFixed(2)):qeGross(m[2],c.ex),from:c.id,fromN:c.name,d}));
+  save(); toast('Added to the total list · '+r.mat.length+' items'); }
+const qeIn=(c,f,nxt)=>{ const [k,l,u,t,opts]=f, v=c.v[k]==null?'':c.v[k];
+  if(t==='sel') return `<select id="qe_${k}" onchange="qeSet('${k}',this.value,'${nxt}')" class="qei" style="width:auto;text-align:left">${opts.map(o=>`<option value="${o[0]}" ${String(v||opts[0][0])===o[0]?'selected':''}>${esc(o[1])}</option>`).join('')}</select>`;
+  return `<input id="qe_${k}" class="qei ${t==='txt'?'tx':''}" value="${esc(v)}" ${t==='txt'?'':'inputmode="decimal"'} onchange="qeSet('${k}',this.value,'${nxt}')">`; };
+function qeCalcHTML(c){ const K=QE_K[c.kind], sh=c.v.shape||'rect', F=K.inp.filter(f=>!f[5]||(f[5]===sh&&(c.v.how!=='beam'||true))).filter(f=>!(c.kind==='edge'&&((c.v.how==='beam'&&f[0]==='run')||(c.v.how!=='beam'&&['nb','bl'].includes(f[0])))))
+   .filter(f=>!(c.kind==='stair'&&((c.v.ty==='rp'&&['fl','ns','rs','gw','ws','lL','lW'].includes(f[0]))||(c.v.ty!=='rp'&&['rL','rH','rT'].includes(f[0])))));
+  const r=K.calc(c.v);
+  let a=panel('Step 1 · You fill',`<table class="sheet qet"><tbody>${F.map((f,i)=>`<tr><td>${esc(f[1])}${f[2]?` <span class="qu">${esc(f[2])}</span>`:''}</td><td class="r">${qeIn(c,f,F[i+1]?F[i+1][0]:'ex')}</td></tr>`).join('')}
+    <tr><td><b>Extra for safety</b> <span class="qu">%</span><br><small class="muted">added on top of the exact figure</small></td><td class="r"><input id="qe_ex" class="qei" value="${esc(c.ex||'')}" inputmode="decimal" onchange="qeSet('ex',this.value,'')"></td></tr></tbody></table><p class="note">Every number here is yours. Nothing is filled in for you.</p>`);
+  let b; if(r.msg&&!r.res) b=panel('Step 2 · Result',`<p class="note">${esc(r.msg)}</p>`);
+  else { const ex=QE_N(c.ex)||0;
+   b=panel('Step 2 · Result',(r.msg?`<div class="banner">${esc(r.msg)}</div>`:'')+(r.warn?`<div class="banner">${PILL('wn','SHORT')} ${esc(r.warn)}</div>`:'')+
+    `<table class="sheet"><thead><tr><th>Result</th><th class="r">Value</th><th>How</th></tr></thead><tbody>${(r.res||[]).map(x=>`<tr><td>${x[0]}</td><td class="r"><b>${x[1]}</b></td><td class="how">${x[2]||''}</td></tr>`).join('')}</tbody></table>`+
+    (r.mat?`<div class="tklab" style="margin-top:12px">MATERIAL</div><table class="sheet"><thead><tr><th>Item</th><th class="r">Exact</th>${ex?`<th class="r">+ ${ex}%</th>`:''}<th>Unit</th><th>How</th></tr></thead><tbody>${r.mat.map(m=>`<tr><td><b>${esc(m[0])}</b></td><td class="r">${qf(m[2],2)}</td>${ex?`<td class="r"><b>${qf(m[1]==='rmt'||m[1]==='sqm'?m[2]*(1+ex/100):qeGross(m[2],ex),2)}</b></td>`:''}<td>${esc(m[1])}</td><td class="how">${m[3]}</td></tr>`).join('')}</tbody></table>
+     <div class="acts" style="margin-top:10px"><button class="btn p" onclick="qeToList()">${qeS().list.some(x=>x.from===c.id)?'Update in total list':'Add to total list'}</button></div>`:'')+
+    (r.alt&&r.alt.length?`<details style="margin-top:8px"><summary style="cursor:pointer;font-size:13px">Other combinations that also fit (${r.alt.length})</summary><p class="note">${r.alt.map(esc).join('<br>')}</p></details>`:'')); }
+  return `<div class="qehd"><b>${esc(c.name)}</b><span class="muted">${esc(K.name)}</span><button class="btn sm" onclick="qeRen('${c.id}')">Rename</button><button class="btn sm" onclick="qeDel('${c.id}')">Delete</button></div><div class="qe2">${a}${b}</div><p class="note">Planning quantity — check against the approved formwork design.</p>`; }
+function qeNormsHTML(){ const Q=qeS();
+  const rows=Q.norms.map(r=>{ const I=Q.nIn[r.id]||{}, x=qeNormQty(r,I), bi=QE_BIN[r.basis];
+   const ed=(k,w,ph)=>`<input class="qei tx" style="width:${w}px" value="${esc(r[k]==null?'':r[k])}" placeholder="${ph||''}" onchange="qeNSet('${r.id}','${k}',this.value)">`;
+   const qi=(k,w)=>`<input class="qei" style="width:${w||80}px" value="${esc(I[k]==null?'':I[k])}" inputmode="decimal" onchange="qeNIn('${r.id}','${k}',this.value)">`;
+   return `<tr><td>${ed('item',170,'item')}</td><td>${ed('applies',110,'used on')}</td><td><select class="qei" style="width:auto;text-align:left" onchange="qeNSet('${r.id}','basis',this.value)">${QE_BASIS.map(b=>`<option value="${b[0]}" ${r.basis===b[0]?'selected':''}>${b[1]}</option>`).join('')}</select></td>
+    <td>${r.basis==='link'?`<select class="qei" style="width:auto;text-align:left" onchange="qeNSet('${r.id}','link',this.value)"><option value="">— pick —</option>${Q.norms.filter(o=>o.id!==r.id).map(o=>`<option value="${o.id}" ${r.link===o.id?'selected':''}>${esc(o.item||'?')}</option>`).join('')}</select> × `:''}${ed('v',60)}${r.basis==='grid'?' × '+ed('v2',60):''}${r.basis==='spc'?' m, + '+ed('add',40)+' per member':''}</td><td>${ed('unit',60,'nos')}</td><td>${ed('src',110,'your source')}</td>
+    <td>${bi?`${bi[0]} ${qi('a')} ${bi[1]}${bi[2]?`<br>${bi[2]} ${qi('b',60)}`:''}`:'<span class="muted">from linked item</span>'}</td><td class="r"><b>${isFinite(x.q)?qf(x.q,2):'—'}</b></td><td class="how">${isFinite(x.q)?x.how:''}</td>
+    <td><button class="btn sm" onclick="qeNList('${r.id}')">Add</button> <button class="btn sm" onclick="qeNDel('${r.id}')">✕</button></td></tr>`; });
+  return panel('Consumption norms · your own coefficients',`<div class="tw"><table class="sheet qen"><thead><tr><th>Item</th><th>Used on</th><th>Basis</th><th>Your value</th><th>Unit</th><th>Source</th><th>Quantity for this job</th><th class="r">Result</th><th>How</th><th></th></tr></thead><tbody>${rows.join('')||`<tr><td colspan="10" class="muted" style="text-align:center">No norms yet. Add your first one — e.g. beam clamp, spacing along length 0.6 m, + 1 per beam.</td></tr>`}</tbody></table></div>
+   <div class="acts" style="margin-top:10px"><button class="btn p" onclick="qeNAdd()">+ Add norm</button></div><p class="note">Set a norm once (per sqm, per rmt, spacing along a length, grid, per nos, or linked to another item). Type the job quantity, and the result shows how it was worked out.</p>`); }
+function qeNAdd(){ qeS().norms.push({id:uid(),item:'',applies:'',basis:'sqm',v:'',unit:'nos',src:''}); save(); }
+function qeNDel(id){ const Q=qeS(); Q.norms=Q.norms.filter(x=>x.id!==id); delete Q.nIn[id]; save(); }
+function qeNSet(id,k,v){ const r=qeS().norms.find(x=>x.id===id); if(r){ r[k]=v; save(); } }
+function qeNIn(id,k,v){ const Q=qeS(); Q.nIn[id]=Object.assign({},Q.nIn[id],{[k]:v}); save(); }
+function qeNList(id){ const Q=qeS(), r=Q.norms.find(x=>x.id===id); if(!r) return; const x=qeNormQty(r,Q.nIn[id]||{}); if(!isFinite(x.q)||!r.item){ toast('Fill the item and quantity first'); return; }
+  Q.list=Q.list.filter(y=>y.from!=='n_'+id); Q.list.push({id:uid(),item:r.item,unit:r.unit||'nos',net:+x.q.toFixed(2),ex:'',gross:Math.ceil(x.q-1e-9),from:'n_'+id,fromN:'Norm · '+r.item,d:todayStr()}); save(); toast('Added to the total list'); }
+/* ---- total list · where to get it from (store → site, with contractor → shortfall) ---- */
+const qeKey=x=>(x.item||'').trim().toLowerCase()+'|'+(x.unit||'').trim().toLowerCase();
+function qeTotals(){ const Q=qeS(), M=new Map(); Q.list.forEach(x=>{ const k=qeKey(x); let g=M.get(k); if(!g){ g={k,item:x.item,unit:x.unit,q:0,from:[]}; M.set(k,g); } g.q+=num(x.gross); g.from.push(x.fromN); }); return [...M.values()]; }
+function qeSrc(k,f,v){ const Q=qeS(); Q.src[k]=Object.assign({},Q.src[k],{[f]:v}); save(); }
+function qePR(k){ const g=qeTotals().find(x=>x.k===k); if(!g) return; const s=qeS().src[k]||{}, st=qeStock(g,s), sh=Math.max(0,g.q-st.store-num(s.re));
+  if(!sh){ toast('Nothing short for this item'); return; } state.prpo.push(Object.assign({id:uid(),_u:Date.now()},typeof DEFAULTS!=='undefined'&&DEFAULTS.prpo?DEFAULTS.prpo():{},{category:'Material',item:g.item,unit:g.unit,qty:sh,requiredBy:s.need||'',prNo:'',prDate:todayStr(),remarks:'from Material Calculator'}));
+  save(); toast('PR line added · '+fmtN(sh)+' '+g.unit); }
+function qeStock(g,s){ let store=0, con=0; const it=s.sid&&(state.storeItems||[]).find(i=>i.id===s.sid); if(it){ try{ const b=storeBal(it.id); store=Math.max(0,b.inStore); con=Math.max(0,b.withCon); }catch(e){} } return {store,con,it}; }
+function qeListDel(from){ const Q=qeS(); Q.list=Q.list.filter(x=>x.from!==from); save(); }
+function qeTotalHTML(){ const Q=qeS(), T=qeTotals(), SI=(state.storeItems||[]).filter(i=>!i.del);
+  if(!T.length) return panel('Total list',`<p class="note">Nothing added yet. Open a calculator, fill it and press “Add to total list”.</p>`);
+  const rows=T.map(g=>{ const s=Q.src[g.k]||{}, st=qeStock(g,s), re=Math.min(num(s.re),st.con), fromStore=Math.min(g.q,st.store), sh=Math.max(0,g.q-fromStore-re);
+   return `<tr><td><b>${esc(g.item)}</b><br><small class="muted">${esc([...new Set(g.from)].join(', '))}</small></td><td class="r"><b>${qf(g.q,2)}</b> ${esc(g.unit)}</td>
+    <td><select class="qei" style="width:170px;text-align:left" onchange="qeSrc('${esc(g.k)}','sid',this.value)"><option value="">— link store item —</option>${SI.map(i=>`<option value="${i.id}" ${s.sid===i.id?'selected':''}>${esc(i.item||i.name||'')}</option>`).join('')}</select></td>
+    <td class="r">${st.it?qf(fromStore):'—'}</td><td class="r">${st.it?qf(st.con):'—'}</td><td class="r"><input class="qei" style="width:70px" value="${esc(s.re||'')}" inputmode="decimal" onchange="qeSrc('${esc(g.k)}','re',this.value)"><br><input class="qei tx" style="width:110px;font-size:12px" placeholder="released on / from" value="${esc(s.rel||'')}" onchange="qeSrc('${esc(g.k)}','rel',this.value)"></td>
+    <td class="r" style="${sh?'color:#dc2626;font-weight:700':''}">${qf(sh,2)}</td><td><input type="date" class="qei tx" style="width:130px" value="${esc(s.need||'')}" onchange="qeSrc('${esc(g.k)}','need',this.value)"></td><td>${sh?`<button class="btn sm p" onclick="qePR('${esc(g.k)}')">Raise PR</button>${PAGES.siReq?` <button class="btn sm" onclick="go('siReq')">Other site</button>`:''}`:PILL('ok','covered')}</td></tr>`; });
+  const src=[...new Map(Q.list.map(x=>[x.from,x.fromN])).entries()];
+  return panel('Total list · where to get it from (easiest first)',`<div class="tw"><table class="sheet"><thead><tr><th>Item</th><th class="r">Required</th><th>Store item</th><th class="r">1 · From store</th><th class="r">With contractor at site</th><th class="r">2 · Redeploy from site</th><th class="r">3 · Short</th><th>Needed by</th><th></th></tr></thead><tbody>${rows.join('')}</tbody></table></div>
+   <p class="note">Order: take from the store first, then redeploy material at site when it is released (type how many and when), then raise a PR or ask another site for the rest.</p>
+   <div class="chips" style="margin-top:6px">${src.map(([f,n])=>`<span class="chip">${esc(n)} <a href="#" onclick="qeListDel('${f}');return false" title="remove from list">✕</a></span>`).join('')}</div>`)
+   +`<div class="acts"><button class="btn" onclick="qeXls()">Download Excel (CSV)</button></div>`; }
+function qeXls(){ const Q=qeS(), T=qeTotals(); const L=[['Item','Unit','Required','From store','With contractor','Redeploy','Short','Needed by']];
+  T.forEach(g=>{ const s=Q.src[g.k]||{}, st=qeStock(g,s), re=Math.min(num(s.re),st.con), fs=Math.min(g.q,st.store); L.push([g.item,g.unit,g.q,fs,st.con,re,Math.max(0,g.q-fs-re),s.need||'']); });
+  const csv=L.map(r=>r.map(x=>`"${String(x).replace(/"/g,'""')}"`).join(',')).join('\n'); const a=document.createElement('a'); a.href=URL.createObjectURL(new Blob([csv],{type:'text/csv'})); a.download='Material_total_list.csv'; a.click(); }
+PAGES.qe=()=>{ const Q=qeS(), t=state.ui.qeTab||'calc'; let c=qeCur(); if(t==='calc'&&!c&&Q.calcs.length){ c=Q.calcs[0]; state.ui.qeC=c.id; }
+  const n=qeTotals().length;
+  let left=`<div class="qel">${Q.calcs.map(x=>`<button class="${t==='calc'&&c&&c.id===x.id?'on':''}" onclick="state.ui.qeC='${x.id}';state.ui.qeTab='calc';render()">${esc(x.name)}</button>`).join('')}
+    <button class="${t==='norm'?'on':''}" onclick="state.ui.qeTab='norm';render()">Consumption norms</button>
+    <div class="qadd"><select id="qeAddK"><option value="">+ Add calculator…</option>${Object.entries(QE_K).map(([k,K])=>`<option value="${k}">${esc(K.name)}</option>`).join('')}</select></div>
+    <button class="tot ${t==='tot'?'on':''}" onclick="state.ui.qeTab='tot';render()">Total list · ${n} item${n===1?'':'s'} →</button></div>`;
+  let right=t==='tot'?qeTotalHTML():t==='norm'?qeNormsHTML():c?qeCalcHTML(c):panel('Start',`<p>Pick a calculator to add from the list on the left: cuplock scaffolding, secondary / primary member, plywood, edge boards, wall tie set, staircase &amp; ramp. Add the same kind more than once for different areas, and rename each one.</p><p class="note">For irregular shapes, draw the area in <a href="#" onclick="go('draft');return false">Drafting</a> and use its area and perimeter.</p>`);
+  setTimeout(()=>{ const s=document.getElementById('qeAddK'); if(s) s.onchange=()=>{ if(s.value) qeAdd(s.value); }; const f=state.ui.qeFocus&&document.getElementById('qe_'+state.ui.qeFocus); if(f){ f.focus(); if(f.select) f.select(); state.ui.qeFocus=''; } },0);
+  return `<div class="qew">${left}<div>${right}</div></div>`; };
+(()=>{ const s=document.createElement('style'); s.textContent=`.qew{display:grid;grid-template-columns:230px 1fr;gap:16px;align-items:start}.qel{background:#fff;border-radius:12px;box-shadow:0 0 0 1px #e6e1d8;padding:8px;display:flex;flex-direction:column;gap:2px;position:sticky;top:8px}.qel button{border:0;background:none;text-align:left;padding:10px 12px;border-radius:8px;font:inherit;font-size:14.5px;cursor:pointer;color:inherit}.qel button.on{background:#1e3a5f;color:#fff;font-weight:700}.qel .tot{border-top:1px solid #eee;margin-top:6px;font-weight:700;color:#1e3a5f}.qel .tot.on{color:#fff}.qel select{width:100%;padding:8px;border:1px dashed #c9d0d7;border-radius:8px;font:inherit;font-size:13.5px;background:#fafafa;margin-top:4px}
+.qe2{display:grid;grid-template-columns:minmax(380px,1fr) 1.2fr;gap:16px;align-items:start}.qehd{display:flex;gap:10px;align-items:baseline;margin:2px 0 10px;flex-wrap:wrap}.qehd b{font-size:20px;color:#16263A}.qei{width:90px;padding:6px 8px;border:1px solid #c9d0d7;border-radius:6px;font:inherit;font-size:15px;font-weight:700;text-align:right;background:#fffdf7}.qei.tx{width:200px;text-align:left;font-weight:600}.qu{display:inline-block;font-size:11.5px;color:#5d6a76;background:#eef1f4;border-radius:4px;padding:0 5px;margin-left:2px}td.how{font-size:12.5px;color:#5d6a76}.qen td{vertical-align:top}.qew .sheet td{padding:5px 8px;vertical-align:middle}.qew .qei{min-height:0;height:32px;box-sizing:border-box;font-size:14px;padding:4px 8px}.qew select.qei{font-weight:500}.qew input[type=date].qei{font-weight:500}.qew td.how{padding-left:12px}.qet td:first-child{font-size:13.5px;min-width:150px}.qew .sheet td b{white-space:nowrap}.qew .sheet td .btn.sm{white-space:nowrap;margin:2px 0}
+@media(max-width:900px){.qew{grid-template-columns:1fr}.qel{position:static;flex-direction:row;flex-wrap:wrap}.qe2{grid-template-columns:1fr}.qei.tx{width:150px}}`; document.head.appendChild(s); })();
+/* the old Material Requirement page = Required vs Available */
+try{ setNav(); }catch(e){}
+
+/* ================= DRAFTING (route draft) · stage 1 · draw in mm, exact area, staging layout, shuttering take-off, ramp scaffolding ================= */
+function drS(){ if(!state.dr||typeof state.dr!=='object'||Array.isArray(state.dr)) state.dr={}; const d=state.dr; if(!Array.isArray(d.dwgs)) d.dwgs=[]; return d; }
+const drNew=n=>({id:uid(),name:n||'Drawing 1',gx:'',gy:'',ents:[],def:{},set:{},n:{}});
+function drCur(){ const D=drS(); let w=D.dwgs.find(x=>x.id===D.cur); if(!w){ w=D.dwgs[0]; if(!w){ w=drNew(); D.dwgs.push(w); } D.cur=w.id; } ['ents'].forEach(k=>{ if(!Array.isArray(w[k])) w[k]=[]; }); ['def','set','n'].forEach(k=>{ if(!w[k]||typeof w[k]!=='object') w[k]={}; }); return w; }
+const DRN=v=>{ const n=Number(String(v==null?'':v).replace(/,/g,'')); return v===''||v==null||!isFinite(n)?NaN:n; };
+const dm=v=>isFinite(v)?Math.round(v).toLocaleString('en-IN'):'—', dq=(v,d=2)=>isFinite(v)?(+v).toLocaleString('en-IN',{maximumFractionDigits:d}):'—';
+/* ---- geometry (mm) ---- */
+const gArea=P=>P.circ?Math.PI*P.circ[1]*P.circ[1]:Math.abs(P.reduce((a,p,i)=>{ const q=P[(i+1)%P.length]; return a+p[0]*q[1]-q[0]*p[1]; },0))/2;
+const gPer=P=>P.circ?2*Math.PI*P.circ[1]:P.reduce((a,p,i)=>a+Math.hypot(P[(i+1)%P.length][0]-p[0],P[(i+1)%P.length][1]-p[1]),0);
+const gPIP=(p,P)=>{ let c=false; for(let i=0,j=P.length-1;i<P.length;j=i++){ const a=P[i],b=P[j]; if(((a[1]>p[1])!==(b[1]>p[1]))&&(p[0]<(b[0]-a[0])*(p[1]-a[1])/(b[1]-a[1])+a[0])) c=!c; } return c; };
+const gSegD=(p,a,b)=>{ const dx=b[0]-a[0],dy=b[1]-a[1],L=dx*dx+dy*dy; let t=L?((p[0]-a[0])*dx+(p[1]-a[1])*dy)/L:0; t=Math.max(0,Math.min(1,t)); return Math.hypot(p[0]-a[0]-t*dx,p[1]-a[1]-t*dy); };
+const gEdgeD=(p,P)=>Math.min(...P.map((a,i)=>gSegD(p,a,P[(i+1)%P.length])));
+const gRect=(a,b)=>[[Math.min(a[0],b[0]),Math.min(a[1],b[1])],[Math.max(a[0],b[0]),Math.min(a[1],b[1])],[Math.max(a[0],b[0]),Math.max(a[1],b[1])],[Math.min(a[0],b[0]),Math.max(a[1],b[1])]];
+const gBB=P=>({x0:Math.min(...P.map(p=>p[0])),y0:Math.min(...P.map(p=>p[1])),x1:Math.max(...P.map(p=>p[0])),y1:Math.max(...P.map(p=>p[1]))});
+const gBand=(a,b,w)=>{ const dx=b[0]-a[0],dy=b[1]-a[1],L=Math.hypot(dx,dy)||1,nx=-dy/L*w/2,ny=dx/L*w/2; return [[a[0]+nx,a[1]+ny],[b[0]+nx,b[1]+ny],[b[0]-nx,b[1]-ny],[a[0]-nx,a[1]-ny]]; };
+/* parameter interval of segment a→b inside an axis-aligned box (Liang–Barsky) */
+const gClip=(a,b,B)=>{ let t0=0,t1=1; const dx=b[0]-a[0],dy=b[1]-a[1]; for(const [p,q] of [[-dx,a[0]-B.x0],[dx,B.x1-a[0]],[-dy,a[1]-B.y0],[dy,B.y1-a[1]]]){ if(p===0){ if(q<0) return null; } else { const r=q/p; if(p<0){ if(r>t1) return null; if(r>t0) t0=r; } else { if(r<t0) return null; if(r<t1) t1=r; } } } return t1>t0?[t0,t1]:null; };
+/* ---- entity helpers ---- */
+const DR_T={slab:'Slab',beam:'Beam',drop:'Drop / capital',col:'Column',open:'Opening',wall:'Wall',ramp:'Ramp'};
+const DR_COL={slab:'#1e3a5f',beam:'#b45309',drop:'#7c3aed',col:'#334155',open:'#dc2626',wall:'#64748b',ramp:'#0f766e',stg:'#16a34a'};
+const DR_PROPS={slab:[['thk','Slab thickness','mm'],['H','Floor top to slab soffit','mm']],beam:[['bw','Beam width','mm'],['bd','Depth below slab soffit','mm']],drop:[['dd','Drop depth below slab soffit','mm']],col:[['cw','Size X','mm'],['ch','Size Y','mm'],['H','Height to slab soffit','mm']],open:[],wall:[['wt','Wall thickness','mm']],
+ ramp:[['dir','Slope along','',[['x','X'],['y','Y']]],['h1','Soffit height at start (low X/Y)','mm'],['h2','Soffit height at end','mm'],['thk','Ramp slab thickness','mm']]};
+const drPoly=e=>e.t==='beam'||e.t==='wall'?gBand(e.p[0],e.p[1],DRN(e.t==='beam'?e.bw:e.wt)||1):e.t==='col'?(()=>{ const w=DRN(e.cw)||1,h=DRN(e.ch)||1,c=e.p[0]; return gRect([c[0]-w/2,c[1]-h/2],[c[0]+w/2,c[1]+h/2]); })():e.p;
+const drName=(w,e)=>{ const n={slab:'S',beam:'B',drop:'D',col:'C',open:'OP',wall:'W',ramp:'R',line:'L',dim:'DM'}[e.t]; const i=w.ents.filter(x=>x.t===e.t).indexOf(e)+1; return e.nm||n+i; };
+/* ---- undo ---- */
+let DR_U=[]; const drPush=()=>{ const w=drCur(); DR_U.push(JSON.stringify(w.ents)); if(DR_U.length>40) DR_U.shift(); };
+function drUndo(){ if(DR_T_.pts.length){ DR_T_.pts.pop(); drDraw(); return; } const s=DR_U.pop(); if(!s){ toast('Nothing to undo'); return; } drCur().ents=JSON.parse(s); state.ui.drSel=''; save(); }
+/* ---- tool state (not saved) ---- */
+let DR_T_={pts:[],cur:null};
+const drTool=()=>state.ui.drTool||'sel';
+function drSetTool(t){ state.ui.drTool=t; DR_T_={pts:[],cur:null}; state.ui.drSel=''; render(); }
+function drToolNeeds(t){ return {slab:['thk','H'],beam:['bw','bd'],drop:['dd'],col:['cw','ch'],wall:['wt'],ramp:['dir','h1','h2','thk'],open:[]}[t]||[]; }
+function drFinish(close){ const t=drTool(), P=DR_T_.pts, w=drCur(); if(!P.length) return;
+  const need=drToolNeeds(t), props={}; need.forEach(k=>props[k]=w.def[t+'_'+k]==null?'':w.def[t+'_'+k]);
+  let e=null;
+  if(t==='slab'&&P.length>=3) e={t,p:P.slice()}; else if(t==='slabr'&&P.length>=2) e={t:'slab',p:gRect(P[0],P[1])};
+  else if((t==='beam'||t==='wall')&&P.length>=2) e={t,p:[P[0],P[1]]};
+  else if((t==='drop'||t==='open'||t==='ramp')&&P.length>=2) e={t,p:gRect(P[0],P[1])};
+  else if(t==='col'&&P.length>=1) e={t,p:[P[0]]};
+  if(!e) return; drPush(); Object.assign(e,props,t==='slabr'?{thk:w.def.slab_thk||'',H:w.def.slab_H||''}:{}); e.id=uid(); w.ents.push(e); DR_T_={pts:[],cur:null}; state.ui.drSel=e.id; save(); }
+const DR_NPTS={slabr:2,beam:2,wall:2,drop:2,open:2,ramp:2,col:1};
+function drAddPt(p){ const t=drTool(); if(t==='sel') return; if(!DR_T_.pts.length){ const w=drCur(), tk=t==='slabr'?'slab':t, miss=drToolNeeds(tk).filter(k=>!String(w.def[tk+'_'+k]==null?'':w.def[tk+'_'+k]).trim()&&!(DR_PROPS[tk].find(x=>x[0]===k)||[])[3]); if(miss.length){ toast('Type the '+miss.map(k=>DR_PROPS[tk].find(x=>x[0]===k)[1].toLowerCase()).join(' and ')+' first (yellow bar)'); const f=document.querySelector('.drdef input'); if(f){ f.focus(); f.classList.add('drneed'); } return; } } if(t==='slab'&&DR_T_.pts.length>=3&&Math.hypot(p[0]-DR_T_.pts[0][0],p[1]-DR_T_.pts[0][1])<1){ drFinish(true); return; }
+  DR_T_.pts.push(p); if(DR_NPTS[t]&&DR_T_.pts.length>=DR_NPTS[t]) drFinish(); else drDraw(); }
+/* ---- command line: x,y · @dx,dy · @len<ang · c (close) · u (undo) · enter (finish) ---- */
+function drCmd(v){ v=String(v||'').trim().toLowerCase(); const P=DR_T_.pts, last=P[P.length-1];
+  if(!v){ if(drTool()==='slab'&&P.length>=3) drFinish(true); return; }
+  if(v==='c'||v==='close'){ drFinish(true); return; } if(v==='u'||v==='undo'){ drUndo(); return; }
+  let m; if((m=v.match(/^@\s*(-?[\d.]+)\s*<\s*(-?[\d.]+)$/))){ if(!last){ toast('Give the first point as x,y'); return; } const L=+m[1],a=+m[2]*Math.PI/180; drAddPt([last[0]+L*Math.cos(a),last[1]+L*Math.sin(a)].map(x=>Math.round(x*100)/100)); return; }
+  if((m=v.match(/^@\s*(-?[\d.]+)\s*,\s*(-?[\d.]+)$/))){ if(!last){ toast('Give the first point as x,y'); return; } drAddPt([last[0]+ +m[1],last[1]+ +m[2]]); return; }
+  if((m=v.match(/^(-?[\d.]+)\s*,\s*(-?[\d.]+)$/))){ drAddPt([+m[1],+m[2]]); return; }
+  if((m=v.match(/^(-?[\d.]+)$/))&&last&&DR_T_.cur){ const dx=DR_T_.cur[0]-last[0],dy=DR_T_.cur[1]-last[1],L=Math.hypot(dx,dy)||1; drAddPt([last[0]+dx/L*+m[1],last[1]+dy/L*+m[1]].map(x=>Math.round(x*100)/100)); return; }
+  toast('Type x,y  ·  @dx,dy  ·  @length<angle  ·  or a length in the mouse direction'); }
+/* ---- grid ---- */
+const drGrid=w=>{ return {X:[],Y:[]}; const sp=s=>String(s||'').split(/[,;\s]+/).map(Number).filter(x=>x>0); const X=[0],Y=[0]; sp(w.gx).forEach(s=>X.push(X[X.length-1]+s)); sp(w.gy).forEach(s=>Y.push(Y[Y.length-1]+s)); return {X:X.length>1?X:[],Y:Y.length>1?Y:[]}; };
+const drLetter=i=>{ let s=''; i++; while(i>0){ const m=(i-1)%26; s=String.fromCharCode(65+m)+s; i=Math.floor((i-1)/26); } return s; };
+/* ---- snapping ---- */
+function drSnap(p){ const w=drCur(), s=state.ui.drSnap!==0, tol=8/(state.ui.drZ||0.05); if(!s) return {p,k:''};
+  let best=null, bd=tol; const tryP=(q,k)=>{ const d=Math.hypot(q[0]-p[0],q[1]-p[1]); if(d<bd){ bd=d; best={p:[q[0],q[1]],k}; } };
+  w.ents.forEach(e=>{ const P=e.t==='col'?drPoly(e):e.p; P.forEach(q=>tryP(q,'End')); if(P.length>=2) P.forEach((q,i)=>{ const r=P[(i+1)%P.length]; if(e.t==='beam'||e.t==='wall'?i===0:true) tryP([(q[0]+r[0])/2,(q[1]+r[1])/2],'Mid'); }); if(e.t==='col') tryP(e.p[0],'Centre'); });
+  DR_T_.pts.forEach(q=>tryP(q,'End')); const G=drGrid(w); G.X.forEach(x=>G.Y.forEach(y=>tryP([x,y],'Grid')));
+  if(best) return best; const st=state.ui.drStep==null||state.ui.drStep===''?50:(DRN(state.ui.drStep)||0); let q=p; if(st>0) q=[Math.round(p[0]/st)*st,Math.round(p[1]/st)*st];
+  if(state.ui.drOrtho&&DR_T_.pts.length){ const l=DR_T_.pts[DR_T_.pts.length-1]; q=Math.abs(q[0]-l[0])>Math.abs(q[1]-l[1])?[q[0],l[1]]:[l[0],q[1]]; }
+  return {p:q,k:st>0?'Step':''}; }
+/* ---- drawing ---- */
+function drView(){ const w=drCur(); let P=[]; w.ents.forEach(e=>P.push(...drPoly(e))); const G=drGrid(w); G.X.forEach(x=>G.Y.forEach(y=>P.push([x,y])));
+  if(!P.length) P=[[0,0],[20000,12000]]; const B=gBB(P), pad=Math.max(B.x1-B.x0,B.y1-B.y0,2000)*0.12; return {x0:B.x0-pad,y0:B.y0-pad,x1:B.x1+pad,y1:B.y1+pad}; }
+let DR_VB=null;
+function drFit(){ DR_VB=null; drDraw(); }
+const drVB=(v)=>Object.assign(v,{w:drCur().id});
+function drZoom(f,c){ const v=DR_VB||drView(); const cx=c?c[0]:(v.x0+v.x1)/2, cy=c?c[1]:(v.y0+v.y1)/2; DR_VB=drVB({x0:cx-(cx-v.x0)*f,x1:cx+(v.x1-cx)*f,y0:cy-(cy-v.y0)*f,y1:cy+(v.y1-cy)*f}); drDraw(); }
+const drLay=k=>!(state.ui.drL||{})[k];
+function drTogL(k){ const L=Object.assign({},state.ui.drL); L[k]=!L[k]; state.ui.drL=L; persist(); drDraw(); }
+function drSVG(){ const w=drCur(); if(!DR_VB||DR_VB.w!==w.id){ DR_VB=Object.assign(drView(),{w:w.id}); } const v=DR_VB, W=v.x1-v.x0, H=v.y1-v.y0, px=W/1000, G=drGrid(w), sel=state.ui.drSel, Y=y=>-y; state.ui.drZ=1000/W;
+  const pts=P=>P.map(p=>`${p[0]},${Y(p[1])}`).join(' '); let g='';
+  if(drLay('grid')&&G.X.length&&G.Y.length){ const e=8*px*5; G.X.forEach((x,i)=>{ g+=`<line x1="${x}" y1="${Y(G.Y[0]-e)}" x2="${x}" y2="${Y(G.Y[G.Y.length-1]+e)}" class="dg" stroke-width="${px}"/><circle cx="${x}" cy="${Y(G.Y[G.Y.length-1]+e+9*px)}" r="${9*px}" class="db" stroke-width="${px}"/><text x="${x}" y="${Y(G.Y[G.Y.length-1]+e+9*px)+3.5*px}" font-size="${10*px}" text-anchor="middle" class="dbt">${drLetter(i)}</text>`; if(i) g+=`<text x="${(x+G.X[i-1])/2}" y="${Y(G.Y[G.Y.length-1]+e)-3*px}" font-size="${9*px}" text-anchor="middle" class="ddt">${dm(x-G.X[i-1])}</text>`; });
+    G.Y.forEach((y,i)=>{ g+=`<line x1="${G.X[0]-e}" y1="${Y(y)}" x2="${G.X[G.X.length-1]+e}" y2="${Y(y)}" class="dg" stroke-width="${px}"/><circle cx="${G.X[0]-e-9*px}" cy="${Y(y)}" r="${9*px}" class="db" stroke-width="${px}"/><text x="${G.X[0]-e-9*px}" y="${Y(y)+3.5*px}" font-size="${10*px}" text-anchor="middle" class="dbt">${i+1}</text>`; if(i) g+=`<text x="${G.X[0]-e+3*px}" y="${Y((y+G.Y[i-1])/2)}" font-size="${9*px}" class="ddt">${dm(y-G.Y[i-1])}</text>`; }); }
+  const order=['slab','ramp','drop','open','wall','beam','col'];
+  order.forEach(t=>{ if(!drLay(t)) return; w.ents.filter(e=>e.t===t).forEach(e=>{ const P=drPoly(e), on=e.id===sel, c=DR_COL[t];
+    g+=`<polygon points="${pts(P)}" fill="${c}" fill-opacity="${t==='slab'?0.06:t==='open'?0.12:0.22}" stroke="${on?'#f59e0b':c}" stroke-width="${(on?3:t==='slab'?1.8:1.2)*px}" ${t==='open'?`stroke-dasharray="${6*px} ${4*px}"`:''} data-id="${e.id}"/>`;
+    const B=gBB(P), cx=(B.x0+B.x1)/2, cy=(B.y0+B.y1)/2, lab=drName(w,e)+(t==='beam'?` ${e.bw||'?'}×${e.bd||'?'}`:t==='col'?` ${e.cw||'?'}×${e.ch||'?'}`:'');
+    g+=`<text x="${cx}" y="${Y(cy)+4*px}" font-size="${13*px}" text-anchor="middle" class="dlt" fill="${c}">${esc(lab)}</text>`;
+    if(drLay('dim')&&(t==='slab'||t==='open'||t==='drop'||t==='ramp')) P.forEach((a,i)=>{ const b=P[(i+1)%P.length], dx=b[0]-a[0], dy=b[1]-a[1], L=Math.hypot(dx,dy); if(L<1) return; const o=(t==='slab'?14:8)*px, nx=dy/L*o, ny=-dx/L*o, mx=(a[0]+b[0])/2+nx, my=(a[1]+b[1])/2+ny; let an=-Math.atan2(dy,dx)*180/Math.PI; if(an>90||an<-90) an+=180;
+      g+=`<text x="${mx}" y="${Y(my)}" font-size="${(t==='slab'?12:10.5)*px}" text-anchor="middle" transform="rotate(${an} ${mx} ${Y(my)})" class="ddt">${dm(L)}</text>`; }); }); });
+  if(drLay('stg')&&state.ui.drR==='stg'){ const R=drStaging(w); if(R.pts) R.pts.forEach(q=>{ g+=`<circle cx="${q.x}" cy="${Y(q.y)}" r="${3*px}" fill="${q.k==='slab'?DR_COL.stg:q.k==='beam'?DR_COL.beam:DR_COL.drop}"/>`; }); }
+  if(state.ui.drR==='ramp'){ w.ents.filter(e=>e.t==='ramp').forEach(e=>{ const R=drRampCalc(w,e); (R.pts||[]).forEach(q=>{ g+=`<circle cx="${q[0]}" cy="${Y(q[1])}" r="${3*px}" fill="${DR_COL.ramp}"/>`; }); }); }
+  const T=DR_T_.pts; if(T.length&&DR_T_.cur){ const l=T[T.length-1], c=DR_T_.cur, rect=['slabr','drop','open','ramp'].includes(drTool()); const txt=rect?`${dm(Math.abs(c[0]-l[0]))} × ${dm(Math.abs(c[1]-l[1]))}`:dm(Math.hypot(c[0]-l[0],c[1]-l[1])); if(rect) g+=`<polygon points="${pts(gRect(l,c))}" fill="#f59e0b" fill-opacity="0.08" stroke="#f59e0b" stroke-width="${1.2*px}" stroke-dasharray="${5*px} ${3*px}"/>`;
+    g+=`<text x="${c[0]+10*px}" y="${Y(c[1])-10*px}" font-size="${12*px}" class="drlive">${txt} mm</text>`; }
+  if(T.length){ if(!['slabr','drop','open','ramp'].includes(drTool())) g+=`<polyline points="${pts(T.concat(DR_T_.cur?[DR_T_.cur]:[]))}" fill="none" stroke="#f59e0b" stroke-width="${1.5*px}" stroke-dasharray="${5*px} ${3*px}"/>`; T.forEach(q=>{ g+=`<circle cx="${q[0]}" cy="${Y(q[1])}" r="${3*px}" fill="#f59e0b"/>`; }); }
+  return {vb:`${v.x0} ${-v.y1} ${W} ${H}`,g,px}; }
+function drDraw(){ const s=document.getElementById('drsvg'); if(!s) return; const R=drSVG(); s.setAttribute('viewBox',R.vb); s.querySelector('#drg').innerHTML=R.g; drCursor(); const c=document.getElementById('drPrompt'); if(c) c.textContent=drPrompt(); }
+function drCursor(){ const s=document.getElementById('drsvg'); if(!s) return; const c=s.querySelector('#drc'), q=DR_T_.cur; if(!q){ c.innerHTML=''; return; } const px=(DR_VB||drView()); const u=(px.x1-px.x0)/1000;
+  c.innerHTML=`<line x1="${q[0]-12*u}" y1="${-q[1]}" x2="${q[0]+12*u}" y2="${-q[1]}" stroke="#f59e0b" stroke-width="${u}"/><line x1="${q[0]}" y1="${-q[1]-12*u}" x2="${q[0]}" y2="${-q[1]+12*u}" stroke="#f59e0b" stroke-width="${u}"/>${DR_T_.k?`<rect x="${q[0]-5*u}" y="${-q[1]-5*u}" width="${10*u}" height="${10*u}" fill="none" stroke="#f59e0b" stroke-width="${u}"/>`:''}`;
+  const st=document.getElementById('drXY'); if(st){ const l=DR_T_.pts[DR_T_.pts.length-1]; st.textContent=`${DR_T_.k?DR_T_.k+' · ':''}X ${dm(q[0])} · Y ${dm(q[1])}${l?` · length ${dm(Math.hypot(q[0]-l[0],q[1]-l[1]))} · angle ${dq(Math.atan2(q[1]-l[1],q[0]-l[0])*180/Math.PI,1)}°`:''} mm`; } }
+function drPrompt(){ const t=drTool(), n=DR_T_.pts.length; if(t==='sel') return 'Select: tap an element to see and edit its sizes';
+  const P={slab:['Slab outline · first point (x,y)','Next point','Next point · Enter or C to close'],slabr:['Slab rectangle · first corner','Opposite corner (e.g. @20000,12000)'],beam:['Beam · start of centre line','End of centre line (e.g. @6000<0)'],wall:['Wall · start of centre line','End of centre line'],drop:['Drop / capital · first corner','Opposite corner'],open:['Opening · first corner','Opposite corner'],ramp:['Ramp · first corner','Opposite corner'],col:['Column · centre point']}[t]||['Point'];
+  return P[Math.min(n,P.length-1)]; }
+function drBind(){ const s=document.getElementById('drsvg'); if(!s||s.dataset.b) return; s.dataset.b=1; let dn=null, pan=false;
+  const W=ev=>{ const p=s.createSVGPoint(); p.x=ev.clientX; p.y=ev.clientY; const q=p.matrixTransform(s.getScreenCTM().inverse()); return [q.x,-q.y]; };
+  s.addEventListener('pointerdown',ev=>{ dn={x:ev.clientX,y:ev.clientY,w:W(ev),b:ev.button}; pan=false; s.setPointerCapture(ev.pointerId); });
+  s.addEventListener('pointermove',ev=>{ if(dn&&(pan||Math.hypot(ev.clientX-dn.x,ev.clientY-dn.y)>6)){ pan=true; const v=DR_VB, q=W(ev), dx=q[0]-dn.w[0], dy=q[1]-dn.w[1]; DR_VB=drVB({x0:v.x0-dx,x1:v.x1-dx,y0:v.y0-dy,y1:v.y1-dy}); drDraw(); return; }
+    const r=drSnap(W(ev)); DR_T_.cur=r.p; DR_T_.k=r.k; if(DR_T_.pts.length) drDraw(); else drCursor(); });
+  s.addEventListener('pointerup',ev=>{ const was=dn; dn=null; if(!was||pan){ pan=false; return; } if(was.b!==0&&ev.pointerType==='mouse') return;
+    if(drTool()==='sel'){ const e=drHit(W(ev)); state.ui.drSel=e?e.id:''; render(); return; } drAddPt(drSnap(W(ev)).p); });
+  s.addEventListener('wheel',ev=>{ ev.preventDefault(); drZoom(ev.deltaY>0?1.15:1/1.15,W(ev)); },{passive:false});
+  s.addEventListener('pointerleave',()=>{ if(dn) return; DR_T_.cur=null; drCursor(); }); }
+document.addEventListener('keydown',e=>{ if(state&&state.route!=='draft') return; if(e.target&&/INPUT|SELECT|TEXTAREA/.test(e.target.tagName)&&e.target.id!=='drCmdIn') return;
+  if(e.key==='Escape'){ DR_T_={pts:[],cur:null}; drDraw(); } if((e.ctrlKey||e.metaKey)&&e.key==='z'){ e.preventDefault(); drUndo(); } if(e.key==='Delete'&&state.ui.drSel&&e.target.id!=='drCmdIn') drDel(state.ui.drSel); });
+function drHit(p){ const w=drCur(), tol=10*((DR_VB.x1-DR_VB.x0)/1000); let best=null;
+  w.ents.forEach(e=>{ if(!drLay(e.t)) return; const P=drPoly(e); let d; if(e.t==='beam'||e.t==='wall') d=Math.max(0,gSegD(p,e.p[0],e.p[1])-(DRN(e.t==='beam'?e.bw:e.wt)||0)/2); else d=gPIP(p,P)?0:gEdgeD(p,P);
+    if(d>tol) return; const rank=(d>0?1e15:0)+(e.t==='slab'?1e14:0)+gArea(P); if(!best||rank<best.r) best={e,r:rank}; }); return best?best.e:null; }
+/* ---- edit ---- */
+function drSetP(id,k,v){ const e=drCur().ents.find(x=>x.id===id); if(!e) return; drPush(); e[k]=v; save(); }
+function drSetPt(id,i,j,v){ const e=drCur().ents.find(x=>x.id===id); if(!e||!isFinite(DRN(v))) return; drPush(); e.p[i][j]=DRN(v); save(); }
+function drDel(id){ const w=drCur(); drPush(); w.ents=w.ents.filter(x=>x.id!==id); state.ui.drSel=''; save(); }
+function drDef(t,k,v){ drCur().def[t+'_'+k]=v; persist(); }
+function drW(k,v){ const w=drCur(); w[k]=v; DR_VB=null; save(); }
+function drSet(k,v){ drCur().set[k]=v; save(); }
+function drNewDwg(){ const D=drS(), n=prompt('Name of the new drawing','Drawing '+(D.dwgs.length+1)); if(!n) return; const w=drNew(n.trim()); D.dwgs.push(w); D.cur=w.id; DR_U=[]; DR_VB=null; save(); }
+function drRenDwg(){ const w=drCur(), n=prompt('Name of this drawing',w.name); if(n&&n.trim()){ w.name=n.trim(); save(); } }
+function drDelDwg(){ const D=drS(), w=drCur(); if(!confirm('Delete drawing "'+w.name+'"?')) return; D.dwgs=D.dwgs.filter(x=>x.id!==w.id); D.cur=''; DR_U=[]; DR_VB=null; save(); }
+/* ================= calculations ================= */
+const drSlabs=w=>w.ents.filter(e=>e.t==='slab'), drIn=(e,S)=>{ const P=drPoly(e), B=gBB(P), c=[(B.x0+B.x1)/2,(B.y0+B.y1)/2]; return S.some(s=>gPIP(c,s.p)); };
+/* beam clear length between column faces and the junctions it makes */
+function drBeamClear(w,e){ const a=e.p[0], b=e.p[1], L=Math.hypot(b[0]-a[0],b[1]-a[1]); let cut=0, faces=0, iv=[]; w.ents.filter(c=>c.t==='col').forEach(c=>{ const r=gClip(a,b,gBB(drPoly(c))); if(r){ cut+=(r[1]-r[0])*L; faces+=(r[0]>1e-6?1:0)+(r[1]<1-1e-6?1:0); iv.push(r); } });
+  iv.sort((x,y)=>x[0]-y[0]); const clear=[]; let t=0; iv.forEach(r=>{ if(r[0]>t) clear.push([t*L,r[0]*L]); t=Math.max(t,r[1]); }); if(t<1) clear.push([t*L,L]); return {L,Lc:L-cut,faces,clear}; }
+function drMeasure(w){ const S=drSlabs(w); return S.map(s=>{ const O=w.ents.filter(e=>e.t==='open'&&drIn(e,[s])); const A=gArea(s.p), oa=O.reduce((x,o)=>x+gArea(o.p),0); return {s,A,P:gPer(s.p),O,oa,net:A-oa}; }); }
+function drTake(w){ const st=w.set, ck=k=>st['x_'+k]!=='0', R=[], miss=[], S=drSlabs(w), m2=v=>v/1e6;
+  const add=(el,me,gross,ded,how,dh)=>R.push({el,me,gross,ded:ded||0,net:gross-(ded||0),how,dh:dh||''});
+  S.forEach(s=>{ const nm=drName(w,s), thk=DRN(s.thk); if(!isFinite(thk)) miss.push(nm+': slab thickness');
+    const A=gArea(s.p); let ded=0, dh=[];
+    const C=w.ents.filter(e=>e.t==='col'&&drIn(e,[s])), Bm=w.ents.filter(e=>e.t==='beam'&&drIn(e,[s])), Dp=w.ents.filter(e=>e.t==='drop'&&drIn(e,[s])), Op=w.ents.filter(e=>e.t==='open'&&drIn(e,[s])), Rp=w.ents.filter(e=>e.t==='ramp'&&drIn(e,[s]));
+    if(ck('col')&&C.length){ const a=C.reduce((x,c)=>x+gArea(drPoly(c)),0); ded+=a; dh.push(`columns ${dq(m2(a))}`); }
+    if(ck('beam')&&Bm.length){ const a=Bm.reduce((x,b)=>x+(DRN(b.bw)||0)*drBeamClear(w,b).Lc,0); ded+=a; dh.push(`beam soffits ${dq(m2(a))}`); }
+    if(ck('drop')&&Dp.length){ const a=Dp.reduce((x,d)=>x+gArea(d.p),0); ded+=a; dh.push(`drops ${dq(m2(a))}`); }
+    const big=Op.filter(o=>m2(gArea(o.p))>=(DRN(st.omin)>=0?DRN(st.omin):0.4)); if(ck('open')&&big.length){ const a=big.reduce((x,o)=>x+gArea(o.p),0); ded+=a; dh.push(`openings ≥ ${isFinite(DRN(st.omin))?st.omin:'0.40'} sqm ${dq(m2(a))}`); }
+    if(Rp.length){ const a=Rp.reduce((x,r)=>x+gArea(r.p),0); ded+=a; dh.push(`ramp (taken separately) ${dq(m2(a))}`); }
+    add(nm+' · slab soffit','plan area',m2(A),m2(ded),`${dq(m2(A))} sqm plan`,dh.join(' + '));
+    /* slab edge boards; segments along a wall get no board */
+    let el=0, wl=0; const Wl=w.ents.filter(e=>e.t==='wall'); s.p.forEach((a,i)=>{ const b=s.p[(i+1)%s.p.length], L=Math.hypot(b[0]-a[0],b[1]-a[1]), mid=[(a[0]+b[0])/2,(a[1]+b[1])/2]; if(ck('wall')&&Wl.some(x=>gPIP(mid,gBand(x.p[0],x.p[1],(DRN(x.wt)||0)+20)))) wl+=L; else el+=L; });
+    if(isFinite(thk)) add(nm+' · slab edge','perimeter × thickness',m2((el+wl)*thk),m2(wl*thk),`${dq((el+wl)/1000)} m × ${thk} mm`,wl?`along walls ${dq(wl/1000)} m`:'');
+    if(ck('open')&&big.length&&isFinite(thk)){ const p=big.reduce((x,o)=>x+gPer(o.p),0); add(nm+' · opening edges','perimeter × thickness',m2(p*thk),0,`${dq(p/1000)} m × ${thk} mm`,'added round deducted openings'); }
+    const small=Op.filter(o=>!big.includes(o)); if(small.length) R.push({el:nm+' · small openings',me:'not deducted',gross:0,ded:0,net:0,how:small.map(o=>drName(w,o)+' '+dq(m2(gArea(o.p)),3)+' sqm').join(', '),dh:'below the limit'});
+    Bm.forEach(b=>{ const bn=drName(w,b), bw=DRN(b.bw), bd=DRN(b.bd), c=drBeamClear(w,b); if(!isFinite(bw)||!isFinite(bd)){ miss.push(bn+': width / depth'); return; }
+      add(bn+' · beam soffit','width × clear length',m2(bw*c.Lc),0,`${bw} × ${dq(c.Lc/1000,3)} m`,c.L>c.Lc?`between column faces (${dq(c.L/1000,3)} − ${dq((c.L-c.Lc)/1000,3)})`:'');
+      add(bn+' · beam sides','2 × depth × clear length',m2(2*bd*c.Lc),0,`2 × ${bd} × ${dq(c.Lc/1000,3)} m`,'depth below slab soffit'); });
+    Dp.forEach(d=>{ const dn=drName(w,d), dd=DRN(d.dd); add(dn+' · drop soffit','plan area',m2(gArea(d.p)),0,`${dq(m2(gArea(d.p)))} sqm`); if(isFinite(dd)) add(dn+' · drop sides','perimeter × depth',m2(gPer(d.p)*dd),0,`${dq(gPer(d.p)/1000)} m × ${dd} mm`); else miss.push(dn+': depth'); });
+    C.forEach(c=>{ const cn=drName(w,c), H=DRN(c.H)||DRN(s.H), cw=DRN(c.cw), ch=DRN(c.ch); if(!isFinite(H)||!isFinite(cw)||!isFinite(ch)){ miss.push(cn+': size / height'); return; }
+      let jd=0, jh=[]; if(ck('junc')) w.ents.filter(b=>b.t==='beam').forEach(b=>{ const r=gClip(b.p[0],b.p[1],gBB(drPoly(c))); if(!r) return; const f=(r[0]>1e-6?1:0)+(r[1]<1-1e-6?1:0), a=f*(DRN(b.bw)||0)*(DRN(b.bd)||0); if(a){ jd+=a; jh.push(`${drName(w,b)} ${f}×${b.bw}×${b.bd}`); } });
+      add(cn+' · column sides','perimeter × height to soffit',m2(2*(cw+ch)*H),m2(jd),`2 × (${cw} + ${ch}) × ${dq(H/1000,3)} m`,jh.length?'beam junctions: '+jh.join(', '):''); });
+    Rp.forEach(r=>{ const x=drRampCalc(w,r); if(x.msg){ miss.push(drName(w,r)+': '+x.msg); return; } const rn=drName(w,r), cos=x.cos;
+      add(rn+' · ramp soffit','plan area ÷ cos θ',m2(gArea(r.p))/cos,0,`${dq(m2(gArea(r.p)))} ÷ ${dq(cos,4)}`,`slope ${dq(x.ang,2)}°`);
+      add(rn+' · ramp sides','2 × sloped length × thickness',m2(2*x.Ls*x.thk),0,`2 × ${dq(x.Ls/1000,3)} m × ${x.thk} mm`); }); });
+  return {R,miss}; }
+/* ---- vertical combination for a top-of-U-jack height ---- */
+function drStock(w){ return String(w.set.st||'').split(/[,;\n]+/).map(x=>x.split(/[=:]/).map(y=>y.trim())).filter(x=>DRN(x[0])>0).map(x=>({l:DRN(x[0]),have:DRN(x[1])})); }
+function drCombo(top,j1,j2,ST){ const lo=top-j2, hi=top-j1, L=ST.map(s=>s.l*1000).sort((a,b)=>b-a), C=[];
+  for(let i=0;i<L.length;i++){ if(L[i]>=lo-.5&&L[i]<=hi+.5) C.push([L[i]]); for(let j=i;j<L.length;j++){ const s2=L[i]+L[j]; if(s2>=lo-.5&&s2<=hi+.5) C.push([L[i],L[j]]); for(let k=j;k<L.length;k++){ const s3=s2+L[k]; if(s3>=lo-.5&&s3<=hi+.5) C.push([L[i],L[j],L[k]]); } } }
+  C.sort((a,b)=>a.length-b.length||b.reduce((x,y)=>x+y,0)-a.reduce((x,y)=>x+y,0)); if(C.length) return {c:C[0],ext:top-C[0].reduce((x,y)=>x+y,0)};
+  let bb=null; const tryC=c=>{ const t=c.reduce((x,y)=>x+y,0); if(t<=hi+.5&&(!bb||t>bb.s||(t===bb.s&&c.length<bb.c.length))) bb={c,s:t}; };
+  for(let i=0;i<L.length;i++){ tryC([L[i]]); for(let j=i;j<L.length;j++){ tryC([L[i],L[j]]); for(let k=j;k<L.length;k++) tryC([L[i],L[j],L[k]]); } }
+  return bb?{c:bb.c,ext:j2,pack:lo-bb.s}:null; }
+const drNeed=w=>['H?','ply','sec','pri','gx','gy','e','cl','bo','sb','gd','lift','jmin','jmax'].filter(k=>k!=='H?'&&!isFinite(DRN(w.set[k])));
+function drStaging(w){ const st=w.set, n=k=>DRN(st[k]); const S=drSlabs(w); if(!S.length) return {msg:'Draw a slab first.'};
+  const miss=drNeed(w); if(miss.length) return {msg:'Fill the staging values: '+miss.map(k=>DR_SET.find(x=>x[0]===k)[1]).join(', ')+'.'};
+  const ST=drStock(w); if(!ST.length) return {msg:'Type the vertical lengths you have.'};
+  const bu=n('ply')+n('sec')+n('pri'), gx=n('gx'), gy=n('gy'), e=n('e'), cl=n('cl'), pts=[], ldg={};
+  const block=w.ents.filter(x=>['beam','drop','col','open','wall','ramp'].includes(x.t)).map(x=>({x,P:drPoly(x)}));
+  const blocked=p=>block.some(b=>gPIP(p,b.P)||gEdgeD(p,b.P)<cl);
+  S.forEach(s=>{ const H=DRN(s.H); if(!isFinite(H)) return; const B=gBB(s.p), nx=Math.floor((B.x1-B.x0-2*e)/gx+1e-9), ny=Math.floor((B.y1-B.y0-2*e)/gy+1e-9), ox=B.x0+e+((B.x1-B.x0-2*e)-nx*gx)/2, oy=B.y0+e+((B.y1-B.y0-2*e)-ny*gy)/2, has=new Set();
+    for(let i=0;i<=nx;i++) for(let j=0;j<=ny;j++){ const p=[ox+i*gx,oy+j*gy]; if(!gPIP(p,s.p)||gEdgeD(p,s.p)<e-0.5||blocked(p)) continue; has.add(i+','+j); pts.push({x:p[0],y:p[1],k:'slab',h:H-bu,s:s.id,g:s.id}); }
+    let lx=0,ly=0; has.forEach(k=>{ const [i,j]=k.split(',').map(Number); if(has.has((i+1)+','+j)) lx++; if(has.has(i+','+(j+1))) ly++; });
+    ldg['slab|'+s.id]={lx,ly,H:H-bu}; });
+  const Hs=DRN((S.find(s=>isFinite(DRN(s.H)))||{}).H);
+  w.ents.filter(b=>b.t==='beam').forEach(b=>{ const bw=DRN(b.bw), bd=DRN(b.bd); if(!isFinite(bw)||!isFinite(bd)||!isFinite(Hs)) return; const c=drBeamClear(w,b), a=b.p[0], d=b.p[1], L=c.L, ux=(d[0]-a[0])/L, uy=(d[1]-a[1])/L, off=bw/2+n('bo');
+    let nb=0; c.clear.forEach(([t0,t1])=>{ const len=t1-t0-2*cl; if(len<=0) return; const k=Math.ceil(len/n('sb')-1e-9); for(let i=0;i<=k;i++){ const t=t0+cl+len*i/(k||1); [-1,1].forEach(sd=>pts.push({x:a[0]+ux*t-uy*off*sd,y:a[1]+uy*t+ux*off*sd,k:'beam',h:Hs-bd-bu,g:b.id+'|'+t0+'|'+sd,t})); nb++; } ldg['beam|'+b.id+'|'+t0]={lx:2*k,ly:0,H:Hs-bd-bu,len:len/(k||1)}; }); });
+  w.ents.filter(d=>d.t==='drop').forEach(d=>{ const dd=DRN(d.dd); if(!isFinite(dd)||!isFinite(Hs)) return; const B=gBB(d.p), g=n('gd'), nx=Math.max(1,Math.ceil((B.x1-B.x0-2*cl)/g-1e-9)), ny=Math.max(1,Math.ceil((B.y1-B.y0-2*cl)/g-1e-9));
+    for(let i=0;i<=nx;i++) for(let j=0;j<=ny;j++) pts.push({x:B.x0+cl+(B.x1-B.x0-2*cl)*i/nx,y:B.y0+cl+(B.y1-B.y0-2*cl)*j/ny,k:'drop',h:Hs-dd-bu,g:d.id}); ldg['drop|'+d.id]={lx:nx*(ny+1),ly:ny*(nx+1),H:Hs-dd-bu,gdx:(B.x1-B.x0-2*cl)/nx,gdy:(B.y1-B.y0-2*cl)/ny}; });
+  /* combinations per height */
+  const HG=new Map(); pts.forEach(p=>{ const k=p.k+'|'+Math.round(p.h); let g=HG.get(k); if(!g){ g={k:p.k,h:p.h,n:0}; HG.set(k,g); } g.n++; });
+  const G=[...HG.values()].map(g=>Object.assign(g,{cb:drCombo(g.h,n('jmin'),n('jmax'),ST)}));
+  const mat=new Map(), addM=(it,q,how)=>{ const m=mat.get(it)||{q:0,how:[]}; m.q+=q; m.how.push(how); mat.set(it,m); };
+  G.forEach(g=>{ if(!g.cb) return; g.cb.c.forEach(l=>addM(`Vertical ${dq(l/1000,2)} m`,g.n,`${g.n} ${g.k}`)); if(g.cb.c.length>1) addM('Spigot pin',g.n*(g.cb.c.length-1),`${g.n} × ${g.cb.c.length-1}`); });
+  addM('Base jack',pts.length,'1 per vertical'); addM('U-jack',pts.length,'1 per vertical');
+  const lev=h=>{ const g=G.find(x=>Math.round(x.h)===Math.round(h)); if(!g||!g.cb) return 0; return Math.ceil(g.cb.c.reduce((a,b)=>a+b,0)/n('lift')-1e-9)+1; };
+  Object.entries(ldg).forEach(([k,v])=>{ const L=lev(v.H); if(k.startsWith('slab')){ if(gx===gy) addM(`Ledger ${dq(gx/1000,2)} m`,(v.lx+v.ly)*L,`(${v.lx} + ${v.ly}) × ${L} levels`); else { addM(`Ledger ${dq(gx/1000,2)} m`,v.lx*L,`${v.lx} × ${L} levels`); addM(`Ledger ${dq(gy/1000,2)} m`,v.ly*L,`${v.ly} × ${L} levels`); } }
+    else if(k.startsWith('beam')) addM(`Ledger ≈ ${dq(v.len/1000,2)} m (beam side)`,v.lx*L,`${v.lx} × ${L} levels`); else addM(`Ledger ≈ ${dq(v.gdx/1000,2)} × ${dq(v.gdy/1000,2)} m (drop)`,(v.lx+v.ly)*L,`(${v.lx} + ${v.ly}) × ${L} levels`); });
+  return {pts,G,mat}; }
+/* ---- ramp scaffolding: rows across the slope, each row its own height ---- */
+function drRampCalc(w,r){ const n=k=>DRN(r[k]), h1=n('h1'), h2=n('h2'), thk=n('thk'); if(!isFinite(h1)||!isFinite(h2)||!isFinite(thk)) return {msg:'ramp heights / thickness'};
+  const B=gBB(r.p), ax=r.dir==='y'?'y':'x', L=ax==='x'?B.x1-B.x0:B.y1-B.y0, Wd=ax==='x'?B.y1-B.y0:B.x1-B.x0, ang=Math.atan2(h2-h1,L), cos=Math.cos(ang), Ls=L/cos, out={L,Wd,ang:ang*180/Math.PI,cos,Ls,thk,slope:(h2-h1)/L*100};
+  const st=w.set, ga=DRN(ax==='x'?st.gx:st.gy), gc=DRN(ax==='x'?st.gy:st.gx), e=DRN(st.e), bu=DRN(st.ply)+DRN(st.sec)+DRN(st.pri); if([ga,gc,e,bu,DRN(st.jmin),DRN(st.jmax),DRN(st.lift)].some(x=>!isFinite(x))) return out;
+  const ST=drStock(w); if(!ST.length) return out; const na=Math.max(1,Math.ceil((L-2*e)/ga-1e-9)), nc=Math.max(1,Math.ceil((Wd-2*e)/gc-1e-9)), rows=[], pts=[];
+  for(let i=0;i<=na;i++){ const d=e+(L-2*e)*i/na, soff=h1+(h2-h1)*d/L, top=soff-bu/cos, cb=drCombo(top,DRN(st.jmin),DRN(st.jmax),ST); const vs=cb?cb.c.reduce((a,b)=>a+b,0):0, lv=cb?Math.ceil(vs/DRN(st.lift)-1e-9)+1:0; rows.push({i,d,soff,top,cb,vs,lv});
+    for(let j=0;j<=nc;j++){ const c=e+(Wd-2*e)*j/nc; pts.push(ax==='x'?[B.x0+d,B.y0+c]:[B.x0+c,B.y0+d]); } }
+  const mat=new Map(), addM=(it,q,how)=>{ const m=mat.get(it)||{q:0,how:[]}; m.q+=q; m.how.push(how); mat.set(it,m); }, cols=nc+1, tilt=Math.abs(out.slope)>(DRN(st.tilt)||0);
+  rows.forEach(x=>{ if(!x.cb) return; x.cb.c.forEach(l=>addM(`Vertical ${dq(l/1000,2)} m`,cols,`row ${x.i+1}`)); if(x.cb.c.length>1) addM('Spigot pin',cols*(x.cb.c.length-1),`row ${x.i+1}`); });
+  addM('Base jack',rows.length*cols,`${rows.length} rows × ${cols}`); addM(tilt?'U-head · tilting':'U-jack',rows.length*cols,`${rows.length} rows × ${cols}${tilt?` · slope ${dq(out.slope,1)}% above ${st.tilt||0}%`:''}`);
+  let la=0; rows.forEach((x,i)=>{ if(i) la+=Math.min(x.lv,rows[i-1].lv)*cols; }); let lc=rows.reduce((a,x)=>a+x.lv*(cols-1),0);
+  addM(`Ledger ≈ ${dq((L-2*e)/na/1000,2)} m (along slope)`,la,'between rows, levels both rows share'); addM(`Ledger ≈ ${dq((Wd-2*e)/nc/1000,2)} m (across)`,lc,'each row × its levels');
+  const pk=rows.filter(x=>x.cb&&x.cb.pack>0); return Object.assign(out,{rows,pts,mat,cols,tilt,pk}); }
+/* ---- settings for staging (all typed by you) ---- */
+const DR_SET=[['ply','Plywood thickness','mm'],['sec','Secondary depth','mm'],['pri','Primary depth','mm'],['gx','Slab grid X','mm'],['gy','Slab grid Y','mm'],['e','Gap from slab edge (for side board fixing)','mm'],['cl','Clear gap from beam / drop / column / opening','mm'],['bo','Beam-side vertical offset from beam face','mm'],['sb','Beam-side vertical spacing','mm'],['gd','Drop / capital vertical spacing','mm'],['lift','Ledger lift','mm'],['jmin','Jack extension · minimum (base + U)','mm'],['jmax','Jack extension · maximum (base + U)','mm'],['st','Vertical lengths you have (m = nos), e.g. 3=120, 2.5=400','','txt'],['tilt','Ramp: use tilting U-head above slope','%'],['pdir','Primary runs along (X or Y)','','txt'],['ss','Secondary spacing c/c','mm'],['pname','Primary member (e.g. ISMC 100)','','txt'],['sname','Secondary member (e.g. SQ tube 50×50)','','txt']];
+function drToList(kind){ const w=drCur(); let M; if(kind==='ramp'){ M=new Map(); w.ents.filter(e=>e.t==='ramp').forEach(r=>{ const x=drRampCalc(w,r); (x.mat||new Map()).forEach((v,k)=>{ const m=M.get(k)||{q:0}; m.q+=v.q; M.set(k,m); }); }); } else if(kind==='stg') M=(drStaging(w).mat)||new Map(); else { M=new Map(); drTake(w).R.forEach(x=>{ if(x.net>0){ const m=M.get('Shuttering')||{q:0}; m.q+=x.net; M.set('Shuttering',m); } }); }
+  if(!M.size){ toast('Nothing to add yet'); return; } const Q=qeS(), f='dr_'+w.id+'_'+kind, nm=w.name+' · '+({stg:'staging',ramp:'ramp scaffolding',tk:'shuttering'}[kind]);
+  Q.list=Q.list.filter(x=>x.from!==f); M.forEach((v,k)=>Q.list.push({id:uid(),item:k,unit:kind==='tk'?'sqm':'nos',net:+v.q.toFixed(2),ex:'',gross:kind==='tk'?+v.q.toFixed(2):Math.ceil(v.q),from:f,fromN:nm,d:todayStr()})); save(); toast('Added to the Material Calculator total list'); }
+function drToCalc(){ const w=drCur(), M=drMeasure(w); if(!M.length){ toast('Draw a slab first'); return; } const A=M.reduce((a,m)=>a+m.net,0)/1e6, P=M.reduce((a,m)=>a+m.P,0)/1000; const Q=qeS(), c={id:uid(),kind:'cup',name:w.name+' · cuplock',v:{shape:'ap',A:+A.toFixed(3),P:+P.toFixed(3)},ex:''}; Q.calcs.push(c); state.ui.qeC=c.id; state.ui.qeTab='calc'; save(); go('qe'); }
+/* ================= page ================= */
+const drMatTable=M=>simpleTable([['Item'],['Qty',1],['How']],[...M.entries()].map(([k,v])=>`<tr><td><b>${esc(k)}</b></td><td class="r"><b>${dm(v.q)}</b></td><td class="how">${esc([...new Set(v.how)].slice(0,4).join(' + '))}${v.how.length>4?' …':''}</td></tr>`));
+const drIn2=(val,on,w,ph,t)=>`<input class="qei ${t?'tx':''}" style="width:${w||80}px" value="${esc(val==null?'':val)}" placeholder="${ph||''}" ${t?'':'inputmode="decimal"'} onchange="${on}">`;
+PAGES.draft=()=>{ const D=drS(), w=drCur(), t=drTool(), tab=state.ui.drR||'meas', sel=w.ents.find(e=>e.id===state.ui.drSel);
+  const TOOLS=[['sel','Select'],['slab','Slab (outline)'],['slabr','Slab (rectangle)'],['beam','Beam'],['drop','Drop / capital'],['col','Column'],['open','Opening'],['wall','Wall'],['ramp','Ramp']];
+  let h=`<div class="drtop"><select class="qei" style="width:auto;text-align:left" onchange="drS().cur=this.value;DR_U=[];DR_VB=null;save()">${D.dwgs.map(x=>`<option value="${x.id}" ${x.id===w.id?'selected':''}>${esc(x.name)}</option>`).join('')}</select><button class="btn sm" onclick="drNewDwg()">+ New drawing</button><button class="btn sm" onclick="drRenDwg()">Rename</button>${D.dwgs.length>1?`<button class="btn sm" onclick="drDelDwg()">Delete</button>`:''}
+    <span class="drsep"></span><span class="tklab" style="margin:0">GRID SPACINGS (mm)</span> X ${drIn2(w.gx,"drW('gx',this.value)",170,'e.g. 6000, 6000, 5000',1)} Y ${drIn2(w.gy,"drW('gy',this.value)",150,'e.g. 5000, 5000',1)}</div>`;
+  const need=drToolNeeds(t==='slabr'?'slab':t), tk=t==='slabr'?'slab':t;
+  h+=`<div class="drtools">${TOOLS.map(([k,l])=>`<button class="${t===k?'on':''}" onclick="drSetTool('${k}')">${l}</button>`).join('')}<span class="drsep"></span><button onclick="drUndo()" title="Ctrl+Z">Undo</button><button onclick="drFit()">Fit</button><button onclick="drZoom(1/1.4)">+</button><button onclick="drZoom(1.4)">−</button></div>`;
+  if(!need.length) h+=`<div class="drdef">${t==='sel'?'Tap an element to see and change its sizes and points. Drag to move the view, wheel or + / − to zoom.':'Click the points or type them below.'}</div>`;
+  if(need.length) h+=`<div class="drdef"><b>${esc(DR_T[tk])}</b> · size for the next ones: ${need.map(k=>{ const pr=DR_PROPS[tk].find(x=>x[0]===k); return pr[3]?`${esc(pr[1])} <select class="qei" style="width:auto" onchange="drDef('${tk}','${k}',this.value)">${pr[3].map(o=>`<option value="${o[0]}" ${(w.def[tk+'_'+k]||pr[3][0][0])===o[0]?'selected':''}>${o[1]}</option>`).join('')}</select>`:`${esc(pr[1])} ${drIn2(w.def[tk+'_'+k],`drDef('${tk}','${k}',this.value)`,80)} ${pr[2]}`; }).join(' &nbsp; ')}</div>`;
+  const R=drSVG();
+  h+=`<div class="drw"><div class="drcv"><svg id="drsvg" viewBox="${R.vb}" preserveAspectRatio="xMidYMid meet"><g id="drg">${R.g}</g><g id="drc"></g></svg>
+    <div class="drcmd"><span id="drPrompt">${esc(drPrompt())}</span><input id="drCmdIn" placeholder="x,y  ·  @dx,dy  ·  @length<angle  ·  C close" autocomplete="off" onkeydown="if(event.key==='Enter'){ drCmd(this.value); this.value=''; event.preventDefault(); }"><span id="drXY" class="muted"></span></div>
+    <div class="drsnap">${[['drSnap','Snap',state.ui.drSnap!==0],['drOrtho','Ortho',!!state.ui.drOrtho]].map(([k,l,on])=>`<button class="${on?'on':''}" onclick="state.ui.${k}=${k==='drSnap'?(on?0:1):(on?0:1)};persist();render()">${l}</button>`).join('')}<span>Step ${drIn2(state.ui.drStep==null?'50':state.ui.drStep,"state.ui.drStep=this.value;persist()",60,'mm')} mm</span><span class="muted">Units mm · snaps to grid, ends, mid points</span></div></div>
+   <div class="drside"><div class="panel"><div class="ph"><span>Layers</span></div><div class="pb drlay">${[['grid','Grid'],['dim','Dimensions'],...Object.entries(DR_T),['stg','Staging']].map(([k,l])=>`<label><input type="checkbox" ${drLay(k)?'checked':''} onchange="drTogL('${k}')"><i style="background:${DR_COL[k]||'#94a3b8'}"></i>${l}</label>`).join('')}</div></div>`;
+  if(sel){ const P=DR_PROPS[sel.t]||[], pt=sel.t==='col'?sel.p:sel.t==='beam'||sel.t==='wall'?sel.p:sel.p.length<=6?sel.p:[];
+    h+=panel('Properties · '+esc(drName(w,sel)),`<table class="sheet qet"><tbody><tr><td>Name</td><td>${drIn2(sel.nm||'',`drSetP('${sel.id}','nm',this.value)`,90,drName(w,sel),1)}</td></tr>${P.map(([k,l,u,o])=>`<tr><td>${esc(l)} ${u?`<span class="qu">${u}</span>`:''}</td><td>${o?`<select class="qei" style="width:auto" onchange="drSetP('${sel.id}','${k}',this.value)">${o.map(x=>`<option value="${x[0]}" ${(sel[k]||o[0][0])===x[0]?'selected':''}>${x[1]}</option>`).join('')}</select>`:drIn2(sel[k],`drSetP('${sel.id}','${k}',this.value)`,90)}</td></tr>`).join('')}
+      ${pt.map((q,i)=>`<tr><td class="muted">Point ${i+1} · X, Y</td><td style="white-space:nowrap">${drIn2(q[0],`drSetPt('${sel.id}',${i},0,this.value)`,72)} ${drIn2(q[1],`drSetPt('${sel.id}',${i},1,this.value)`,72)}</td></tr>`).join('')}</tbody></table>
+      ${['slab','open','drop','ramp'].includes(sel.t)?`<p class="note">Area <b>${dq(gArea(drPoly(sel))/1e6,3)} sqm</b> · perimeter <b>${dq(gPer(drPoly(sel))/1000,3)} m</b></p>`:sel.t==='beam'?`<p class="note">Length ${dq(drBeamClear(w,sel).L/1000,3)} m · clear between column faces <b>${dq(drBeamClear(w,sel).Lc/1000,3)} m</b></p>`:''}
+      <div class="acts"><button class="btn sm" onclick="drDel('${sel.id}')">Delete</button></div>`); }
+  else h+=panel('How to draw',`<p class="note" style="margin:0">1 · Type the grid spacings.<br>2 · Pick a tool, type its size once.<br>3 · Click points (they snap) or type them in the command line: <b>0,0</b> then <b>@20000,0</b> or <b>@8000&lt;90</b>.<br>4 · Tap an element to edit sizes or points.</p>`);
+  h+=`</div></div>`;
+  const TB=[['meas','Measured'],['tk','Shuttering take-off'],['stg','Staging layout'],['ramp','Ramp scaffolding']];
+  h+=`<div class="tkdt" style="margin-top:14px">${TB.map(([k,l])=>`<button class="${tab===k?'on':''}" onclick="state.ui.drR='${k}';render()">${l}</button>`).join('')}</div>`;
+  if(tab==='meas'){ const M=drMeasure(w);
+    h+=panel('Measured · exact from the drawing',M.length?simpleTable([['Slab'],['Area',1],['Openings',1],['Net area',1],['Perimeter',1],['Points',1]],M.map(m=>`<tr><td><b>${esc(drName(w,m.s))}</b></td><td class="r">${dq(m.A/1e6,3)} sqm</td><td class="r">${m.O.length?dq(m.oa/1e6,3)+' sqm':'—'}</td><td class="r"><b>${dq(m.net/1e6,3)} sqm</b></td><td class="r">${dq(m.P/1000,3)} m</td><td class="r">${m.s.p.length}</td></tr>`)):'<p class="note">Draw a slab outline to see its area and perimeter.</p>','area by coordinates (shoelace) · every length typed or snapped')
+     +(M.length?`<div class="acts"><button class="btn" onclick="drToCalc()">Use this area in the Material Calculator →</button></div>`:''); }
+  if(tab==='tk'){ const T=drTake(w), x=w.set, ck=k=>x['x_'+k]!=='0', tot=T.R.reduce((a,r)=>a+r.net,0);
+    h+=panel('Deduction rules · tick what applies',`<div class="drck">${[['col','Deduct columns from slab soffit'],['beam','Deduct beam soffits from slab soffit'],['drop','Deduct drops from slab soffit'],['open','Deduct openings of'],['junc','Deduct beam junctions from column sides'],['wall','No edge board where the slab sits on a wall']].map(([k,l])=>`<label><input type="checkbox" ${ck(k)?'checked':''} onchange="drSet('x_${k}',this.checked?'1':'0')"> ${l}${k==='open'?` ${drIn2(x.omin==null?'0.40':x.omin,"drSet('omin',this.value)",55)} sqm and more (smaller ones are not deducted)`:''}</label>`).join('')}</div><p class="note">Beams are measured between column faces. Columns are measured to the slab soffit. Edges are added round deducted openings. Sloped areas are divided by cos θ.</p>`);
+    if(T.miss.length) h+=`<div class="banner">${PILL('wn','MISSING')} ${esc(T.miss.join(' · '))}</div>`;
+    h+=panel('Shuttering quantity · element-wise with deductions',simpleTable([['Element'],['Measure'],['Gross sqm',1],['Deduct sqm',1],['Net sqm',1],['How']],T.R.map(r=>`<tr><td><b>${esc(r.el)}</b></td><td>${esc(r.me)}</td><td class="r">${dq(r.gross,3)}</td><td class="r">${r.ded?dq(r.ded,3):'—'}</td><td class="r"><b>${dq(r.net,3)}</b></td><td class="how">${esc(r.how)}${r.dh?'<br>'+esc(r.dh):''}</td></tr>`),`<tr><td colspan="4"><b>Total shuttering</b></td><td class="r"><b>${dq(tot,2)} sqm</b></td><td></td></tr>`)+`<div class="acts"><button class="btn" onclick="drToList('tk')">Add to total list</button></div>`); }
+  if(tab==='stg'||tab==='ramp'){ const x=w.set;
+    h+=panel('Staging values · all typed by you',`<div class="drsetg">${DR_SET.map(([k,l,u,ty])=>`<label${ty?' class="wide"':''}>${esc(l)} ${u?`<span class="qu">${u}</span>`:''}${drIn2(x[k],`drSet('${k}',this.value)`,ty?260:90,'',ty)}</label>`).join('')}</div><p class="note">Slab soffit height and thickness are set on each slab (tap it). Beam and drop depths are set on each beam / drop.</p>`); }
+  if(tab==='stg'){ const S=drStaging(w);
+    if(S.msg) h+=`<div class="banner">${esc(S.msg)}</div>`; else {
+     h+=panel('Verticals by height',simpleTable([['Where'],['Verticals',1],['Top of U-jack',1],['Combination'],['Jack extension',1]],S.G.map(g=>`<tr><td><b>${{slab:'Slab',beam:'Beam side',drop:'Drop / capital'}[g.k]}</b></td><td class="r">${g.n}</td><td class="r">${dm(g.h)} mm</td><td>${g.cb?g.cb.c.map(l=>dq(l/1000,2)).join(' + ')+' m'+(g.cb.pack>0?` ${PILL('wn','PACK '+dm(g.cb.pack)+' mm')}`:''):PILL('bd','no fit')}</td><td class="r">${g.cb?dm(g.cb.ext)+' mm':'—'}</td></tr>`)),'the green dots on the drawing')
+      +panel('Staging quantity',drMatTable(S.mat)+`<div class="acts"><button class="btn" onclick="drToList('stg')">Add to total list</button></div>`,'slab verticals inside the gap round beams and drops are removed; beam-side and drop verticals are added'); } }
+  if(tab==='ramp'){ const Rm=w.ents.filter(e=>e.t==='ramp'); if(!Rm.length) h+=`<p class="note">Draw a ramp with the Ramp tool — like a slab, in plan — then type its start and end soffit heights.</p>`;
+    Rm.forEach(r=>{ const x=drRampCalc(w,r), rn=drName(w,r); if(x.msg){ h+=`<div class="banner">${esc(rn)}: fill ${esc(x.msg)} (tap the ramp)</div>`; return; }
+      h+=panel(`${esc(rn)} · ${dq(x.L/1000,2)} × ${dq(x.Wd/1000,2)} m · slope ${dq(x.slope,2)}% (${dq(x.ang,2)}°)`,!x.rows?'<p class="note">Fill the staging values above.</p>':
+        simpleTable([['Row',1],['From start',1],['Soffit height',1],['Top of U-jack',1],['Combination'],['Jack',1],['Levels',1]],x.rows.map(q=>`<tr><td class="r">${q.i+1}</td><td class="r">${dm(q.d)}</td><td class="r">${dm(q.soff)}</td><td class="r">${dm(q.top)}</td><td>${q.cb?q.cb.c.map(l=>dq(l/1000,2)).join(' + ')+' m'+(q.cb.pack>0?' '+PILL('wn','PACK '+dm(q.cb.pack)+' mm'):''):PILL('bd','no fit')}</td><td class="r">${q.cb?dm(q.cb.ext):'—'}</td><td class="r">${q.lv}</td></tr>`))
+        +`<p class="note">${x.cols} verticals in each row · top of U-jack = soffit − build-up ÷ cos θ · ${x.tilt?'<b>tilting U-heads</b> (slope above your limit)':'normal U-jacks'}${x.pk.length?` · ${x.pk.length} row(s) need packing`:''}</p>`+drMatTable(x.mat),'each row its own height'); });
+    if(Rm.length) h+=`<div class="acts"><button class="btn" onclick="drToList('ramp')">Add ramp scaffolding to total list</button></div>`; }
+  h+=`<p class="note">Planning layout and quantities — the staging must follow the approved formwork design. See <a href="#" onclick="go('dzPack');return false">Design Verification Pack</a>.</p>`;
+  setTimeout(()=>{ drBind(); drDraw(); },0);
+  return h; };
+(()=>{ const s=document.createElement('style'); s.textContent=`.drtop,.drtools,.drdef{display:flex;gap:6px;align-items:center;flex-wrap:wrap;margin-bottom:8px}.drsep{width:1px;height:22px;background:#d9d2c5;margin:0 6px}.drtools button,.drsnap button{border:1px solid #c9d0d7;background:#fff;border-radius:7px;padding:6px 11px;font:inherit;font-size:13.5px;cursor:pointer;color:inherit}.drtools button.on,.drsnap button.on{background:#1e3a5f;color:#fff;border-color:#1e3a5f;font-weight:700}
+.drdef{background:#fffbeb;border:1px solid #fde68a;border-radius:8px;padding:6px 10px;font-size:13.5px}.drw{display:grid;grid-template-columns:1fr 290px;gap:14px;align-items:start}.drcv{background:#fff;border-radius:12px;box-shadow:0 0 0 1px #e6e1d8;overflow:hidden}#drsvg{width:100%;height:520px;display:block;background:#fbfcfd;touch-action:none;cursor:crosshair}
+td.how{padding-left:12px!important}#drsvg{user-select:none;-webkit-user-select:none}.drside .sheet td{padding:4px 5px}.drside .qei{width:66px!important;font-size:13px;padding:3px 5px;height:28px}.drside .qei.tx{width:96px!important}.drside .qet td:first-child{min-width:0;font-size:12.5px}#drsvg .drlive{fill:#b45309;font-weight:700;font-family:inherit}.drneed{outline:3px solid #f59e0b!important}.drdef{min-height:34px}#drsvg .dg{stroke:#94a3b8;stroke-dasharray:40 20}#drsvg .db{fill:#fff;stroke:#475569}#drsvg .dbt{fill:#334155;font-weight:700;font-family:inherit}#drsvg .ddt{fill:#475569;font-family:inherit}#drsvg .dlt{font-weight:700;font-family:inherit;pointer-events:none}#drsvg text{pointer-events:none}
+.drcmd{display:flex;gap:10px;align-items:center;padding:8px 10px;border-top:1px solid #eee;background:#0f172a;color:#e2e8f0;font-family:ui-monospace,Menlo,Consolas,monospace;font-size:13px;flex-wrap:wrap}.drcmd input{flex:1;min-width:200px;background:#1e293b;border:1px solid #334155;color:#fff;border-radius:6px;padding:6px 8px;font:inherit}.drcmd #drXY{color:#94a3b8}
+.drsnap{display:flex;gap:6px;align-items:center;padding:6px 10px;font-size:12.5px;flex-wrap:wrap}.drlay{display:flex;flex-direction:column;gap:4px;font-size:13.5px}.drlay i{display:inline-block;width:10px;height:10px;border-radius:2px;margin:0 6px}.drck{display:flex;flex-direction:column;gap:6px;font-size:14px}
+.drsetg{display:grid;grid-template-columns:repeat(auto-fill,minmax(250px,1fr));gap:8px 16px}.drsetg label.wide{grid-column:1/-1;justify-content:flex-start}.drsetg label{display:flex;justify-content:space-between;align-items:center;gap:8px;font-size:13.5px}
+@media(max-width:900px){.drw{grid-template-columns:1fr}#drsvg{height:380px}}`; document.head.appendChild(s); })();
+
+/* ================= DRAFTING · CAD workspace (dark canvas, tools, snaps, command line) ================= */
+let DR_H=[], DR_LAST='', DR_FOC=0, DR_PT='mouse';
+const drF=()=>Object.assign({snap:1,grid:1,ortho:0,polar:0,end:1,mid:1,int:1,perp:1},state.ui.drF||{});
+function drFT(k){ const F=drF(); F[k]=F[k]?0:1; if(k==='ortho'&&F.ortho) F.polar=0; if(k==='polar'&&F.polar) F.ortho=0; state.ui.drF=F; persist(); render(); }
+function drLog(t){ DR_H.push(t); if(DR_H.length>60) DR_H.shift(); const h=document.querySelector('.cadh'); if(h) h.innerHTML=DR_H.slice(-3).map(x=>`<div>${esc(x)}</div>`).join(''); }
+const DR_CMD={sel:'SELECT',grid:'GRID',line:'LINE',slab:'PLINE',slabr:'RECTANG',circ:'CIRCLE',beam:'BEAM',col:'COLUMN',drop:'DROP',open:'OPENING',wall:'WALL',ramp:'RAMP',offset:'OFFSET',dim:'DIMALIGNED',move:'MOVE',copy:'COPY',trim:'TRIM',del:'ERASE'};
+const DR_ASK={grid:[['gx','Grid X spacings (mm), e.g. 6000,6000,6000','g'],['gy','Grid Y spacings (mm), e.g. 5000,5000','g']],slab:[['thk','Slab thickness (mm)'],['H','Floor top to slab soffit (mm)']],beam:[['bw','Beam width (mm)'],['bd','Beam depth below slab soffit (mm)']],col:[['cw','Column size X (mm)'],['ch','Column size Y (mm)']],drop:[['dd','Drop depth below slab soffit (mm)']],wall:[['wt','Wall thickness (mm)']],ramp:[['dir','Slope along [X/Y]','d'],['h1','Soffit height at start (mm)'],['h2','Soffit height at end (mm)'],['thk','Ramp slab thickness (mm)']],offset:[['off','Offset distance (mm)']]};
+const drAK=t=>({slabr:'slab',circ:'slab'})[t]||t;
+const drAskGet=k=>{ const w=drCur(), t=drAK(drTool()); if(t==='grid') return w[k]||''; const v=w.def[t+'_'+k]; return v==null?'':String(v); };
+const drAskSet=(k,v)=>{ const w=drCur(), t=drAK(drTool()); if(t==='grid'){ w[k]=v; DR_VB=null; } else w.def[t+'_'+k]=v; };
+const drCircP=(c,r)=>Array.from({length:96},(_,i)=>[c[0]+r*Math.cos(i*Math.PI/48),c[1]+r*Math.sin(i*Math.PI/48)]);
+const drCircFlag=w=>w.ents.forEach(e=>{ if(e.circ&&e.p) e.p.circ=e.circ; });
+const gX=(a,b,c,d)=>{ const r=[b[0]-a[0],b[1]-a[1]], s=[d[0]-c[0],d[1]-c[1]], den=r[0]*s[1]-r[1]*s[0]; if(Math.abs(den)<1e-9) return null; const t=((c[0]-a[0])*s[1]-(c[1]-a[1])*s[0])/den, u=((c[0]-a[0])*r[1]-(c[1]-a[1])*r[0])/den; return t>=-1e-9&&t<=1+1e-9&&u>=-1e-9&&u<=1+1e-9?{t,u,p:[a[0]+r[0]*t,a[1]+r[1]*t]}:null; };
+const gXL=(a,b,c,d)=>{ const r=[b[0]-a[0],b[1]-a[1]], s=[d[0]-c[0],d[1]-c[1]], den=r[0]*s[1]-r[1]*s[0]; if(Math.abs(den)<1e-9) return null; const t=((c[0]-a[0])*s[1]-(c[1]-a[1])*s[0])/den; return [a[0]+r[0]*t,a[1]+r[1]*t]; };
+const gSA=P=>P.reduce((a,p,i)=>{ const q=P[(i+1)%P.length]; return a+p[0]*q[1]-q[0]*p[1]; },0)/2;
+function drRef(q){ const G=drGrid(drCur()); for(let i=0;i<G.X.length;i++) for(let j=0;j<G.Y.length;j++) if(Math.abs(G.X[i]-q[0])<1&&Math.abs(G.Y[j]-q[1])<1) return drLetter(i)+'-'+(j+1); return dm(q[0])+', '+dm(q[1]); }
+function drSegs(w,skip){ const S=[], add=(a,b,id)=>S.push({a,b,id}); w.ents.forEach(e=>{ if(e.id===skip||e.t==='dim') return; if(e.t==='line'){ add(e.p[0],e.p[1],e.id); return; } if(e.t==='beam'||e.t==='wall') add(e.p[0],e.p[1],e.id); const P=drPoly(e); if(P.length>2) P.forEach((q,i)=>add(q,P[(i+1)%P.length],e.id)); });
+  const G=drGrid(w); if(G.X.length&&G.Y.length){ const y0=G.Y[0],y1=G.Y[G.Y.length-1],x0=G.X[0],x1=G.X[G.X.length-1]; G.X.forEach(x=>add([x,y0-1500],[x,y1+1500],'grid')); G.Y.forEach(y=>add([x0-1500,y],[x1+1500,y],'grid')); } return S; }
+/* ---- tool start ---- */
+drSetTool=function(t){ if(t==='undo'){ drUndo(); return; } if(t==='fit'){ drFit(); return; }
+  const w=drCur(), sel=state.ui.drSel; if(t==='del'&&sel){ const e=w.ents.find(x=>x.id===sel); drLog('Command: ERASE · '+(e?drName(w,e):'')); drDel(sel); return; }
+  state.ui.drTool=t; DR_T_={pts:[],cur:null,ask:(DR_ASK[drAK(t)]||[]).map(x=>x.slice()),obj:['move','copy','offset'].includes(t)&&sel?sel:null,base:null};
+  if(!['move','copy','offset'].includes(t)) state.ui.drSel=''; if(t!=='sel') DR_LAST=t; drLog('Command: '+(DR_CMD[t]||t.toUpperCase())); DR_FOC=1; render(); };
+function drEnd(){ if(drTool()!=='sel') drLog('*End*'); state.ui.drTool='sel'; state.ui.drSel=''; DR_T_={pts:[],cur:null,ask:[]}; render(); }
+const drAskDefOK=()=>DR_T_.ask&&DR_T_.ask.length&&drTool()!=='grid'&&DR_T_.ask.every(q=>drAskGet(q[0])!=='');
+function drAskSkip(){ DR_T_.ask.forEach(q=>drLog(q[1].replace(/\s*\(.*\)|, e\.g\..*|\s*\[.*\]/g,'')+': '+drAskGet(q[0]))); DR_T_.ask=[]; }
+function drAnswer(v){ const q=DR_T_.ask[0], t=drTool(); let val=String(v||'').trim(); if(/[,@<]/.test(val)&&q[2]!=='g'&&drAskDefOK()){ drAskSkip(); drCmd(val); return; } const def=drAskGet(q[0]); if(!val) val=def; if(!val){ toast('Type a value and press Enter'); return; }
+  if(q[2]==='d'){ val=/^y/i.test(val)?'y':'x'; } else if(q[2]==='g'){ if(!/^[\d.\s,;]+$/.test(val)||!val.split(/[,;\s]+/).some(x=>+x>0)){ toast('Type spacings like 6000,6000,6000'); return; } val=val.split(/[,;\s]+/).filter(x=>+x>0).join(','); } else if(!(DRN(val)>0)){ toast('Type a number'); return; }
+  drAskSet(q[0],val); drLog(q[1].replace(/\s*\(.*\)|, e\.g\..*|\s*\[.*\]/g,'')+': '+val); DR_T_.ask.shift(); DR_FOC=1;
+  if(t==='grid'&&!DR_T_.ask.length){ state.ui.drTool='sel'; DR_T_={pts:[],cur:null,ask:[]}; save(); return; } persist(); render(); }
+/* ---- prompts ---- */
+drPrompt=function(){ const t=drTool(), T=DR_T_, n=(T.pts||[]).length;
+  if(T.ask&&T.ask.length){ const q=T.ask[0], d=drAskGet(q[0]); return q[1]+(d!==''?` <${d}>`:'')+':'; }
+  switch(t){ case 'sel': return 'Command:';
+   case 'line': return n?'Next point [Undo/Close]:':'Start point:';
+   case 'slab': return n===0?'Start point:':n<3?'Next point [Undo]:':'Next point [Undo/Close]:';
+   case 'slabr': return n?'Other corner:':'First corner:';
+   case 'circ': return n?'Radius:':'Centre point:';
+   case 'beam': case 'wall': return n?'End point:':'Start point:';
+   case 'col': return 'Centre point [Enter = end]:';
+   case 'drop': case 'open': case 'ramp': return n?'Other corner:':'First corner:';
+   case 'offset': return !T.obj?'Select object to offset:':'Specify point on side to offset:';
+   case 'dim': return n===0?'First extension line origin:':n===1?'Second extension line origin:':'Dimension line location:';
+   case 'move': case 'copy': return !T.obj?'Select object:':!T.base?'Specify base point:':'Specify second point:';
+   case 'trim': return 'Select the part of a line to trim:';
+   case 'del': return 'Select objects to erase:'; } return ''; };
+/* ---- create ---- */
+function drMk(type,geo,keep){ const w=drCur(), T=DR_T_, props={}; (DR_PROPS[type]||[]).forEach(([k])=>{ const v=w.def[type+'_'+k]; if(v!=null&&v!=='') props[k]=v; }); drPush(); const e=Object.assign({id:uid(),t:type},props,geo); w.ents.push(e); T.pts=keep||[]; DR_FOC=1; save(); return e; }
+function drShift(e,dx,dy){ e.p=e.p.map(q=>[q[0]+dx,q[1]+dy]); if(e.circ) e.circ=[[e.circ[0][0]+dx,e.circ[0][1]+dy],e.circ[1]]; }
+function drOffset(e,side,d){ if(!(d>0)) return null; const n=JSON.parse(JSON.stringify(e)); n.id=uid(); delete n.nm;
+  if(['line','beam','wall','dim'].includes(e.t)){ const [a,b]=e.p, L=Math.hypot(b[0]-a[0],b[1]-a[1])||1, nx=-(b[1]-a[1])/L, ny=(b[0]-a[0])/L, s=((side[0]-a[0])*nx+(side[1]-a[1])*ny)>=0?1:-1; n.p=e.p.map(q=>[q[0]+nx*d*s,q[1]+ny*d*s]); return n; }
+  if(e.circ){ const inside=Math.hypot(side[0]-e.circ[0][0],side[1]-e.circ[0][1])<e.circ[1], r=e.circ[1]+(inside?-d:d); if(r<=0) return null; n.circ=[e.circ[0],r]; n.p=drCircP(e.circ[0],r); return n; }
+  if(e.t==='col') return null; const P=e.p, ccw=gSA(P)>0, s=gPIP(side,P)?-d:d, N=P.length;
+  const OL=P.map((a,i)=>{ const b=P[(i+1)%N], L=Math.hypot(b[0]-a[0],b[1]-a[1])||1, ox=(ccw?(b[1]-a[1]):-(b[1]-a[1]))/L*s, oy=(ccw?-(b[0]-a[0]):(b[0]-a[0]))/L*s; return [[a[0]+ox,a[1]+oy],[b[0]+ox,b[1]+oy]]; });
+  n.p=P.map((_,i)=>{ const A=OL[(i-1+N)%N], B=OL[i]; return gXL(A[0],A[1],B[0],B[1])||B[0]; }).map(q=>q.map(x=>Math.round(x*100)/100)); return n; }
+function drTrim(e,raw){ const w=drCur(), [a,b]=e.p, ts=[]; drSegs(w,e.id).forEach(s=>{ const x=gX(a,b,s.a,s.b); if(x&&x.t>1e-6&&x.t<1-1e-6) ts.push(x.t); }); if(!ts.length){ toast('Nothing crosses this line to trim against'); return; }
+  const L2=(b[0]-a[0])**2+(b[1]-a[1])**2, tc=((raw[0]-a[0])*(b[0]-a[0])+(raw[1]-a[1])*(b[1]-a[1]))/L2, lo=Math.max(0,...ts.filter(t=>t<tc)), hi=Math.min(1,...ts.filter(t=>t>tc)), P=t=>[a[0]+(b[0]-a[0])*t,a[1]+(b[1]-a[1])*t].map(x=>Math.round(x*100)/100);
+  drPush(); w.ents=w.ents.filter(x=>x.id!==e.id); if(lo>1e-6) w.ents.push({id:uid(),t:'line',p:[a,P(lo)]}); if(hi<1-1e-6) w.ents.push({id:uid(),t:'line',p:[P(hi),b]}); drLog('Trimmed '+drName(w,e)); save(); }
+/* ---- points ---- */
+drAddPt=function(p,typed,raw){ const t=drTool(), T=DR_T_, w=drCur(); raw=raw||p; DR_FOC=1; T.pts=T.pts||[];
+  if(T.ask&&T.ask.length){ if(drAskDefOK()) drAskSkip(); else { toast('Answer the command line first'); drFocus(1); return; } }
+  const lab=typed||`${dm(p[0])},${dm(p[1])}`, n=T.pts.length, same=(a,b)=>Math.hypot(a[0]-b[0],a[1]-b[1])<1;
+  const pick=()=>{ const e=drHit(raw); if(!e) toast('Nothing there — tap on a line or element'); return e; };
+  switch(t){
+   case 'sel': return;
+   case 'line': if(!n){ T.pts=[p]; T.c0=p; drLog('Start point: '+lab); drDraw(); return; } if(same(p,T.pts[n-1])) return; drLog('Next point: '+lab); drMk('line',{p:[T.pts[n-1],p]},[p]); return;
+   case 'slab': if(n>=3&&same(p,T.pts[0])){ drLog('Close'); drMk('slab',{p:T.pts.slice()}); return; } if(n&&same(p,T.pts[n-1])) return; T.pts.push(p); drLog((n?'Next point: ':'Start point: ')+lab); drDraw(); return;
+   case 'slabr': case 'drop': case 'open': case 'ramp': if(!n){ T.pts=[p]; drLog('First corner: '+lab); drDraw(); return; } if(Math.abs(p[0]-T.pts[0][0])<1||Math.abs(p[1]-T.pts[0][1])<1){ toast('Zero width — pick the opposite corner'); return; } drLog('Other corner: '+lab); drMk(t==='slabr'?'slab':t,{p:gRect(T.pts[0],p)}); return;
+   case 'circ': if(!n){ T.pts=[p]; drLog('Centre point: '+lab); drDraw(); return; } { const r=Math.hypot(p[0]-T.pts[0][0],p[1]-T.pts[0][1]); if(r<1) return; drLog('Radius: '+dm(r)); drMk('slab',{p:drCircP(T.pts[0],r),circ:[T.pts[0],r]}); } return;
+   case 'beam': case 'wall': if(!n){ T.pts=[p]; drLog('Start point: '+lab); drDraw(); return; } if(same(p,T.pts[0])) return; drLog('End point: '+lab); drMk(t,{p:[T.pts[0],p]}); return;
+   case 'col': drLog('Centre point: '+lab); drMk('col',{p:[p]}); return;
+   case 'dim': if(n<2){ if(n&&same(p,T.pts[0])) return; T.pts.push(p); drLog((n?'Second point: ':'First point: ')+lab); drDraw(); return; } { const [a,b]=T.pts, L=Math.hypot(b[0]-a[0],b[1]-a[1]); const o=((p[0]-a[0])*-(b[1]-a[1])+(p[1]-a[1])*(b[0]-a[0]))/L; drLog('Dimension text = '+dm(L)); drMk('dim',{p:[a,b],o}); } return;
+   case 'offset': if(!T.obj){ const e=pick(); if(!e) return; T.obj=e.id; state.ui.drSel=e.id; drLog('Object: '+drName(w,e)); drDraw(); return; } { const e=w.ents.find(x=>x.id===T.obj), nE=e&&drOffset(e,raw,DRN(w.def.offset_off)); if(!nE){ toast('This element cannot be offset'); return; } drLog('Offset '+drName(w,e)+' by '+w.def.offset_off); drPush(); w.ents.push(nE); T.obj=null; state.ui.drSel=''; save(); } return;
+   case 'move': case 'copy': if(!T.obj){ const e=pick(); if(!e) return; T.obj=e.id; state.ui.drSel=e.id; drLog('Object: '+drName(w,e)); drDraw(); return; } if(!T.base){ T.base=p; T.pts=[p]; drLog('Base point: '+lab); drDraw(); return; }
+    { const e=w.ents.find(x=>x.id===T.obj); if(!e) return; const dx=p[0]-T.base[0], dy=p[1]-T.base[1]; drLog('Second point: '+lab); drPush(); if(t==='move'){ drShift(e,dx,dy); state.ui.drTool='sel'; DR_T_={pts:[],cur:null,ask:[]}; } else { const c=JSON.parse(JSON.stringify(e)); c.id=uid(); delete c.nm; drShift(c,dx,dy); w.ents.push(c); } save(); } return;
+   case 'trim': { const e=pick(); if(!e) return; if(e.t!=='line'){ toast('Trim works on lines. For slabs and beams, change their points in Properties.'); return; } drTrim(e,raw); } return;
+   case 'del': { const e=pick(); if(!e) return; drLog('Erased '+drName(w,e)); drDel(e.id); } return; } };
+/* ---- command line ---- */
+const DR_AL={l:'line',line:'line',pl:'slab',pline:'slab',rec:'slabr',rect:'slabr',rectang:'slabr',c:'circ',circle:'circ',b:'beam',beam:'beam',col:'col',column:'col',d:'drop',drop:'drop',op:'open',opening:'open',w:'wall',wall:'wall',ramp:'ramp',o:'offset',offset:'offset',dim:'dim',dal:'dim',m:'move',move:'move',co:'copy',cp:'copy',copy:'copy',tr:'trim',trim:'trim',e:'del',erase:'del',u:'undo',undo:'undo',z:'fit',fit:'fit',s:'sel'};
+drCmd=function(raw){ const v=String(raw||'').trim(), lv=v.toLowerCase(), t=drTool(), T=DR_T_; T.pts=T.pts||[]; DR_FOC=1;
+  if(T.ask&&T.ask.length){ drAnswer(v); return; }
+  if(!v){ if(t==='sel'){ if(DR_LAST) drSetTool(DR_LAST); return; } if(t==='slab'&&T.pts.length>=3){ drLog('Close'); drMk('slab',{p:T.pts.slice()}); return; } drEnd(); return; }
+  if((lv==='c'||lv==='close')&&(t==='slab'||t==='line')&&T.pts.length){ if(t==='slab'&&T.pts.length>=3){ drLog('Close'); drMk('slab',{p:T.pts.slice()}); } else if(t==='line'&&T.c0){ drLog('Close'); drMk('line',{p:[T.pts[T.pts.length-1],T.c0]},[]); } return; }
+  if((lv==='u'||lv==='undo')&&t!=='sel'&&T.pts.length){ T.pts.pop(); drLog('*Undo point*'); drDraw(); return; }
+  if(!/^[@\d\-.]/.test(lv)){ if(DR_AL[lv]){ drSetTool(DR_AL[lv]); return; } toast('Unknown command: '+v); return; }
+  const last=(t==='move'||t==='copy')&&T.base?T.base:T.pts[T.pts.length-1]; let m;
+  if(t==='circ'&&T.pts.length===1&&/^[\d.]+$/.test(lv)){ const r=+lv; if(r>0){ drLog('Radius: '+v); drMk('slab',{p:drCircP(T.pts[0],r),circ:[T.pts[0],r]}); } return; }
+  if((m=lv.match(/^@\s*(-?[\d.]+)\s*<\s*(-?[\d.]+)$/))){ if(!last){ toast('Give the first point as x,y'); return; } const L=+m[1],a=+m[2]*Math.PI/180; drAddPt([last[0]+L*Math.cos(a),last[1]+L*Math.sin(a)].map(x=>Math.round(x*100)/100),v); return; }
+  if((m=lv.match(/^@\s*(-?[\d.]+)\s*,\s*(-?[\d.]+)$/))){ if(!last){ toast('Give the first point as x,y'); return; } drAddPt([last[0]+ +m[1],last[1]+ +m[2]],v); return; }
+  if((m=lv.match(/^(-?[\d.]+)\s*,\s*(-?[\d.]+)$/))){ drAddPt([+m[1],+m[2]],v); return; }
+  if((m=lv.match(/^([\d.]+)$/))&&last&&T.cur){ const dx=T.cur[0]-last[0],dy=T.cur[1]-last[1],L=Math.hypot(dx,dy)||1; drAddPt([last[0]+dx/L*+m[1],last[1]+dy/L*+m[1]].map(x=>Math.round(x*100)/100),v); return; }
+  toast('Type x,y  ·  @dx,dy  ·  @length<angle  ·  or a length in the mouse direction'); };
+function drKey(e){ if(e.key==='Enter'){ e.preventDefault(); const i=e.target, v=i.value; i.value=''; drCmd(v); } else if(e.key==='Escape'){ e.preventDefault(); e.target.value=''; drEnd(); } }
+function drFocus(force){ setTimeout(()=>{ const i=document.getElementById('drCmdIn'); if(i&&(force||DR_PT!=='touch')) i.focus({preventScroll:true}); },20); }
+/* ---- snapping ---- */
+drSnap=function(p){ const w=drCur(), F=drF(), tol=12*((DR_VB.x1-DR_VB.x0)/1000), T=DR_T_, P0=T.pts||[], last=(T.base&&(drTool()==='move'||drTool()==='copy'))?T.base:P0[P0.length-1], cand=[];
+  const C=(q,k,pr)=>{ const d=Math.hypot(q[0]-p[0],q[1]-p[1]); if(d<=tol) cand.push({p:[q[0],q[1]],k,pr,d}); };
+  if(F.end){ w.ents.forEach(e=>{ if(e.circ){ C(e.circ[0],'Centre',2); return; } (e.t==='col'?drPoly(e):e.p).forEach(q=>C(q,'Endpoint',0)); if(e.t==='col') C(e.p[0],'Centre',2); if(e.t==='beam'||e.t==='wall') drPoly(e).forEach(q=>C(q,'Endpoint',0)); if(e.t==='dim'){} }); P0.forEach(q=>C(q,'Endpoint',0)); }
+  const near=drSegs(w).filter(s=>gSegD(p,s.a,s.b)<=tol);
+  if(F.int) for(let i=0;i<near.length;i++) for(let j=i+1;j<near.length;j++){ if(near[i].id===near[j].id&&near[i].id!=='grid') continue; const x=gX(near[i].a,near[i].b,near[j].a,near[j].b); if(x) C(x.p,'Intersection',1); }
+  if(F.mid) near.forEach(s=>{ if(s.id!=='grid') C([(s.a[0]+s.b[0])/2,(s.a[1]+s.b[1])/2],'Midpoint',3); });
+  if(F.perp&&last) near.forEach(s=>{ const dx=s.b[0]-s.a[0],dy=s.b[1]-s.a[1],L=dx*dx+dy*dy; if(!L) return; const t=((last[0]-s.a[0])*dx+(last[1]-s.a[1])*dy)/L; if(t<=0||t>=1) return; C([s.a[0]+t*dx,s.a[1]+t*dy],'Perpendicular',4); });
+  if(F.grid){ const G=drGrid(w); G.X.forEach((x,i)=>G.Y.forEach((y,j)=>C([x,y],'Grid '+drLetter(i)+'-'+(j+1),5))); }
+  if(cand.length){ cand.sort((a,b)=>a.pr-b.pr||a.d-b.d); const c=cand[0]; c.p=c.p.map(x=>Math.round(x*100)/100); return c; }
+  const st=state.ui.drStep==null||state.ui.drStep===''?50:(DRN(state.ui.drStep)||0), rs=x=>F.snap&&st>0?Math.round(x/st)*st:Math.round(x);
+  if(last&&(F.ortho||F.polar)){ const dx=p[0]-last[0], dy=p[1]-last[1]; let a=Math.atan2(dy,dx); const L=rs(Math.hypot(dx,dy)); a=F.ortho?Math.round(a/(Math.PI/2))*(Math.PI/2):Math.round(a/(Math.PI/12))*(Math.PI/12);
+    return {p:[last[0]+L*Math.cos(a),last[1]+L*Math.sin(a)].map(x=>Math.round(x*100)/100),k:(F.ortho?'Ortho ':'Polar ')+((Math.round(a*180/Math.PI)+360)%360)+'°'}; }
+  return {p:[rs(p[0]),rs(p[1])],k:''}; };
+drHit=function(p){ const w=drCur(), tol=10*((DR_VB.x1-DR_VB.x0)/1000); let best=null;
+  w.ents.forEach(e=>{ if(!drLay(e.t)) return; let d, inside=false, area=0;
+    if(e.t==='line') d=gSegD(p,e.p[0],e.p[1]);
+    else if(e.t==='dim'){ const [a,b]=e.p,L=Math.hypot(b[0]-a[0],b[1]-a[1])||1,nx=-(b[1]-a[1])/L*e.o,ny=(b[0]-a[0])/L*e.o; d=gSegD(p,[a[0]+nx,a[1]+ny],[b[0]+nx,b[1]+ny]); }
+    else if(e.t==='beam'||e.t==='wall'){ d=Math.max(0,gSegD(p,e.p[0],e.p[1])-(DRN(e.t==='beam'?e.bw:e.wt)||0)/2); area=gArea(drPoly(e)); }
+    else { const P=drPoly(e); inside=gPIP(p,P); d=gEdgeD(p,P); area=gArea(P); if(!inside&&d>tol) return; if(inside&&d<=tol) inside=false; }
+    if(!inside&&d>tol) return; const rank=inside?1e9+area+(e.t==='slab'?1e14:0):d; if(!best||rank<best.r) best={e,r:rank}; }); return best?best.e:null; };
+/* ---- drawing (dark CAD canvas) ---- */
+const DRC={bg:'#152033',minor:'#1d2a40',grid:'#64748b',slab:'#e5e7eb',beam:'#f59e0b',col:'#94a3b8',drop:'#a78bfa',open:'#f87171',wall:'#94a3b8',ramp:'#2dd4bf',line:'#e2e8f0',dim:'#22d3ee',sel:'#facc15',stg:'#4ade80',tmp:'#fbbf24'};
+function drDimSVG(a,b,o,px,txt,col,Y){ const dx=b[0]-a[0], dy=b[1]-a[1], L=Math.hypot(dx,dy); if(L<1) return ''; const ux=dx/L, uy=dy/L, nx=-uy, ny=ux, sg=o>=0?1:-1, a2=[a[0]+nx*o,a[1]+ny*o], b2=[b[0]+nx*o,b[1]+ny*o], g0=3*px*sg, ov=4*px*sg, tk=4*px;
+  const ln=(p,q,w)=>`<line x1="${p[0]}" y1="${Y(p[1])}" x2="${q[0]}" y2="${Y(q[1])}" stroke="${col}" stroke-width="${(w||1.3)*px}"/>`;
+  let s=ln([a[0]+nx*g0,a[1]+ny*g0],[a2[0]+nx*ov,a2[1]+ny*ov])+ln([b[0]+nx*g0,b[1]+ny*g0],[b2[0]+nx*ov,b2[1]+ny*ov])+ln(a2,b2);
+  [a2,b2].forEach(q=>{ s+=ln([q[0]-(ux+nx)*tk*0.7,q[1]-(uy+ny)*tk*0.7],[q[0]+(ux+nx)*tk*0.7,q[1]+(uy+ny)*tk*0.7],1.6); });
+  const mx=(a2[0]+b2[0])/2+nx*5*px*sg, my=(a2[1]+b2[1])/2+ny*5*px*sg; let an=-Math.atan2(dy,dx)*180/Math.PI; if(an>90) an-=180; if(an<=-90) an+=180;
+  return s+`<text x="${mx}" y="${Y(my)}" font-size="${11*px}" text-anchor="middle" dominant-baseline="middle" transform="rotate(${an} ${mx} ${Y(my)})" fill="${col}" class="cadt">${txt==null?dm(L):txt}</text>`; }
+drSVG=function(){ const w=drCur(); drCircFlag(w); if(!DR_VB||DR_VB.w!==w.id||(DR_VB.auto&&w.ents.length)){ DR_VB=Object.assign(drView(),{w:w.id,auto:!w.ents.length&&!drGrid(w).X.length}); } const v=DR_VB, W=v.x1-v.x0, H=v.y1-v.y0, px=W/1000, G=drGrid(w), sel=state.ui.drSel, Y=y=>-y; state.ui.drZ=1000/W;
+  const pts=P=>P.map(p=>`${p[0]},${Y(p[1])}`).join(' '); let g='';
+  let st=500; while(W/st>28) st*=2; if(0) for(let x=Math.ceil(v.x0/st)*st;x<=v.x1;x+=st) g+=`<line x1="${x}" y1="${-v.y1}" x2="${x}" y2="${-v.y0}" stroke="${DRC.minor}" stroke-width="${px}"/>`; if(0) for(let y=Math.ceil(v.y0/st)*st;y<=v.y1;y+=st) g+=`<line x1="${v.x0}" y1="${Y(y)}" x2="${v.x1}" y2="${Y(y)}" stroke="${DRC.minor}" stroke-width="${px}"/>`;
+  g+=`<line x1="0" y1="0" x2="${30*px}" y2="0" stroke="#ef4444" stroke-width="${1.4*px}"/><line x1="0" y1="0" x2="0" y2="${-30*px}" stroke="#22c55e" stroke-width="${1.4*px}"/><text x="${33*px}" y="${3*px}" font-size="${9*px}" fill="#ef4444" class="cadt">X</text><text x="${-3*px}" y="${-34*px}" font-size="${9*px}" fill="#22c55e" class="cadt">Y</text>`;
+  if(drLay('grid')&&G.X.length&&G.Y.length){ const EB=w.ents.length?gBB(w.ents.flatMap(x=>drPoly(x))):{x0:G.X[0],y1:G.Y[G.Y.length-1]}, e=24*px, r=10*px, yT=Math.max(G.Y[G.Y.length-1],EB.y1+(drLay('dim')?34*px:0))+e, xL=Math.min(G.X[0],EB.x0-(drLay('dim')?34*px:0))-e;
+    G.X.forEach((x,i)=>{ g+=`<line x1="${x}" y1="${Y(G.Y[0]-e)}" x2="${x}" y2="${Y(yT)}" stroke="${DRC.grid}" stroke-width="${px}" stroke-dasharray="${12*px} ${4*px} ${2*px} ${4*px}"/><circle cx="${x}" cy="${Y(yT+r)}" r="${r}" fill="${DRC.bg}" stroke="${DRC.grid}" stroke-width="${px}"/><text x="${x}" y="${Y(yT+r)}" font-size="${10*px}" text-anchor="middle" dominant-baseline="central" fill="#cbd5e1" class="cadt">${drLetter(i)}</text>`; });
+    G.Y.forEach((y,i)=>{ g+=`<line x1="${xL}" y1="${Y(y)}" x2="${G.X[G.X.length-1]+e}" y2="${Y(y)}" stroke="${DRC.grid}" stroke-width="${px}" stroke-dasharray="${12*px} ${4*px} ${2*px} ${4*px}"/><circle cx="${xL-r}" cy="${Y(y)}" r="${r}" fill="${DRC.bg}" stroke="${DRC.grid}" stroke-width="${px}"/><text x="${xL-r}" y="${Y(y)}" font-size="${10*px}" text-anchor="middle" dominant-baseline="central" fill="#cbd5e1" class="cadt">${i+1}</text>`; }); }
+  const S=w.ents.filter(e=>e.t==='slab'), thkOf=e=>{ const s=S.find(s=>drIn(e,[s])); return s?DRN(s.thk):NaN; };
+  ['slab','ramp','drop','open','wall','beam','col','line','dim'].forEach(t=>{ if(!drLay(t)) return; w.ents.filter(e=>e.t===t).forEach(e=>{ const on=e.id===sel, sc=on?'#38bdf8':null, nm=drName(w,e);
+    if(t==='slab'){ if(e.circ){ g+=`<circle cx="${e.circ[0][0]}" cy="${Y(e.circ[0][1])}" r="${e.circ[1]}" fill="#ffffff" fill-opacity="0.03" stroke="${sc||DRC.slab}" stroke-width="${(on?4:3)*px}"/>`; if(drLay('dim')) g+=drDimSVG(e.circ[0],[e.circ[0][0]+e.circ[1],e.circ[0][1]],0,px,'R '+dm(e.circ[1]),DRC.dim,Y); }
+      else { g+=`<polygon points="${pts(e.p)}" fill="#ffffff" fill-opacity="0.03" stroke="${sc||DRC.slab}" stroke-width="${(on?4:3)*px}" stroke-linejoin="round"/>`; if(drLay('dim')){ const ccw=gSA(e.p)>0; e.p.forEach((a,i)=>{ g+=drDimSVG(a,e.p[(i+1)%e.p.length],(ccw?-1:1)*22*px,px,null,DRC.dim,Y); }); } }
+      const B=gBB(e.p); g+=`<text x="${B.x0+6*px}" y="${Y(B.y0)-6*px}" font-size="${10*px}" fill="#94a3b8" class="cadt">${esc(nm)}${e.thk?' · '+esc(e.thk)+' thk':''}</text>`; }
+    else if(t==='line'){ g+=`<line x1="${e.p[0][0]}" y1="${Y(e.p[0][1])}" x2="${e.p[1][0]}" y2="${Y(e.p[1][1])}" stroke="${sc||DRC.line}" stroke-width="${(on?3.6:2.4)*px}"/>`; }
+    else if(t==='dim'){ g+=drDimSVG(e.p[0],e.p[1],e.o,px,null,sc||DRC.dim,Y); }
+    else { const P=drPoly(e), c=DRC[t], B=gBB(P), cx=(B.x0+B.x1)/2, cy=(B.y0+B.y1)/2;
+      g+=`<polygon points="${pts(P)}" fill="${c}" fill-opacity="${t==='beam'?0.45:t==='col'?0.55:t==='wall'?0.4:0.1}" stroke="${sc||c}" stroke-width="${(on?3.4:2.2)*px}"/>`;
+      if(t==='open') g+=`<line x1="${B.x0}" y1="${Y(B.y0)}" x2="${B.x1}" y2="${Y(B.y1)}" stroke="${c}" stroke-width="${1.8*px}"/><line x1="${B.x0}" y1="${Y(B.y1)}" x2="${B.x1}" y2="${Y(B.y0)}" stroke="${c}" stroke-width="${1.8*px}"/>`;
+      if(t==='drop'&&!w.ents.some(x=>x.t==='col'&&gPIP(x.p[0],P))) g+=`<rect x="${cx-(B.x1-B.x0)*0.2}" y="${Y(cy)-(B.y1-B.y0)*0.2}" width="${(B.x1-B.x0)*0.4}" height="${(B.y1-B.y0)*0.4}" fill="${c}" fill-opacity="0.45"/>`;
+      if(t==='ramp'){ const ax=e.dir==='y'?[cx,B.y0+(B.y1-B.y0)*0.2,cx,B.y1-(B.y1-B.y0)*0.2]:[B.x0+(B.x1-B.x0)*0.2,cy,B.x1-(B.x1-B.x0)*0.2,cy]; g+=`<line x1="${ax[0]}" y1="${Y(ax[1])}" x2="${ax[2]}" y2="${Y(ax[3])}" stroke="${c}" stroke-width="${1.4*px}" marker-end="url(#drArr)"/>`; }
+      let lab=nm; if(t==='beam'){ const th=thkOf(e); lab+=` ${e.bw||'?'}×${e.bd&&isFinite(th)?(+e.bd+th):e.bd?e.bd+' below slab':'?'}`; } if(t==='col') lab+=` ${e.cw||'?'}×${e.ch||'?'}`; if(t==='open') lab=`${nm} ${dm(B.x1-B.x0)}×${dm(B.y1-B.y0)}`; if(t==='ramp') lab+=` ${e.h1||'?'}→${e.h2||'?'}`;
+      if(t==='beam'){ const [a,b]=e.p; let an=-Math.atan2(b[1]-a[1],b[0]-a[0])*180/Math.PI; if(an>90) an-=180; if(an<=-90) an+=180; const L=Math.hypot(b[0]-a[0],b[1]-a[1]), off=(DRN(e.bw)||0)/2+6*px, mx=(a[0]+b[0])/2-(b[1]-a[1])/L*off, my=(a[1]+b[1])/2+(b[0]-a[0])/L*off; g+=`<text x="${mx}" y="${Y(my)}" font-size="${10*px}" text-anchor="middle" transform="rotate(${an} ${mx} ${Y(my)})" fill="${c}" class="cadt">${esc(lab)}</text>`; }
+      else if(t==='col'){ g+=`<text x="${B.x1+3*px}" y="${Y(B.y1)-3*px}" font-size="${9*px}" fill="#cbd5e1" class="cadt">${esc(nm)}</text>`; }
+      else g+=`<text x="${t==='open'||t==='ramp'?cx:B.x1+3*px}" y="${t==='open'||t==='ramp'?Y(B.y1)-5*px:Y(B.y1)-3*px}" font-size="${10*px}" text-anchor="${t==='open'||t==='ramp'?'middle':'start'}" fill="${c}" class="cadt">${esc(lab)}</text>`; }
+    if(on){ (e.t==='col'?e.p:e.circ?[e.circ[0]]:e.p.length>24?[]:e.p).forEach(q=>{ g+=`<rect x="${q[0]-4*px}" y="${Y(q[1])-4*px}" width="${8*px}" height="${8*px}" fill="#3b82f6" stroke="#fff" stroke-width="${0.8*px}"/>`; }); } }); });
+  if(state.ui.drStg||state.ui.drR==='stg'){ const R=drStaging(w); if(R.pts) R.pts.forEach(q=>{ g+=`<circle cx="${q.x}" cy="${Y(q.y)}" r="${2.6*px}" fill="${q.k==='slab'?DRC.stg:q.k==='beam'?DRC.beam:DRC.drop}"/>`; }); }
+  if(state.ui.drR==='ramp') w.ents.filter(e=>e.t==='ramp').forEach(e=>{ (drRampCalc(w,e).pts||[]).forEach(q=>{ g+=`<circle cx="${q[0]}" cy="${Y(q[1])}" r="${2.6*px}" fill="${DRC.ramp}"/>`; }); });
+  /* live preview */
+  const T=DR_T_, c=T.cur, tl=drTool(), P0=T.pts||[]; if(c&&!(T.ask&&T.ask.length)){ const l=P0[P0.length-1], tc=DRC.tmp, dash=`stroke-dasharray="${5*px} ${3*px}"`; let txt='';
+    if(l&&['slabr','drop','open','ramp'].includes(tl)){ g+=`<polygon points="${pts(gRect(l,c))}" fill="${tc}" fill-opacity="0.07" stroke="${tc}" stroke-width="${1.2*px}" ${dash}/>`; txt=`${dm(Math.abs(c[0]-l[0]))} × ${dm(Math.abs(c[1]-l[1]))}`; }
+    else if(l&&tl==='circ'){ const r=Math.hypot(c[0]-l[0],c[1]-l[1]); g+=`<circle cx="${l[0]}" cy="${Y(l[1])}" r="${r}" fill="none" stroke="${tc}" stroke-width="${1.2*px}" ${dash}/><line x1="${l[0]}" y1="${Y(l[1])}" x2="${c[0]}" y2="${Y(c[1])}" stroke="${tc}" stroke-width="${px}"/>`; txt='R '+dm(r); }
+    else if(tl==='dim'&&P0.length===2){ const [a,b]=P0, L=Math.hypot(b[0]-a[0],b[1]-a[1]); g+=drDimSVG(a,b,((c[0]-a[0])*-(b[1]-a[1])+(c[1]-a[1])*(b[0]-a[0]))/L,px,null,tc,Y); }
+    else if((tl==='move'||tl==='copy')&&T.obj&&T.base){ const e=drCur().ents.find(x=>x.id===T.obj); if(e){ const k=JSON.parse(JSON.stringify(e)); drShift(k,c[0]-T.base[0],c[1]-T.base[1]); const P=k.t==='line'||k.t==='dim'?k.p:k.circ?drCircP(k.circ[0],k.circ[1]):drPoly(k); g+=`<polyline points="${pts(k.t==='line'||k.t==='dim'?P:P.concat([P[0]]))}" fill="none" stroke="${tc}" stroke-width="${1.2*px}" ${dash}/><line x1="${T.base[0]}" y1="${Y(T.base[1])}" x2="${c[0]}" y2="${Y(c[1])}" stroke="${tc}" stroke-width="${px}"/>`; txt=`@${dm(c[0]-T.base[0])},${dm(c[1]-T.base[1])}`; } }
+    else if(tl==='offset'&&T.obj){ const e=drCur().ents.find(x=>x.id===T.obj), k=e&&drOffset(e,c,DRN(drCur().def.offset_off)); if(k){ const P=k.t==='line'||k.t==='dim'||k.t==='beam'||k.t==='wall'?k.p:k.p.concat([k.p[0]]); g+=`<polyline points="${pts(P)}" fill="none" stroke="${tc}" stroke-width="${1.2*px}" ${dash}/>`; } }
+    else if(l&&['line','slab','beam','wall','dim'].includes(tl)){ if(tl==='beam'&&DRN(drCur().def.beam_bw)>0) g+=`<polygon points="${pts(gBand(l,c,DRN(drCur().def.beam_bw)))}" fill="${DRC.beam}" fill-opacity="0.2" stroke="${tc}" stroke-width="${px}" ${dash}/>`;
+      g+=`<polyline points="${pts(P0.slice(tl==='slab'?0:-1).concat([c]))}" fill="none" stroke="${tc}" stroke-width="${1.3*px}" ${dash}/>`; txt=`${dm(Math.hypot(c[0]-l[0],c[1]-l[1]))} < ${dq(((Math.atan2(c[1]-l[1],c[0]-l[0])*180/Math.PI)+360)%360,1)}°`; }
+    P0.forEach(q=>{ g+=`<circle cx="${q[0]}" cy="${Y(q[1])}" r="${2.5*px}" fill="${tc}"/>`; });
+    if(txt) g+=`<text x="${c[0]+14*px}" y="${Y(c[1])+22*px}" font-size="${11*px}" fill="${tc}" class="cadt" font-weight="700">${txt}</text>`; }
+  return {vb:`${v.x0} ${-v.y1} ${W} ${H}`,g,px}; };
+drCursor=function(){ const s=document.getElementById('drsvg'); if(!s) return; const c=s.querySelector('#drc'), q=DR_T_.cur, st=document.getElementById('drXY'); if(!q){ c.innerHTML=''; return; } const u=(DR_VB.x1-DR_VB.x0)/1000, Y=-q[1], k=DR_T_.k||'';
+  let m=`<line x1="${q[0]-14*u}" y1="${Y}" x2="${q[0]+14*u}" y2="${Y}" stroke="#e2e8f0" stroke-width="${u}"/><line x1="${q[0]}" y1="${Y-14*u}" x2="${q[0]}" y2="${Y+14*u}" stroke="#e2e8f0" stroke-width="${u}"/>`;
+  const sz=6*u, sc='#facc15'; if(/^Endpoint/.test(k)) m+=`<rect x="${q[0]-sz}" y="${Y-sz}" width="${2*sz}" height="${2*sz}" fill="none" stroke="${sc}" stroke-width="${1.6*u}"/>`; else if(/^Midpoint/.test(k)) m+=`<polygon points="${q[0]},${Y-sz} ${q[0]+sz},${Y+sz} ${q[0]-sz},${Y+sz}" fill="none" stroke="${sc}" stroke-width="${1.6*u}"/>`; else if(/^Intersection/.test(k)) m+=`<path d="M${q[0]-sz} ${Y-sz}L${q[0]+sz} ${Y+sz}M${q[0]-sz} ${Y+sz}L${q[0]+sz} ${Y-sz}" stroke="${sc}" stroke-width="${1.6*u}"/>`; else if(/^Centre|^Grid/.test(k)) m+=`<circle cx="${q[0]}" cy="${Y}" r="${sz}" fill="none" stroke="${sc}" stroke-width="${1.6*u}"/>`; else if(/^Perp/.test(k)) m+=`<path d="M${q[0]-sz} ${Y-sz}V${Y+sz}H${q[0]+sz}M${q[0]-sz} ${Y}H${q[0]}V${Y+sz}" fill="none" stroke="${sc}" stroke-width="${1.6*u}"/>`;
+  if(k){ const t=`${k} · ${dm(q[0])}, ${dm(q[1])}`, w=t.length*5.6*u+10*u; m+=`<rect x="${q[0]+10*u}" y="${Y-26*u}" width="${w}" height="${15*u}" rx="${2*u}" fill="#0b1220" stroke="${sc}" stroke-width="${0.8*u}"/><text x="${q[0]+15*u}" y="${Y-15.5*u}" font-size="${9.5*u}" fill="#fde68a" class="cadt">${esc(t)}</text>`; }
+  c.innerHTML=m; if(st){ const P0=DR_T_.pts||[], l=(DR_T_.base&&['move','copy'].includes(drTool()))?DR_T_.base:P0[P0.length-1]; st.textContent=`X ${dm(q[0])} · Y ${dm(q[1])}${l?` · length ${dm(Math.hypot(q[0]-l[0],q[1]-l[1]))} · angle ${dq(((Math.atan2(q[1]-l[1],q[0]-l[0])*180/Math.PI)+360)%360,1)}°`:''}`; } };
+drDraw=function(){ const s=document.getElementById('drsvg'); if(!s) return; const R=drSVG(); s.setAttribute('viewBox',R.vb); s.querySelector('#drg').innerHTML=R.g; drCursor(); const c=document.getElementById('drPrompt'); if(c) c.textContent=drPrompt(); };
+drBind=function(){ const s=document.getElementById('drsvg'); if(!s||s.dataset.b) return; s.dataset.b=1; let dn=null, pan=false; const pts=new Map(); let pinch=null;
+  const W=ev=>{ const p=s.createSVGPoint(); p.x=ev.clientX; p.y=ev.clientY; const q=p.matrixTransform(s.getScreenCTM().inverse()); return [q.x,-q.y]; };
+  s.addEventListener('contextmenu',ev=>{ ev.preventDefault(); drCmd(''); });
+  s.addEventListener('pointerdown',ev=>{ DR_PT=ev.pointerType; pts.set(ev.pointerId,[ev.clientX,ev.clientY]); if(pts.size===2){ const [a,b]=[...pts.values()]; pinch={d:Math.hypot(a[0]-b[0],a[1]-b[1])}; dn=null; return; } dn={x:ev.clientX,y:ev.clientY,w:W(ev),b:ev.button}; pan=false; try{ s.setPointerCapture(ev.pointerId); }catch(e){} });
+  s.addEventListener('pointermove',ev=>{ if(pts.has(ev.pointerId)) pts.set(ev.pointerId,[ev.clientX,ev.clientY]);
+    if(pinch&&pts.size===2){ const [a,b]=[...pts.values()], d=Math.hypot(a[0]-b[0],a[1]-b[1]); if(d>0&&pinch.d>0){ drZoom(pinch.d/d); pinch.d=d; } return; }
+    if(dn&&(pan||Math.hypot(ev.clientX-dn.x,ev.clientY-dn.y)>6)){ pan=true; const v=DR_VB, q=W(ev), dx=q[0]-dn.w[0], dy=q[1]-dn.w[1]; DR_VB=drVB({x0:v.x0-dx,x1:v.x1-dx,y0:v.y0-dy,y1:v.y1-dy}); drDraw(); return; }
+    const r=drSnap(W(ev)); DR_T_.cur=r.p; DR_T_.k=r.k; if((DR_T_.pts||[]).length||DR_T_.obj) drDraw(); else drCursor(); });
+  const up=ev=>{ pts.delete(ev.pointerId); if(pinch){ if(pts.size<2) pinch=null; dn=null; return; } const was=dn; dn=null; if(!was||pan){ pan=false; return; } if(was.b!==0&&ev.pointerType==='mouse') return;
+    const raw=W(ev); if(drTool()==='sel'){ const e=drHit(raw); state.ui.drSel=e?e.id:''; render(); return; } const r=drSnap(raw); drAddPt(r.p,null,raw); };
+  s.addEventListener('pointerup',up); s.addEventListener('pointercancel',ev=>{ pts.delete(ev.pointerId); pinch=null; dn=null; });
+  s.addEventListener('wheel',ev=>{ ev.preventDefault(); drZoom(ev.deltaY>0?1.15:1/1.15,W(ev)); },{passive:false});
+  s.addEventListener('pointerleave',()=>{ if(dn) return; DR_T_.cur=null; drCursor(); }); };
+document.addEventListener('keydown',e=>{ if(!state||state.route!=='draft') return; const tg=e.target; if(tg&&/INPUT|SELECT|TEXTAREA/.test(tg.tagName)) return; if(e.ctrlKey||e.metaKey||e.altKey) return;
+  if(e.key==='Escape'){ drEnd(); return; } if(e.key==='Enter'||e.key===' '){ e.preventDefault(); drCmd(''); return; } if(e.key.length===1){ const i=document.getElementById('drCmdIn'); if(i) i.focus({preventScroll:true}); } });
+/* ---- panel ---- */
+function drTogL2(k){ if(k==='stg'){ state.ui.drStg=!state.ui.drStg; persist(); render(); return; } const L=Object.assign({},state.ui.drL); L[k]=!L[k]; state.ui.drL=L; persist(); render(); }
+function drPreset(t){ const id=state.ui.drSel; drSetTool(t); if(id&&['move','copy','offset'].includes(t)){ DR_T_.obj=id; state.ui.drSel=id; drDraw(); } }
+function drStgGo(){ state.ui.drR='stg'; render(); setTimeout(()=>{ const e=document.querySelector('.cadres'); if(e) e.scrollIntoView({behavior:'smooth',block:'start'}); },60); }
+function drPanelHTML(w,sel){ const cnt=t=>w.ents.filter(e=>e.t===t).length, S=w.ents.filter(e=>e.t==='slab'), G=drGrid(w), edges=S.reduce((a,s)=>a+(s.circ?1:s.p.length),0), D=drS();
+  const row=(k,v)=>`<div class="cadkv"><span>${k}</span><b>${v}</b></div>`, inp=(e,k,u)=>`<input class="cadi" value="${esc(e[k]==null?'':e[k])}" onchange="drSetP('${e.id}','${k}',this.value)" inputmode="decimal">${u?`<small>${u}</small>`:''}`;
+  let h=`<div class="cadsec"><div class="cadhd">DRAWING</div><div style="display:flex;gap:4px;flex-wrap:wrap"><select class="cadsel" onchange="drS().cur=this.value;DR_U=[];DR_VB=null;save()">${D.dwgs.map(x=>`<option value="${x.id}" ${x.id===w.id?'selected':''}>${esc(x.name)}</option>`).join('')}</select><button class="cadsb" onclick="drNewDwg()">New</button><button class="cadsb" onclick="drRenDwg()">Rename</button>${D.dwgs.length>1?`<button class="cadsb" onclick="drDelDwg()">Delete</button>`:''}</div></div>`;
+  const L=[['slab','Slab edge',edges+' line'+(edges===1?'':'s'),DRC.slab],['beam','Beams',cnt('beam'),DRC.beam],['col','Columns',cnt('col'),DRC.col],['drop','Drops / capitals',cnt('drop'),DRC.drop],['open','Openings',cnt('open'),DRC.open],['wall','Walls',cnt('wall'),DRC.wall],['ramp','Ramps',cnt('ramp'),DRC.ramp],['line','Lines',cnt('line'),DRC.line],['dim','Dimensions',cnt('dim')||'auto',DRC.dim],['stg','Staging (auto)',state.ui.drStg||state.ui.drR==='stg'?'shown':'hidden',DRC.stg]];
+  h+=`<div class="cadsec"><div class="cadhd">LAYERS</div>${L.map(([k,n,c,col])=>{ const off=k==='stg'?!(state.ui.drStg||state.ui.drR==='stg'):!drLay(k); return `<div class="cadl ${off?'off':''}" onclick="drTogL2('${k}')" title="Show / hide"><i style="background:${col}"></i>${n}<span>${c}</span></div>`; }).join('')}</div>`;
+  if(sel){ const nm=drName(w,sel), host=S.find(s=>s.id!==sel.id&&drIn(sel,[s])), th=host?DRN(host.thk):NaN, len=(a,b)=>Math.hypot(b[0]-a[0],b[1]-a[1]); let R='';
+    const typ={slab:sel.circ?'Slab (circle)':'Slab',beam:'Beam',col:'Column',drop:'Drop / capital',open:'Opening',wall:'Wall',ramp:'Ramp',line:'Line',dim:'Dimension'}[sel.t];
+    R+=row('Type',typ)+`<div class="cadkv"><span>Name</span><input class="cadi tx" value="${esc(sel.nm||'')}" placeholder="${esc(nm)}" onchange="drSetP('${sel.id}','nm',this.value)"></div>`;
+    if(sel.t==='beam'){ const c=drBeamClear(w,sel); R+=row('From',drRef(sel.p[0]))+row('To',drRef(sel.p[1]))+row('Length',dm(c.L)+' mm')+row('Clear (column faces)',dm(c.Lc)+' mm')+`<div class="cadkv"><span>Width</span>${inp(sel,'bw','mm')}</div>`+row('Depth (total)',sel.bd&&isFinite(th)?dm(+sel.bd+th)+' mm':'—')+`<div class="cadkv"><span>Below slab</span>${inp(sel,'bd','mm')}</div>`; }
+    else if(sel.t==='wall') R+=row('From',drRef(sel.p[0]))+row('To',drRef(sel.p[1]))+row('Length',dm(len(...sel.p))+' mm')+`<div class="cadkv"><span>Thickness</span>${inp(sel,'wt','mm')}</div>`;
+    else if(sel.t==='line') R+=row('From',drRef(sel.p[0]))+row('To',drRef(sel.p[1]))+row('Length',dm(len(...sel.p))+' mm')+row('Angle',dq(((Math.atan2(sel.p[1][1]-sel.p[0][1],sel.p[1][0]-sel.p[0][0])*180/Math.PI)+360)%360,2)+'°');
+    else if(sel.t==='dim') R+=row('Measured',dm(len(...sel.p))+' mm');
+    else if(sel.t==='slab') R+=`<div class="cadkv"><span>Thickness</span>${inp(sel,'thk','mm')}</div><div class="cadkv"><span>Floor to soffit</span>${inp(sel,'H','mm')}</div>`+(sel.circ?row('Centre',drRef(sel.circ[0]))+row('Radius',dm(sel.circ[1])+' mm'):row('Corners',sel.p.length))+row('Area',dq(gArea(sel.p)/1e6,3)+' sqm')+row('Perimeter',dq(gPer(sel.p)/1000,3)+' m');
+    else if(sel.t==='col') R+=row('Centre',drRef(sel.p[0]))+`<div class="cadkv"><span>Size X</span>${inp(sel,'cw','mm')}</div><div class="cadkv"><span>Size Y</span>${inp(sel,'ch','mm')}</div><div class="cadkv"><span>Height to soffit</span>${inp(sel,'H','mm')}</div>`;
+    else { const B=gBB(sel.p); R+=row('Size',dm(B.x1-B.x0)+' × '+dm(B.y1-B.y0))+row('Area',dq(gArea(sel.p)/1e6,3)+' sqm'); if(sel.t==='drop') R+=`<div class="cadkv"><span>Depth below slab</span>${inp(sel,'dd','mm')}</div>`; if(sel.t==='ramp') R+=`<div class="cadkv"><span>Slope along</span><select class="cadi" onchange="drSetP('${sel.id}','dir',this.value)"><option value="x" ${sel.dir!=='y'?'selected':''}>X</option><option value="y" ${sel.dir==='y'?'selected':''}>Y</option></select></div><div class="cadkv"><span>Soffit at start</span>${inp(sel,'h1','mm')}</div><div class="cadkv"><span>Soffit at end</span>${inp(sel,'h2','mm')}</div><div class="cadkv"><span>Thickness</span>${inp(sel,'thk','mm')}</div>`; }
+    const PP=sel.circ?[]:sel.t==='col'?sel.p:sel.p.length<=12?sel.p:[];
+    if(PP.length) R+=`<details class="cadpts"><summary>Points (X, Y)</summary>${PP.map((q,i)=>`<div class="cadkv"><span>${i+1}</span><span style="display:flex;gap:3px"><input class="cadi" value="${Math.round(q[0]*100)/100}" onchange="drSetPt('${sel.id}',${i},0,this.value)"><input class="cadi" value="${Math.round(q[1]*100)/100}" onchange="drSetPt('${sel.id}',${i},1,this.value)"></span></div>`).join('')}</details>`;
+    R+=`<div class="cadbtns"><button onclick="drPreset('move')">Move</button><button onclick="drPreset('copy')">Copy</button>${sel.t!=='col'?`<button onclick="drPreset('offset')">Offset</button>`:''}<button onclick="drDel('${sel.id}')">Erase</button></div>`;
+    h+=`<div class="cadsec"><div class="cadhd">PROPERTIES · ${esc(nm)}</div>${R}</div>`; }
+  const M=drMeasure(w), A=M.reduce((a,m)=>a+m.A,0)/1e6, oa=M.reduce((a,m)=>a+m.oa,0)/1e6, P=M.reduce((a,m)=>a+m.P,0)/1000, Bm=w.ents.filter(e=>e.t==='beam').map(b=>dq(Math.hypot(b.p[1][0]-b.p[0][0],b.p[1][1]-b.p[0][1])/1000,2));
+  h+=`<div class="cadsec"><div class="cadhd">MEASURED · EXACT</div>${row('Slab area',S.length?dq(A,3)+' sqm':'—')}${row('Less opening',oa?'− '+dq(oa,3)+' sqm':'—')}${row('Net area',S.length?dq(A-oa,3)+' sqm':'—')}${row('Perimeter',S.length?dq(P,3)+' m':'—')}${row('Beams',Bm.length?(Bm.length>4?Bm.length+' nos':Bm.join(' + ')+' m'):'—')}${row('Drops',cnt('drop')+' nos')}${row('Columns',cnt('col')+' nos')}
+    <button class="cadgo" onclick="drStgGo()">Calculate staging →</button></div>`;
+  return h; }
+const DR_IC={sel:'<path d="M5 3l14 8-6 2-2 6z"/>',grid:'<path d="M3 8h18M3 16h18M8 3v18M16 3v18"/>',line:'<path d="M4 20L20 4"/><circle cx="4" cy="20" r="1.5"/><circle cx="20" cy="4" r="1.5"/>',slab:'<path d="M3 18l5-11 6 6 7-9"/>',slabr:'<rect x="4" y="6" width="16" height="12"/>',circ:'<circle cx="12" cy="12" r="8"/>',
+ beam:'<path d="M2 10h20M2 14h20"/>',col:'<rect x="7" y="7" width="10" height="10"/><path d="M7 7l10 10"/>',drop:'<rect x="4" y="4" width="16" height="16"/><rect x="9" y="9" width="6" height="6"/>',open:'<rect x="4" y="5" width="16" height="14"/><path d="M4 5l16 14M20 5L4 19"/>',wall:'<rect x="3" y="9" width="18" height="6"/>',ramp:'<path d="M3 19h18L3 8z"/>',
+ offset:'<path d="M4 18C8 8 16 8 20 18"/><path d="M4 12C8 3 16 3 20 12" stroke-dasharray="3 2"/>',dim:'<path d="M3 15h18M3 11v8M21 11v8M6 13l-2 2 2 2M18 13l2 2-2 2"/>',move:'<path d="M12 3v18M3 12h18M12 3l-3 3M12 3l3 3M12 21l-3-3M12 21l3-3M3 12l3-3M3 12l3 3M21 12l-3-3M21 12l-3 3"/>',copy:'<rect x="8" y="8" width="12" height="12"/><path d="M4 16V4h12"/>',
+ trim:'<circle cx="6" cy="6" r="3"/><circle cx="6" cy="18" r="3"/><path d="M8.5 8L20 18M8.5 16L20 6"/>',del:'<path d="M4 20h16M7 16l9-12 4 3-9 12H7z"/>',undo:'<path d="M9 14L4 9l5-5"/><path d="M4 9h10a6 6 0 010 12h-3"/>',fit:'<path d="M4 9V4h5M15 4h5v5M20 15v5h-5M9 20H4v-5"/>'};
+function drCadHTML(w){ const t=drTool(), F=drF(), sel=w.ents.find(e=>e.id===state.ui.drSel), R=drSVG();
+  const TB=[['sel','Select'],['line','Line'],['slab','Polyline'],['slabr','Rectangle'],['circ','Circle'],['beam','Beam'],['col','Column'],['drop','Drop / capital'],['open','Opening'],['wall','Wall'],['ramp','Ramp'],['offset','Offset'],['dim','Dimension'],['move','Move'],['copy','Copy'],['trim','Trim'],['del','Erase'],['undo','Undo'],['fit','Fit']];
+  const SN=[['snap','SNAP'],['ortho','ORTHO'],['polar','POLAR'],['end','END'],['mid','MID'],['int','INT'],['perp','PERP']];
+  return `<div class="cad"><div class="cadtb">${TB.map(([k,l])=>`<button class="${t===k?'on':''}" onclick="drSetTool('${k}')" title="${l}"><svg viewBox="0 0 24 24">${DR_IC[k]}</svg><span>${l}</span></button>`).join('')}</div>
+   <div class="cadsn">${SN.map(([k,l])=>`<button class="${F[k]?'on':''}" onclick="drFT('${k}')">${l}</button>`).join('')}<span class="cadstep">step <input value="${esc(state.ui.drStep==null?'50':state.ui.drStep)}" onchange="state.ui.drStep=this.value;persist()" inputmode="decimal"> mm</span><span style="flex:1"></span><button onclick="drZoom(1/1.4)">＋</button><button onclick="drZoom(1.4)">－</button></div>
+   <div class="cadw"><div class="cadcv"><svg id="drsvg" viewBox="${R.vb}" preserveAspectRatio="xMidYMid meet"><defs><marker id="drArr" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto"><path d="M0 0L10 5L0 10z" fill="${DRC.ramp}"/></marker></defs><g id="drg">${R.g}</g><g id="drc"></g></svg></div><div class="cadp">${drPanelHTML(w,sel)}</div></div>
+   <div class="cadcmd"><div class="cadh">${DR_H.slice(-3).map(x=>`<div>${esc(x)}</div>`).join('')}</div><div class="cadin"><span id="drPrompt">${esc(drPrompt())}</span><input id="drCmdIn" autocomplete="off" autocapitalize="off" spellcheck="false" onkeydown="drKey(event)"><span class="cadhint">type length, @x,y or @length&lt;angle · or click with snap · Enter = repeat / finish · Esc = cancel</span></div>
+   <div class="cadst"><span id="drXY">X — · Y —</span><span>Units: mm · Scale 1:1</span></div></div></div>
+   <p class="note">All lengths are typed or snapped, so every measurement is exact. Works with a mouse on a laptop, and with a finger plus the number pad on a phone (drag to move the view, two fingers to zoom).</p>`; }
+{ const _old=PAGES.draft; PAGES.draft=function(){ const w=drCur(); drCircFlag(w); const old=_old.apply(this,arguments), i=old.indexOf('<div class="tkdt" style="margin-top:14px">');
+  setTimeout(()=>{ const h=document.querySelector('#main h1'); if(h) h.textContent='Drafting · '+w.name; if(DR_FOC){ DR_FOC=0; drFocus(); } },0);
+  return drCadHTML(w)+`<div class="cadres">`+(i>=0?old.slice(i):'')+`</div>`; }; }
+(()=>{ const s=document.createElement('style'); s.textContent=`.cad{background:#0f1726;border-radius:12px;overflow:hidden;color:#e2e8f0;box-shadow:0 0 0 1px #0b1220}.cadtb{display:flex;flex-wrap:wrap;gap:2px;padding:6px;background:#111b2c;border-bottom:1px solid #1f2b40}
+.cadtb button{display:flex;flex-direction:column;align-items:center;gap:2px;min-width:52px;padding:6px 4px 4px;border:1px solid transparent;border-radius:7px;background:none;color:#cbd5e1;font:inherit;font-size:10.5px;cursor:pointer}.cadtb button:hover{background:#1b2840}.cadtb button.on{background:#1e3a5f;border-color:#3b82f6;color:#fff}.cadtb svg{width:20px;height:20px;fill:none;stroke:currentColor;stroke-width:1.7;stroke-linecap:round;stroke-linejoin:round}
+.cadsn{display:flex;flex-wrap:wrap;gap:4px;align-items:center;padding:5px 8px;background:#0f1726;border-bottom:1px solid #1f2b40;font-size:11px}.cadsn button{border:1px solid #334155;background:#0b1220;color:#64748b;border-radius:4px;padding:3px 7px;font:inherit;font-size:10.5px;font-weight:700;letter-spacing:.04em;cursor:pointer}.cadsn button.on{color:#7dd3fc;border-color:#0e7490;background:#082f49}.cadstep{color:#94a3b8;margin-left:6px}.cadstep input{width:52px;background:#0b1220;border:1px solid #334155;color:#e2e8f0;border-radius:4px;padding:2px 5px;font:inherit;text-align:right}
+.cadw{display:grid;grid-template-columns:1fr 250px}.cadcv{position:relative;background:${DRC.bg}}#drsvg{background:transparent!important;width:100%;height:560px;display:block;touch-action:none;cursor:none;user-select:none;-webkit-user-select:none}#drsvg .cadt{font-family:Inter,system-ui,sans-serif;pointer-events:none}
+.cadp{background:#111b2c;border-left:1px solid #1f2b40;padding:8px 10px;overflow:auto;max-height:560px;font-size:12px}.cadsec{margin-bottom:12px}.cadhd{color:#7dd3fc;font-weight:700;font-size:10.5px;letter-spacing:.08em;margin:2px 0 6px}.cadl{display:flex;align-items:center;gap:7px;padding:3px 2px;cursor:pointer;color:#e2e8f0}.cadl i{width:10px;height:10px;border-radius:2px;display:inline-block}.cadl span{margin-left:auto;color:#94a3b8}.cadl.off{opacity:.4}
+.cadkv{display:flex;justify-content:space-between;align-items:center;gap:6px;padding:3px 0;border-bottom:1px solid #1b263a}.cadkv span{color:#94a3b8}.cadkv b{color:#f1f5f9;text-align:right}.cadi{width:70px;background:#0b1220;border:1px solid #334155;color:#fff;border-radius:4px;padding:3px 5px;font:inherit;font-size:12px;text-align:right;font-weight:700}.cadi.tx{width:110px;text-align:left}.cadkv small{color:#64748b;margin-left:3px}
+.cadsel{flex:1;min-width:0;background:#0b1220;border:1px solid #334155;color:#fff;border-radius:4px;padding:3px;font:inherit;font-size:12px}.cadsb,.cadbtns button{background:#1b2840;border:1px solid #334155;color:#e2e8f0;border-radius:4px;padding:3px 7px;font:inherit;font-size:11px;cursor:pointer}.cadbtns{display:flex;gap:4px;flex-wrap:wrap;margin-top:8px}.cadpts summary{cursor:pointer;color:#94a3b8;margin:6px 0 2px}
+.cadgo{width:100%;margin-top:10px;background:#0f766e;color:#fff;border:0;border-radius:7px;padding:9px;font:inherit;font-weight:700;cursor:pointer}.cadcmd{background:#0b1220;border-top:1px solid #1f2b40;padding:6px 10px;font-family:ui-monospace,Menlo,Consolas,monospace;font-size:12.5px}.cadh{color:#94a3b8;min-height:3.6em}.cadh div{white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.cadin{display:flex;align-items:center;gap:8px;flex-wrap:wrap;color:#fde68a}.cadin input{flex:0 1 220px;min-width:120px;background:#111b2c;border:1px solid #334155;color:#fff;border-radius:4px;padding:4px 7px;font:inherit}.cadin input:focus{outline:1px solid #3b82f6}.cadhint{color:#64748b;font-size:11.5px}.cadst{display:flex;justify-content:space-between;color:#64748b;font-size:11.5px;margin-top:4px}
+@media(max-width:900px){.cadtb,.cadsn{flex-wrap:nowrap;overflow-x:auto;-webkit-overflow-scrolling:touch}.cadtb button,.cadsn button,.cadstep{flex:0 0 auto}.cadw{grid-template-columns:1fr}.cadp{border-left:0;border-top:1px solid #1f2b40;max-height:none}#drsvg{height:420px;cursor:crosshair}.cadtb button{min-width:50px;font-size:9.5px}.cadhint{display:none}}`; document.head.appendChild(s); })();
+/* ---- cuplock staging plan (top view): verticals · ledgers · primary · secondary ---- */
+function drClipLine(a,b,P){ const T=[]; P.forEach((p,i)=>{ const q=P[(i+1)%P.length], x=gX(a,b,p,q); if(x) T.push(x.t); }); T.sort((x,y)=>x-y); const out=[]; for(let i=0;i+1<T.length;i+=2) if(T[i+1]-T[i]>1e-9) out.push([T[i],T[i+1]]); return out; }
+function drIvSub(A,B){ let R=A.slice(); B.forEach(([b0,b1])=>{ const N=[]; R.forEach(([a0,a1])=>{ if(b1<=a0||b0>=a1){ N.push([a0,a1]); return; } if(b0>a0) N.push([a0,b0]); if(b1<a1) N.push([b1,a1]); }); R=N; }); return R; }
+function drPlanFrom(w,R){ const st=w.set, along=String(st.pdir||'x').trim().toLowerCase().startsWith('y')?'y':'x', ss=DRN(st.ss), G=new Map(), led=[], pri=[], sec=[];
+  R.pts.forEach(p=>{ const a=G.get(p.g)||[]; a.push(p); G.set(p.g,a); });
+  G.forEach(P=>{ if(P[0].k==='beam'){ P.sort((a,b)=>a.t-b.t); for(let i=1;i<P.length;i++) led.push([P[i-1],P[i],'beam']); return; }
+    const lim=P[0].k==='slab'?{x:DRN(st.gx)+1,y:DRN(st.gy)+1}:{x:DRN(st.gd)+1,y:DRN(st.gd)+1}, rows=k=>{ const M=new Map(); P.forEach(p=>{ const v=Math.round(p[k==='x'?'y':'x']); if(!M.has(v)) M.set(v,[]); M.get(v).push(p); }); return M; };
+    ['x','y'].forEach(k=>rows(k).forEach(r=>{ r.sort((a,b)=>a[k]-b[k]); let s0=r[0]; for(let i=1;i<=r.length;i++){ const ok=i<r.length&&r[i][k]-r[i-1][k]<=lim[k]; if(ok) led.push([r[i-1],r[i],P[0].k]); if(!ok){ if(k===along&&r[i-1]!==s0) pri.push([[s0.x,s0.y],[r[i-1].x,r[i-1].y]]); if(i<r.length) s0=r[i]; } } })); });
+  if(ss>0){ const blk=w.ents.filter(e=>['beam','drop','col','open','wall','ramp'].includes(e.t)).map(drPoly);
+    w.ents.filter(e=>e.t==='slab').forEach(s=>{ const B=gBB(s.p), e0=DRN(st.e)||0; if(along==='x'){ for(let x=B.x0+e0;x<=B.x1-e0+1e-6;x+=ss){ const a=[x,B.y0-10],b=[x,B.y1+10]; let iv=drClipLine(a,b,s.p); blk.forEach(P=>{ iv=drIvSub(iv,drClipLine(a,b,P)); }); iv.forEach(([t0,t1])=>{ const L=b[1]-a[1]; if((t1-t0)*L>50) sec.push([[x,a[1]+L*t0],[x,a[1]+L*t1]]); }); } }
+      else { for(let y=B.y0+e0;y<=B.y1-e0+1e-6;y+=ss){ const a=[B.x0-10,y],b=[B.x1+10,y]; let iv=drClipLine(a,b,s.p); blk.forEach(P=>{ iv=drIvSub(iv,drClipLine(a,b,P)); }); iv.forEach(([t0,t1])=>{ const L=b[0]-a[0]; if((t1-t0)*L>50) sec.push([[a[0]+L*t0,y],[a[0]+L*t1,y]]); }); } } }); }
+  const len=S=>S.reduce((x,[a,b])=>x+Math.hypot(b[0]-a[0],b[1]-a[1]),0); return {led,pri,sec,along,priL:len(pri),secL:len(sec)}; }
+{ const _ds=drStaging; drStaging=function(w){ const R=_ds(w); if(R&&R.pts&&R.mat){ const P=drPlanFrom(w,R); R.plan=P; const st=w.set;
+    if(P.priL) R.mat.set(`Primary ${st.pname||''} (running length, m)`.replace(/\s+/g,' '),{q:+(P.priL/1000).toFixed(1),how:[`${P.pri.length} runs along ${P.along.toUpperCase()} over the U-jacks`]});
+    if(P.secL) R.mat.set(`Secondary ${st.sname||''} (running length, m)`.replace(/\s+/g,' '),{q:+(P.secL/1000).toFixed(1),how:[`${P.sec.length} runs at ${st.ss} c/c, cut at beams, drops and openings`]}); } return R; }; }
+{ const _sv=drSVG; drSVG=function(){ const R=_sv(); const w=drCur(); if(!(state.ui.drStg||state.ui.drR==='stg')) return R; const S=drStaging(w); if(!S||!S.plan) return R; const px=R.px, Y=y=>-y, L=(a,b,c,wd,da)=>`<line x1="${a[0]}" y1="${Y(a[1])}" x2="${b[0]}" y2="${Y(b[1])}" stroke="${c}" stroke-width="${wd*px}" ${da?`stroke-dasharray="${da}"`:''}/>`; let g='';
+  if(drLay('stgs')) S.plan.sec.forEach(([a,b])=>{ g+=L(a,b,'#60a5fa',1.2); });
+  if(drLay('stgl')) S.plan.led.forEach(([a,b])=>{ g+=L([a.x,a.y],[b.x,b.y],'#4ade80',1.3); });
+  if(drLay('stgp')) S.plan.pri.forEach(([a,b])=>{ g+=L(a,b,'#fb923c',3.2); });
+  /* staging drawn under the structure lines: rebuild with staging first, then keep verticals on top */
+  let v=''; if(drLay('stgv')) S.pts.forEach(q=>{ v+=`<circle cx="${q.x}" cy="${Y(q.y)}" r="${3.6*px}" fill="#0f1726" stroke="${q.k==='slab'?'#4ade80':q.k==='beam'?'#f59e0b':'#a78bfa'}" stroke-width="${1.8*px}"/><circle cx="${q.x}" cy="${Y(q.y)}" r="${1.3*px}" fill="${q.k==='slab'?'#4ade80':q.k==='beam'?'#f59e0b':'#a78bfa'}"/>`; });
+  R.g=R.g.replace(/<circle cx="[^"]*" cy="[^"]*" r="[^"]*" fill="#4ade80"\/>|<circle cx="[^"]*" cy="[^"]*" r="[^"]*" fill="#f59e0b"\/>|<circle cx="[^"]*" cy="[^"]*" r="[^"]*" fill="#a78bfa"\/>/g,'');
+  R.g+=g+v; return R; }; }
+{ const _p=drPanelHTML; drPanelHTML=function(w,sel){ let h=_p(w,sel); if(!(state.ui.drStg||state.ui.drR==='stg')) return h; const S=drStaging(w);
+  const rows=[['stgv','Verticals',S&&S.pts?S.pts.length:0,'#4ade80'],['stgl','Ledgers',S&&S.plan?S.plan.led.length:0,'#4ade80'],['stgp','Primary',S&&S.plan?dq(S.plan.priL/1000,1)+' m':'—','#fb923c'],['stgs','Secondary',S&&S.plan?dq(S.plan.secL/1000,1)+' m':(DRN(w.set.ss)>0?'—':'set spacing'),'#60a5fa']];
+  const add=rows.map(([k,n,c,col])=>`<div class="cadl ${drLay(k)?'':'off'}" onclick="drTogL2('${k}')" style="padding-left:14px"><i style="background:${col}"></i>${n}<span>${c}</span></div>`).join('');
+  return h.replace(/(<div class="cadl[^"]*" onclick="drTogL2\('stg'\)"[\s\S]*?<\/div>)/,'$1'+add); }; }
+
+/* ================= TRUST · photo proof · audit trail of review figures · design verification pack ================= */
+/* ---- photo proof (stored on this device like Site Observations photos) ---- */
+function t5Pick(cb){ const inp=document.createElement('input'); inp.type='file'; inp.accept='image/*'; inp.multiple=true; inp.setAttribute('capture','environment');
+  inp.onchange=async()=>{ const out=[]; for(const f of [...inp.files].slice(0,6)){ try{ const d=await shrinkImage(f); const pid='ph-'+uid(); phPut(pid,d); out.push(pid); }catch(e){ toast('Could not read one photo.'); } } if(out.length) cb(out); }; inp.click(); }
+const t5Th=(P,del)=>`<span class="thumbs" style="display:inline-flex">${(P||[]).map(p=>PH[p]?`<span class="th"><img src="${PH[p]}" alt="" onclick="viewPhoto('${p}')">${del?`<button title="Remove photo" onclick="${del.replace('$P',p)}">×</button>`:''}</span>`:`<span class="th miss" title="Photo is on another device">📷</span>`).join('')}</span>`;
+/* stage entry: photos picked before Save go to the entry and to each element */
+function t5EntryPh(){ t5Pick(P=>{ state.ui.tkPh=(state.ui.tkPh||[]).concat(P); persist(); render(); toast(P.length+' photo'+(P.length>1?'s':'')+' ready · they are saved with the entry'); }); }
+function t5EntryPhDel(p){ state.ui.tkPh=(state.ui.tkPh||[]).filter(x=>x!==p); phDel(p); persist(); render(); }
+{ const o=tkSaveEntry; tkSaveEntry=function(){ const n0=tkS().log.length, P=(state.ui.tkPh||[]).slice(); const r=o.apply(this,arguments);
+  if(tkS().log.length>n0&&P.length){ const g=tkS().log[tkS().log.length-1]; g.ph=P; const A=tkCurA(); state.ui.tkPh=[]; save(); } return r; }; }
+function t5LogPh(id){ t5Pick(P=>{ const g=tkS().log.find(x=>x.id===id); if(!g) return; g.ph=(g.ph||[]).concat(P); g._u=Date.now(); save(); toast('Photo added'); }); }
+function t5LogPhDel(id,p){ const g=tkS().log.find(x=>x.id===id); if(!g||!confirm('Remove this photo?')) return; g.ph=(g.ph||[]).filter(x=>x!==p); g._u=Date.now(); save(); }
+{ const o=PAGES.tkEntry; PAGES.tkEntry=function(){ let h=o.apply(this,arguments); const P=state.ui.tkPh||[], L=tkS().log.slice(-12).reverse();
+  h+=panel('Photo proof',`<div style="display:flex;gap:10px;align-items:center;flex-wrap:wrap"><button class="btn" onclick="t5EntryPh()">📷 Add photo to this entry</button>${P.length?t5Th(P,"t5EntryPhDel('$P')")+`<span class="note">${P.length} photo${P.length>1?'s':''} will be saved with the next Save</span>`:'<span class="note">Optional · a photo of the cast, de-shuttering or the problem is kept with the entry</span>'}</div>`);
+  if(L.length) h+=panel('Recent entries · with photos',simpleTable([['Date'],['Area'],['Elements'],['Stage'],['Photos']],L.map(g=>`<tr><td>${fmtD(g.d)}</td><td>${esc((tkArea(g.a)||{}).name||'')} <small class="muted">${esc(g.lv||'')}</small></td><td>${esc(g.names)}</td><td>${esc(g.st)} ${g.act==='s'?'started':'finished'}${g.why?` <small class="muted">· ${esc(g.why)}</small>`:''}</td><td>${t5Th(g.ph,`t5LogPhDel('${g.id}','$P')`)} <button class="btn sm" onclick="t5LogPh('${g.id}')">📷</button></td></tr>`)),'photos stay on this device and in the storage file');
+  return h; }; }
+/* damage & missing: photo per return line */
+function t5DmgPh(id){ t5Pick(P=>{ const r=state.rentDmg.find(x=>x.id===id); if(!r) return; r.ph=(r.ph||[]).concat(P); r._u=Date.now(); save(); toast('Photo added'); }); }
+function t5DmgPhDel(id,p){ const r=state.rentDmg.find(x=>x.id===id); if(!r||!confirm('Remove this photo?')) return; r.ph=(r.ph||[]).filter(x=>x!==p); r._u=Date.now(); save(); }
+{ const o=PAGES.siDmg; if(o) PAGES.siDmg=function(){ let h=o.apply(this,arguments); const R=(state.rentDmg||[]).filter(r=>r.item||r.challan||num(r.dmg)||num(r.miss));
+  if(R.length) h+=panel('Photo proof · damage & missing',simpleTable([['Date'],['Return challan'],['Item'],['Damaged',1],['Missing',1],['Photos']],R.map(r=>`<tr><td>${fmtD(r.date)}</td><td>${esc(r.challan||'')}</td><td>${esc(r.item||'')}</td><td class="r">${fmtN(r.dmg)}</td><td class="r">${fmtN(r.miss)}</td><td>${t5Th(r.ph,`t5DmgPhDel('${r.id}','$P')`)} <button class="btn sm" onclick="t5DmgPh('${r.id}')">📷 Add</button></td></tr>`)),'a photo with the return challan helps when the vendor bill comes');
+  return h; }; }
+/* ---- audit trail: the rows behind each review-meeting figure ---- */
+{ const o=lockMeeting; lockMeeting=function(){ const n=(state.meeting.locks||[]).length; const r=o.apply(this,arguments); const L=state.meeting.locks||[]; if(L.length>n){ L[L.length-1].at=Date.now(); persist(); } return r; }; }
+const t5When=u=>u?new Date(u).toLocaleString('en-IN',{day:'2-digit',month:'short',hour:'2-digit',minute:'2-digit'}):'—';
+function t5Audit(){ const m=state.ui.month||thisMonth(), k=state.ui.t5A||'progress', locks=(state.meeting&&state.meeting.locks)||[], lk=[...locks].reverse().find(x=>x.at&&x.month===m), after=u=>lk&&u&&u>lk.at;
+  const flag=u=>after(u)?` ${PILL('wn','changed after '+esc(lk.title.replace(/^Meeting /,'meeting ')))}`:'';
+  const T={progress:['Work progress',()=>{ const R=state.execution.filter(e=>monthOf(e.date)===m).sort((a,b)=>(a.date||'').localeCompare(b.date||''));
+      return [simpleTable([['Date'],['System'],['Area'],['Element'],['Qty',1],['Entered from'],['Last changed']],R.map(e=>`<tr><td>${fmtD(e.date)}</td><td>${esc(sysName(e.systemId))}</td><td>${esc(areaName(e.areaId))}</td><td>${esc(e.element||'')}</td><td class="r">${fmtN(e.sqm)}</td><td>${String(e.id).startsWith('tk_')?'Daily Progress · Cast':'Executed sqm log'}</td><td>${t5When(e._u)}${flag(e._u)}</td></tr>`),`<tr><td colspan="4"><b>Total ${monthLabel(m)}</b></td><td class="r"><b>${fmtN(R.reduce((a,e)=>a+num(e.sqm),0))}</b></td><td colspan="2"></td></tr>`),R]; }],
+   targets:['Monthly targets',()=>{ const R=state.targets.filter(t=>t.month===m); return [simpleTable([['Area'],['System'],['Target sqm',1],['Last changed']],R.map(t=>`<tr><td>${esc(areaName(t.areaId))}</td><td>${esc(t.systemId?sysName(t.systemId):'All systems')}</td><td class="r">${fmtN(t.targetSqm)}</td><td>${t5When(t._u)}${flag(t._u)}</td></tr>`)),R]; }],
+   bills:['Vendor bill check',()=>{ const R=state.invoices.filter(i=>i.month===m||i.month===addMonth(m,-1)); return [simpleTable([['Month'],['System'],['Bill no.'],['Billed',1],['Difference',1],['Last changed']],R.map(i=>{ const d=invoiceDiff(i); return `<tr><td>${monthLabel(i.month)}</td><td>${esc(sysName(i.systemId))}</td><td>${esc(i.invoiceNo||'')}</td><td class="r">${money(num(i.amount))}</td><td class="r">${d.partial?'—':money(d.diff)}</td><td>${t5When(i._u)}${flag(i._u)}</td></tr>`; })),R]; }],
+   stock:['Store stock movements',()=>{ const R=state.storeTx.filter(t=>monthOf(t.date)===m).sort((a,b)=>(a.date||'').localeCompare(b.date||'')); return [simpleTable([['Date'],['Item'],['Type'],['Qty',1],['Document'],['Last changed']],R.map(t=>`<tr><td>${fmtD(t.date)}</td><td>${esc((storeObj(t.itemId)||{}).item||'')}</td><td>${esc(t.type)}</td><td class="r">${fmtN(t.qty)}</td><td>${esc(t.doc||t.challan||'')}</td><td>${t5When(t._u)}${flag(t._u)}</td></tr>`)),R]; }],
+   labour:['Labour',()=>{ const R=state.labour.filter(l=>monthOf(l.date)===m); return [simpleTable([['Date'],['Area'],['Carpenters',1],['Helpers',1],['Hours',1],['Last changed']],R.map(l=>`<tr><td>${fmtD(l.date)}</td><td>${esc(areaName(l.areaId))}</td><td class="r">${fmtN(l.carpenters)}</td><td class="r">${fmtN(l.helpers)}</td><td class="r">${fmtN(l.hours)}</td><td>${t5When(l._u)}${flag(l._u)}</td></tr>`)),R]; }],
+   delays:['Late elements (tracker)',()=>{ const R=tkS().items.map(i=>({i,n:tkNow(i)})).filter(x=>x.n.late>0).sort((a,b)=>b.n.late-a.n.late); return [simpleTable([['Area'],['Element'],['Level'],['Stage'],['Late days',1]],R.slice(0,200).map(x=>`<tr><td>${esc((tkArea(x.i.a)||{}).name||'')}</td><td>${esc(tkShort(x.i))}</td><td>${esc(x.i.lv)}</td><td>${esc(x.n.n)}</td><td class="r">${x.n.late}</td></tr>`)),R]; }]};
+  const cur=T[k]||T.progress, [tbl,R]=cur[1](), ch=lk?R.filter(r=>after(r._u)).length:0;
+  return panel('Audit trail · where each figure comes from',`<div class="chips">${Object.entries(T).map(([x,v])=>`<button class="btn sm ${x===k?'p':''}" onclick="setUI('t5A','${x}')">${v[0]}</button>`).join('')}</div>
+   <p class="note">${R.length} source row${R.length===1?'':'s'} for ${monthLabel(m)}.${lk?` Locked: <b>${esc(lk.title)}</b> (${t5When(lk.at)}). ${ch?`<b style="color:#dc2626">${ch} row${ch>1?'s':''} changed after the lock</b> — the locked figures may differ from today.`:'No row changed after the lock.'}`:' Lock the meeting to keep a copy of the figures; rows changed later are then flagged here.'}</p>${tbl}`,'every figure can be traced to the entries behind it'); }
+{ const o=PAGES.meeting; PAGES.meeting=function(){ return o.apply(this,arguments)+t5Audit(); }; }
+/* ---- Design Verification Pack: everything a qualified engineer needs to check and sign ---- */
+const T5_CHK=['Loads match the project specification and the codes quoted (concrete density, formwork self weight, construction live load)','Slab / beam / wall sizes and pour heights match the issued structural drawing','Plywood, secondary and primary spacings match the drawing and the site layout','Material strength and stiffness values are backed by the manufacturer catalogue or a test report (see section 4)','Safe working load of verticals / props is from the supplier for the actual height and bracing','Deflection limits are acceptable for the finish required','Staging layout: vertical spacing, ledger lifts, jack extensions and spigot joints are within the supplier limits','Lateral stability and bracing are designed (wind, impact, out-of-plumb)','Bearing below the staging (slab below / ground / sole plates) is checked','Pour rate, pour sequence and concrete pressure on walls / columns are within the design','Striking and re-propping sequence is given','Site inspection before the pour is planned and recorded'];
+function t5VpSet(id,k,v){ const c=CO.get(), d=c.dzDes.find(x=>x.id===id); if(!d) return; d.vp=Object.assign({},d.vp||{},{[k]:v}); coSave(c); }
+PAGES.dzPack=()=>{ if(typeof dzLv==='function'&&!dzLv()) return dzLocked(); const c=CO.get(), D=(c.dzDes||[]).filter(x=>!x.del).sort((a,b)=>(a.no||'').localeCompare(b.no||'')||num(a.rev)-num(b.rev)), id=state.ui.t5D&&D.some(x=>x.id===state.ui.t5D)?state.ui.t5D:(D[0]||{}).id, d=D.find(x=>x.id===id);
+  let h=`<div class="noprint" style="background:#fff7ed;border:1px solid #fdba74;border-radius:10px;padding:10px 14px;margin-bottom:12px">${PILL('wn','NOT A CERTIFICATE')} This pack collects the inputs, formulas, references and material values of a design so that a <b>qualified engineer</b> can check it and sign. FormTrack does not check or approve designs.</div>`;
+  if(!D.length) return h+panel('No designs yet',`<p class="note">Make a design first in <a href="#" onclick="go('dzHome');return false">Design Overview</a>. Its verification pack then shows here.</p>`);
+  h+=`<div class="chips noprint"><select class="qei" style="width:auto;text-align:left;font-weight:600" onchange="setUI('t5D',this.value)">${D.map(x=>`<option value="${x.id}" ${x.id===id?'selected':''}>${esc(x.no||'')} R${x.rev||0} · ${esc(x.el||'')} · ${esc(x.status||'')}</option>`).join('')}</select><button class="btn p" onclick="window.print()">🖨 Print / Save PDF</button></div>`;
+  let H={}, B={}, U={S:[],M:[]}; try{ H=dzRepHdr(c,d); }catch(e){} try{ B=dzRepBody(c,d)||{}; }catch(e){ B={err:e.message}; } try{ U=dzRefsUsed(c,d); }catch(e){}
+  const vp=d.vp||{}, row=x=>x.h?`<tr><td colspan="4" style="font-weight:700;background:#f1f5f9">${esc(x.l)}${x.ref?` <small class="muted">${esc(x.ref)}</small>`:''}</td></tr>`:`<tr><td>${esc(x.l)}</td><td class="how" style="white-space:pre-line">${esc(String(x.ref??''))}</td><td class="r"><b>${esc(String(x.v??''))}</b>${x.ok===true?' ✓':x.ok===false?' <b style="color:#dc2626">✗</b>':''}</td><td>${esc(x.u||'')}</td></tr>`;
+  const M=[...new Map((U.M||[]).map(m=>[m.id,m])).values()], bad=M.filter(m=>!m.srcOK);
+  h+=`<div class="t5vp">`+panel('1 · Design',simpleTable([['Item'],['Value']],[['Document',`${esc(d.no||'')} R${d.rev||0}`],['Element',esc(d.el||'')],['Subject',esc(H.subject||'')],['Project',esc(H.project||'')],['Location / element',esc(H.location||'')],['Design standard',esc(H.std||'')],['Status in register',esc(d.status||'')+(d.appAt?' · '+fmtD(d.appAt):'')],['Prepared by',esc(H.prep||'—')]].map(r=>`<tr><td>${r[0]}</td><td><b>${r[1]}</b></td></tr>`)));
+  h+=panel('2 · Inputs, formulas and results',B.err?`<p class="note">${esc(B.err)}</p>`:(B.S||[]).filter(s=>!s.html&&!/REFERENCES/.test(s.t)).map(s=>`<div class="tklab" style="margin-top:10px">${esc(s.t)}</div><div class="tw"><table class="sheet"><thead><tr><th>Item</th><th>Formula / reference</th><th class="r">Value</th><th>Unit</th></tr></thead><tbody>${s.rows.map(row).join('')}</tbody></table></div>`).join(''));
+  h+=panel('3 · References used',simpleTable([['Reference'],['Title'],['Used for']],(U.S||[]).map(k=>{ const r=DZ_REF[k]||{}; return `<tr><td><b>${esc(r.t||k)}</b></td><td>${esc(r.n||'')}</td><td class="how">${esc(r.u||'')}</td></tr>`; })));
+  h+=panel('4 · Material values and their source',simpleTable([['Material'],['Group'],['M allow',1],['V allow',1],['EI',1],['SWL',1],['Source'],['Status']],M.map(m=>`<tr${m.srcOK?'':' class="tkrow"'}><td><b>${esc(m.n)}</b></td><td>${esc(m.g)}</td><td class="r">${m.M!=null&&m.g!=='Support'?dz3(m.M):'—'}</td><td class="r">${m.V!=null&&m.g!=='Support'?dz3(m.V,2):'—'}</td><td class="r">${m.EI!=null&&m.g!=='Support'?dz3(m.EI,2):'—'}</td><td class="r">${m.cap!=null&&m.g==='Support'?dz3(m.cap,1):'—'}</td><td class="how" style="white-space:normal;max-width:320px">${esc(m.src||'')}</td><td>${m.srcOK?PILL('ok','Referenced'):PILL('bd','Source needed')}</td></tr>`)));
+  h+=panel('5 · Values still needed from the supplier',bad.length?`<ul style="margin:0;padding-left:18px">${bad.map(m=>`<li><b>${esc(m.n)}</b> — ${esc((m.need||[]).join(', '))}. Ask the supplier for the catalogue page or test report and enter its number in Design Criteria.</li>`).join('')}</ul>`:'<p class="note" style="margin:0">Every material value used has a code, handbook or document reference.</p>');
+  h+=panel('6 · Checklist for the checking engineer',`<div class="tw"><table class="sheet"><thead><tr><th>#</th><th>Check</th><th>Result</th><th>Remarks</th></tr></thead><tbody>${T5_CHK.map((t,i)=>{ const v=vp['c'+i]||''; return `<tr><td>${i+1}</td><td style="white-space:normal">${esc(t)}</td><td style="white-space:nowrap">${['OK','Not OK','N/A'].map(o=>`<label style="margin-right:8px"><input type="radio" name="t5c${i}" ${v===o?'checked':''} onchange="t5VpSet('${d.id}','c${i}','${o}')"> ${o}</label>`).join('')}</td><td><input class="qei tx" style="width:220px" value="${esc(vp['r'+i]||'')}" onchange="t5VpSet('${d.id}','r${i}',this.value)"></td></tr>`; }).join('')}</tbody></table></div>`);
+  const sg=(k,l)=>`<label class="t5sg">${l}<input value="${esc(vp[k]||'')}" onchange="t5VpSet('${d.id}','${k}',this.value)"></label>`;
+  h+=panel('7 · Sign-off by a qualified engineer',`<div class="t5sgw">${sg('nm','Checked by (name)')}${sg('qual','Qualification')}${sg('reg','Registration / licence no.')}${sg('org','Organisation')}${sg('dt','Date')}<label class="t5sg">Decision<select onchange="t5VpSet('${d.id}','dec',this.value)">${['','Accepted','Accepted with comments','Not accepted'].map(o=>`<option ${vp.dec===o?'selected':''}>${o}</option>`).join('')}</select></label></div>
+    <div class="t5sig"><div>Signature</div><div>Stamp</div></div><p class="note">The engineer signs the printed pack. FormTrack keeps the record of who was entered here; the signature and the engineering judgement are the engineer's.</p>`)+`</div>`;
+  return h; };
+(()=>{ const s=document.createElement('style'); s.textContent=`.t5sgw{display:grid;grid-template-columns:repeat(auto-fill,minmax(230px,1fr));gap:10px}.t5sg{display:flex;flex-direction:column;font-size:12.5px;color:#5d6a76;gap:3px}.t5sg input,.t5sg select{padding:7px 9px;border:1px solid #c9d0d7;border-radius:6px;font:inherit;font-size:14px;color:inherit}.t5sig{display:grid;grid-template-columns:2fr 1fr;gap:16px;margin-top:16px}.t5sig div{border:1px solid #94a3b8;border-radius:6px;height:90px;padding:6px 10px;font-size:12px;color:#5d6a76}
+@media print{.t5vp .panel{break-inside:avoid-page}.t5vp input[type=radio]{accent-color:#000}}`; document.head.appendChild(s); })();
+
+/* ================= trk2 · parts menu with folding · merged tab pages · renames ================= */
+const T2_NAMES={home:'Today',dashboard:'Site Dashboard',qsum:'Site Dashboard',manual:'Site Dashboard',tkMap:'Progress Map',tkSheet:'Progress Register',tkEntry:'Daily Progress',execution:'Daily Progress',
+ tkTarget:'Monthly Targets',tkLook:'2-week Look-ahead',tkAll:'All Projects',store:'Store Stock',tkIssue:'Issue / Return',invoices:'Vendor Bill Check',siReqm:'Required vs Available',
+ qe:'Material Calculator',draft:'Drafting',dzPack:'Design Verification Pack',setup:'Project Setup',tkStages:'Project Setup',scope:'Scope & Work Breakdown',tkSetup:'Scope & Work Breakdown',
+ health:'Data Check',quick:'Quick Entry',more:'More Pages · My Menu',meeting:'Review Meeting'};
+/* route shown under another menu item (tabs of one page) */
+const T2_ALIAS={qsum:'dashboard',manual:'dashboard',execution:'tkEntry',tkStages:'setup',tkSetup:'scope',tkLate:'tkSheet'};
+/* parts: [name, visible, folded] */
+const T2_SITE=[
+ ['Daily',['home','dashboard','tkMap'],['health','tkSheet','quick','sitemap','practice','notes']],
+ ['Progress',['tkEntry','tkTarget','tkLook'],['labour']],
+ ['Store',['store','tkIssue'],['ledger','siReq','storeMove','storeChk','consumables','contractors','machines','rentStore','storeVal','siTr','siReqm']],
+ ['Design',['dzHome','qe'],['draft','dzSlab','dzWall','dzCol','dzBeam','dzCant','dzCrit','dzReg','dzPack']],
+ ['Planning',['planning'],['cycle','dehire']],
+ ['Cost & Rental',['rent','invoices'],['items','siDmg','rentbuy','prpo','storeRec','owned']],
+ ['Setup',['setup','scope'],['rates','coMaster','coHR']],
+ ['Review & File',['meeting'],['tkAll','mypages','audit','data','bin','cflx','storage','more']]];
+const T2_HO=[
+ ['Daily',['home','tkAll','dashboard'],['portfolio','health','coHealth','quick']],
+ ['Progress',['tkTarget','tkLook','tkMap'],['tkSheet','tkEntry','coPvA','coReport','labour']],
+ ['Cost & Rental',['rent','invoices','prpo'],['coPR','storeRec','items','coRent','siDmg','rentbuy','coIdle']],
+ ['Store',['store','storeMove'],['coReq','coSur','coTr','siTr','storeChk','storeVal','contractors','rentStore','machines','consumables','siReq','ledger','tkIssue','siReqm']],
+ ['Company Asset',['coLoc'],['coLedger','coDep','coAssets','owned']],
+ ['Design',['qe','dzReg'],['dzHome','dzSlab','dzWall','dzCol','dzBeam','dzCant','dzCrit','draft','dzPack']],
+ ['Planning',['planning','dehire'],['coWO','cycle']],
+ ['Setup',['setup'],['scope','rates','coMaster','coHR','coSites','coOpen']],
+ ['Review & File',['meeting'],['coUsers','audit','coLog','data','bin','cflx','coCflx','storage','mypages','sitemap','practice','notes','more']]];
+const t2Fold=()=>{ try{ return JSON.parse(localStorage.getItem('ft_fold')||'{}'); }catch(e){ return {}; } };
+const t2Open=g=>{ const F=t2Fold(); return tkAllOn()||!tkRole()?F[g]!==false:F[g]===true; };
+function t2Tog(g){ const F=t2Fold(); F[g]=!t2Open(g); try{ localStorage.setItem('ft_fold',JSON.stringify(F)); }catch(e){} render(); }
+const t2On=()=>{ try{ return wsGet()!=='company'; }catch(e){ return true; } };
+const t2Parts=()=>{ const r=tkRole(); return r==='ho'||r==='hod'?T2_HO:T2_SITE; };
+let T2_CUR=null;
+function t2Build(){ if(!t2On()){ T2_CUR=null; return; }
+  const {M}=tkAllPages(), coK=new Set(NAV_CO.flatMap(g=>g.items.map(x=>x[0]))), used=new Set();
+  const ok=k=>PAGES[k]&&!used.has(k)&&(M.has(k)||['home','quick','more','tkIssue','tkLate','qe','draft','dzPack','siReqm','tkSheet'].includes(k)||(coK.has(k)?coAllowed():false))&&(!/^dz/.test(k)||typeof dzLv!=='function'||dzLv());
+  const lab=k=>T2_NAMES[k]||M.get(k)||k, parts=[];
+  t2Parts().forEach(([g,v,f])=>{ const V=v.filter(ok); V.forEach(k=>used.add(k)); const Fd=f.filter(ok); Fd.forEach(k=>used.add(k)); if(V.length||Fd.length) parts.push({g,v:V,f:Fd}); });
+  const pins=tkPins().filter(k=>ok(k)); pins.forEach(k=>used.add(k)); if(pins.length) parts.splice(1,0,{g:'Pinned',v:pins,f:[]});
+  const siteK=new Set(NAV_SITE.flatMap(g=>g.items.map(x=>x[0]))), ho=t2Parts()===T2_HO; const rest=[...M.keys()].filter(k=>ok(k)&&!T2_ALIAS[k]&&(ho||siteK.has(k))); rest.forEach(k=>used.add(k)); if(rest.length){ const rf=parts.find(p=>p.g==='Review & File')||parts[parts.length-1]; rf.f.push(...rest); }
+  const alias=Object.keys(T2_ALIAS).filter(k=>PAGES[k]);
+  T2_CUR={parts,lab};
+  NAV.length=0; parts.forEach(p=>NAV.push({g:p.g,items:[...p.v,...p.f].map(k=>[k,lab(k)])})); NAV.push({g:'_alias',items:alias.map(k=>[k,lab(k)])}); }
+{ const _sn=setNav; setNav=function(){ const r=_sn.apply(this,arguments); try{ t2Build(); document.body.classList.toggle('t2m',!!T2_CUR&&t2Parts()===T2_HO); }catch(e){ console.error(e); } return r; }; }
+TK_HIDE.length=0;
+function t2NavHTML(){ const B=sideBadges(), F=t2Fold(), all=tkAllOn()||!tkRole(), r=state.route, on=T2_ALIAS[r]||r;
+  const btn=(k,l)=>{ const bd=B[k]; return `<button class="nl ${on===k?'on':''}" onclick="go('${k}')" title="${esc(l)}">${ico(k)}<span class="lb">${esc(l)}</span>${bd?`<span class="bdg ${bd[1]}">${bd[0]}</span>`:''}</button>`; };
+  return T2_CUR.parts.map(p=>{ const open=t2Open(p.g);
+    const show=open?p.f:p.f.filter(k=>k===on);
+    return `<div class="ng"><span>${esc(p.g)}</span></div>`+p.v.map(k=>btn(k,T2_CUR.lab(k))).join('')+show.map(k=>btn(k,T2_CUR.lab(k))).join('')
+     +(p.f.length?`<button class="nl t2more" onclick="t2Tog('${esc(p.g)}')" title="${open?'Show less':'Show more pages'}"><span class="ic t2c">${open?'−':'+'}</span><span class="lb">${open?'Less':p.f.length+' more'}</span></button>`:''); }).join(''); }
+{ const _sh=sideHTML; sideHTML=function(){ const h=_sh.apply(this,arguments); if(!T2_CUR) return h;
+  return h.replace(/<nav class="navw">[\s\S]*?<\/nav>/,`<nav class="navw">${t2NavHTML()}</nav>`); }; }
+(()=>{ const s=document.createElement('style'); s.textContent='.nl.t2more{opacity:.75;font-size:12.5px;min-height:30px}.nl.t2more .t2c{display:inline-flex;width:18px;height:18px;align-items:center;justify-content:center;font-weight:700;border:0;font-size:15px}#side.mini .nl.t2more .lb{display:none}body.t2m .wsw{display:flex!important}'; document.head.appendChild(s); })();
+Object.assign(ICONS,{qe:'<rect x="5" y="3" width="14" height="18" rx="2"/><path d="M8 7h8M8 11h2M12 11h2M16 11h0M8 15h2M12 15h2M8 18h6"/>',draft:'<path d="M3 21l3-1 12-12-2-2L4 18z"/><path d="M14 6l2 2"/><path d="M3 3h7M3 3v7"/>',dzPack:'<path d="M6 3h9l4 4v14H6z"/><path d="M9 13l2 2 4-4"/>',siReqm:ICONS.siReqm||ICONS.store||ICONS.dashboard});
+/* ---------- merged pages = tabs ---------- */
+const t2Tabs=(cur,T)=>`<div class="tkdt">${T.map(([k,l,s])=>`<button class="${k===cur?'on':''}" onclick="go('${k}')">${l}<small>${s}</small></button>`).join('')}</div>`;
+const T2_TABS=[[['setup','Systems & Areas','formwork systems, areas, rates'],['tkStages','Work Stages & Cycle','stages and days per element']],
+ [['scope','Scope (sqm)','quantity by system and area'],['tkSetup','Areas · Floors · Pours','work breakdown for tracking']],
+ [['tkEntry','Stage Entry','element → stage → date'],['execution','Executed sqm Log','shuttered / poured quantity']]];
+T2_TABS.forEach(T=>T.forEach(([k])=>{ const o=PAGES[k]; if(!o) return; PAGES[k]=function(){ if(k==='execution') window.__noSqmTgt=1; try{ return t2Tabs(k,T)+o.apply(this,arguments); } finally{ window.__noSqmTgt=0; } }; }));
+/* sqm targets now live in Monthly Targets */
+{ const o=PAGES.tkTarget; PAGES.tkTarget=function(){ const h=o.apply(this,arguments); let x=''; try{ if((state.systems||[]).length||state.targets.length) x=sqmTargetsPanel(state.ui.month||thisMonth()); }catch(e){} return h+(x?`<h3 class="t2h">Quantity targets (sqm)</h3>`+x:''); }; }
+/* Cycle Planning: the Gantt moved to the 2-week Look-ahead */
+{ const o=PAGES.cycle; if(o) PAGES.cycle=function(){ state.ui.cyTab='hire'; return o.apply(this,arguments).replace(/<div class="chips systabs">[\s\S]*?<\/div>/,`<p class="note">Hire capacity and rent compare. The day-by-day schedule is now on the <a href="#" onclick="go('tkLook');return false">2-week Look-ahead</a>.</p>`); }; }
+(()=>{ const s=document.createElement('style'); s.textContent='.t2h{margin:22px 0 8px;font-size:15px;color:#1e3a5f}'; document.head.appendChild(s); })();
+/* role menus point to the new names too */
+TK_ROLES.site.menu=[['Daily',[['home','Today'],['dashboard','Site Dashboard'],['tkMap','Progress Map']]]];
+try{ setNav(); render(); }catch(e){ console.error(e); }
 
 </script>
 </body>
