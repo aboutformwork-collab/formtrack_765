@@ -661,7 +661,7 @@ select.dzin{width:auto;max-width:230px;text-align:left}
 <input type="file" id="restoreFile" accept=".json" style="display:none" onchange="if(this.files[0])restoreBackup(this.files[0]);this.value=''">
 <input type="file" id="fsPick" style="display:none" onchange="fsOpenFile(this.files[0]);this.value=''">
 
-<script>window.__FORMTRACK_PWA=true; window.__FORMTRACK_VER="2026.11.23-0853"; window.__FORMTRACK_VERNAME="23 Nov 08:53"; window.__FT_TRIAL_FROM=1793358725887; window.__FT_OWNER_KEYS=["FTK1.KFWlfr8L9B9vCV5zDqch0g==.dbjdxh8PZxOLP1CNQ2z3RabZkTuh7AORMJY1xre+tWo=", "FTK1.Osl5ooyWCagTRuMdk06Obg==.rchABMlUZsicdxq192DnzmUcdgRXTqVE0LzUln8iqDY="]; window.__FT_ACCESS_PUB="SC1QzgBryXETIvpdPX-L1vNG0PfXbclYD1uqU4rGGy0"; window.__FT_BLOCKED=[];</script>
+<script>window.__FORMTRACK_PWA=true; window.__FORMTRACK_VER="2026.11.23-1524"; window.__FORMTRACK_VERNAME="23 Nov 15:24"; window.__FT_TRIAL_FROM=1793358725887; window.__FT_OWNER_KEYS=["FTK1.KFWlfr8L9B9vCV5zDqch0g==.dbjdxh8PZxOLP1CNQ2z3RabZkTuh7AORMJY1xre+tWo=", "FTK1.Osl5ooyWCagTRuMdk06Obg==.rchABMlUZsicdxq192DnzmUcdgRXTqVE0LzUln8iqDY="]; window.__FT_ACCESS_PUB="SC1QzgBryXETIvpdPX-L1vNG0PfXbclYD1uqU4rGGy0"; window.__FT_BLOCKED=[];</script>
 <script>
 /* FormTrack */
 const STORE_KEY = 'formtrack_data_v2';
@@ -8538,7 +8538,17 @@ try{ setNav(); render(); }catch(e){ console.error(e); }
 /* ================= trk12 · Design register v2 · revision lock · verification status · design menu ================= */
 const DZ_EL={Slab:'Slab',Wall:'Wall · aluminium',Column:'Column / wall · H-beam',Beam:'Beam',Cant:'Cantilever slab',Bprop:'Back-propping',Plat:'External platform'};
 const dzLog=(d,act)=>{ d.log=(d.log||[]).concat([{at:todayStr(),who:audWho(),act}]); };
-const dzLive=c=>(c.dzDes||[]).filter(x=>!x.del);
+const dzHO=()=>['ho','hod'].includes(tkRole());
+const dzSiteOf=d=>d.site||PRJ.cur;
+/* site formwork team sees only its own site's designs · HO sees every site, kept apart site-wise */
+/* design is done by HO · the site team only views the designs HO approved for its site */
+const dzSiteView=()=>!dzHO();
+/* site team: makes its own drafts and requests · only HO approves */
+{ const _l=dzLv; dzLv=function(){ const v=_l.apply(this,arguments); return dzSiteView()?Math.min(v||2,2):v; }; }
+const dzSiteSees=x=>true;
+const dzLive=c=>(c.dzDes||[]).filter(x=>!x.del&&(dzHO()||dzSiteOf(x)===PRJ.cur)&&dzSiteSees(x));
+dzHead=function(el,label){ const c=CO.get(), D=c.dzDes.filter(x=>!x.del&&x.el===el&&(dzSiteOf(x)===PRJ.cur||(dzHO()&&x.id===state.ui.dzSel))&&dzSiteSees(x)), ed=dzLv()>=2, d=D.find(x=>x.id===state.ui.dzSel)||D.filter(x=>x.status!=='Superseded'&&dzSiteOf(x)===PRJ.cur).slice(-1)[0];
+  const h=`<div class="chips noprint"><label>Design · ${esc(dzSiteN(PRJ.cur))}<select class="coi" onchange="setUI('dzSel',this.value)">${D.map(x=>`<option value="${x.id}" ${d&&x.id===d.id?'selected':''}>${esc(x.no)} R${x.rev||0} · ${esc(x.area||'')} · ${x.status}${dzSiteOf(x)!==PRJ.cur?' · '+esc(dzSiteN(x.site)):''}</option>`).join('')||'<option>— no design at this site yet —</option>'}</select></label>${ed?`<button class="btn sm p" onclick="dzNew('${el}')">+ New ${label}</button>`:''}</div>`; return {c,d,h,ed}; };
 const dzRevs=(c,no)=>dzLive(c).filter(x=>x.no===no).sort((a,b)=>num(a.rev)-num(b.rev));
 const dzLatest=(c,d)=>{ const R=dzRevs(c,d.no); return R[R.length-1]; };
 /* ---- 1. Revision system: approved = locked; changes only through a new revision copy ---- */
@@ -8567,36 +8577,40 @@ DZ_TABS.forEach(([k])=>{ const o=PAGES[k]; if(!o) return; PAGES[k]=function(){ l
       const L=dzLatest(c,d); const b=`<div class="dzlock top">🔒 <b>${esc(d.no)} R${d.rev||0} · ${esc(d.status)}</b> — locked, nothing can be changed. ${L.id!==d.id?`Latest is R${L.rev}: <button class="btn sm" onclick="${dzOpen(L)}">Open R${L.rev}</button>`:dzLv()>=2?`<button class="btn sm p" onclick="dzRev('${d.id}')">New revision</button> makes a draft copy R${num(d.rev)+1}.`:''}</div>`;
       h=h.replace(/(<div class="sgt">[\s\S]*?<\/div><\/div>)/,'$1'+b); } }catch(e){} return h; }; });
 /* ---- 2. Design Register ---- */
-function dzSum(c,d){ let r={}; try{ r=dzEval(c,d)||{}; }catch(e){ r={err:e.message}; } const ck=(r.ck||[]).filter(x=>!x.soft); let mx=ck.length?ck.reduce((m,x)=>Math.max(m,num(x.r)),0):null; if(!ck.length&&r.A&&r.A.L){ mx=Math.max(...[r.A,r.B,r.C].filter(x=>x&&x.L).map(x=>num(x.prov)/num(x.L)),num(r.ut)||0); }
+function dzSum(c,d){ let r={}; try{ r=dzEval(c,d)||{}; }catch(e){ r={err:e.message}; } const ck0=(r.ck||[]).filter(x=>!x.soft), miss=ck0.filter(x=>!(num(x.al)>0)).length, ck=ck0.filter(x=>num(x.al)>0); let mx=ck.length?ck.reduce((m,x)=>Math.max(m,num(x.r)),0):null; if(!ck.length&&r.A&&r.A.L){ mx=Math.max(...[r.A,r.B,r.C].filter(x=>x&&x.L).map(x=>num(x.prov)/num(x.L)),num(r.ut)||0); }
   let ref={S:[],M:[]}; try{ ref=dzRefsUsed(c,d); }catch(e){} const M=[...new Map((ref.M||[]).map(m=>[m.id,m])).values()], vp=d.vp||{};
   const ans=T5_CHK.filter((t,i)=>vp['c'+i]).length, nok=T5_CHK.filter((t,i)=>vp['c'+i]==='Not OK').length;
-  return {r,err:r.err,ok:!r.err&&r.ok!==false&&!r.fail,mx,n:ck.length,fail:num(r.fail),sys:r.sys||'',grid:r.grid||'',refs:(ref.S||[]).length,mNo:M.filter(m=>!m.srcOK).length,mAll:M.length,ans,nok,dec:vp.dec||'',eng:vp.nm||''}; }
+  return {r,miss,err:r.err,ok:!r.err&&r.ok!==false&&!r.fail,mx,n:ck.length,fail:num(r.fail),sys:r.sys||'',grid:r.grid||'',refs:(ref.S||[]).length,mNo:M.filter(m=>!m.srcOK).length,mAll:M.length,ans,nok,dec:vp.dec||'',eng:vp.nm||''}; }
 const dzElTxt=d=>{ const a=d.in||{}; return (DZ_EL[d.el]||d.el)+(d.el==='Slab'&&d.t?' '+d.t+' mm':d.el==='Beam'&&a.b?' '+a.b+' × '+a.D:d.el==='Cant'&&a.t?' '+a.t+' mm':''); };
 const dzVerPill=s=>s.dec==='Accepted'?PILL('ok','Accepted'):s.dec==='Accepted with comments'?PILL('wn','Accepted · comments'):s.dec==='Not accepted'?PILL('bd','Not accepted'):s.ans?PILL('wn',s.ans+'/'+T5_CHK.length+' checked'):PILL('na','Not checked');
 const dzPct=s=>s.mx==null?'':' · '+Math.round(s.mx*100)+' %';
-const dzCalcPill=s=>s.err?PILL('na','Incomplete'):s.ok?PILL('ok','Safe'+dzPct(s)):PILL('bd',(s.fail?s.fail+' fail':'Fails')+dzPct(s));
+const dzCalcPill=s=>s.err?PILL('na','Incomplete'):s.miss?PILL('wn',s.miss+' value to enter'):s.ok?PILL('ok','Safe'+dzPct(s)):PILL('bd',(s.fail?s.fail+' fail':'Fails')+dzPct(s));
 function dzRegRows(){ const c=CO.get(), U=state.ui, q=(U.dzQ||'').toLowerCase(), all=!!U.dzOld;
   let D=dzLive(c); if(!all) D=D.filter(d=>dzLatest(c,d).id===d.id||d.status==='Approved');
   return D.filter(d=>(!U.dzF||d.status===U.dzF)&&(!U.dzE||d.el===U.dzE)&&(!U.dzS||d.site===U.dzS)&&(!q||[d.no,d.area,d.by,dzElTxt(d),dzSiteN(d.site),d.revWhy].join(' ').toLowerCase().includes(q)))
-   .sort((a,b)=>(a.no||'').localeCompare(b.no||'')||num(b.rev)-num(a.rev)); }
+   .sort((a,b)=>dzSiteN(dzSiteOf(a)).localeCompare(dzSiteN(dzSiteOf(b)))||(a.no||'').localeCompare(b.no||'')||num(b.rev)-num(a.rev)); }
 function dzRegCsv(){ const c=CO.get(), H=['Doc no','Rev','Element','Site','Area','System','Grid','Calculation','Max ratio %','Status','Designed by','Checked by','Approved by','Approved on','Verification','Checked by engineer','Reason for revision','Date'];
   const L=dzRegRows().map(d=>{ const s=dzSum(c,d); return [d.no,'R'+(d.rev||0),dzElTxt(d),dzSiteN(d.site),d.area||'',s.sys,s.grid,s.err?'Incomplete':s.ok?'Safe':'Fails',s.mx==null?'':Math.round(s.mx*100),d.status,d.by||'',d.chk||'',d.appBy||'',d.appAt||'',s.dec||(s.ans?s.ans+'/'+T5_CHK.length+' checked':'Not checked'),s.eng,d.revWhy||'',d.date||'']; });
   const csv=[H,...L].map(r=>r.map(x=>'"'+String(x??'').replace(/"/g,'""')+'"').join(',')).join('\n'); const a=document.createElement('a'); a.href=URL.createObjectURL(new Blob(['﻿'+csv],{type:'text/csv'})); a.download='Design-register-'+todayStr()+'.csv'; a.click(); }
 const dzStP=s=>s==='Withdrawn'?PILL('bd','Withdrawn'):dzStPill(s);
 const dzOpen=(d)=>`state.ui.dzSel='${d.id}';go('${DZ_PG[d.el]||'dzSlab'}')`;
 PAGES.dzReg=()=>{ if(!dzLv()) return dzLocked(); const c=CO.get(), U=state.ui, A=dzLive(c), cur=A.filter(d=>dzLatest(c,d).id===d.id||d.status==='Approved');
-  const S=new Map(A.map(d=>[d.id,dzSum(c,d)])), docs=new Set(A.map(d=>d.no)).size, appr=A.filter(d=>d.status==='Approved'), dr=A.filter(d=>d.status==='Draft'), unsafe=dr.filter(d=>!S.get(d.id).ok&&!S.get(d.id).err), ver=appr.filter(d=>S.get(d.id).dec==='Accepted'||S.get(d.id).dec==='Accepted with comments');
+  let h0=''; const S=new Map(A.map(d=>[d.id,dzSum(c,d)])), docs=new Set(A.map(d=>d.no)).size, appr=A.filter(d=>d.status==='Approved'), dr=A.filter(d=>d.status==='Draft'), unsafe=dr.filter(d=>!S.get(d.id).ok&&!S.get(d.id).err), ver=appr.filter(d=>S.get(d.id).dec==='Accepted'||S.get(d.id).dec==='Accepted with comments');
+  if(dzSiteView()) h0=`<div class="dzlock top">📐 <b>Designs of ${esc(dzSiteN(PRJ.cur))}</b> — your team can make drafts and request designs; only HO approves. Approved = locked, any change is a new revision by HO.</div>`;
   let h=`<div class="kpis">${kpi('Design documents',docs,A.length+' revisions in total')}${kpi('Approved · in force',appr.length,'locked · change only by revision','good')}${kpi('Drafts waiting',dr.length,unsafe.length?unsafe.length+' not safe yet':'',dr.length?'warn':'')}${kpi('Checked by engineer',ver.length+' / '+appr.length,'verification pack signed',ver.length<appr.length?'warn':'good')}</div>`;
   const ed=dzLv()>=2, els=Object.keys(DZ_EL).filter(k=>DZ_PG[k]&&PAGES[DZ_PG[k]]);
   h+=`<div class="chips noprint dzrf">${['','Draft','Approved','Superseded','Withdrawn'].map(x=>`<button class="btn sm ${(U.dzF||'')===x?'p':''}" onclick="setUI('dzF','${x}')">${x||'All'}</button>`).join('')}
    <select class="qei" onchange="setUI('dzE',this.value)"><option value="">All elements</option>${els.map(k=>`<option value="${k}" ${U.dzE===k?'selected':''}>${DZ_EL[k]}</option>`).join('')}</select>
-   <select class="qei" onchange="setUI('dzS',this.value)"><option value="">All sites</option>${PRJ.list.map(p=>`<option value="${p.id}" ${U.dzS===p.id?'selected':''}>${esc(dzSiteN(p.id))}</option>`).join('')}</select>
+   ${dzHO()?'':'<!--'}<select class="qei" onchange="setUI('dzS',this.value)"><option value="">All sites</option>${PRJ.list.map(p=>`<option value="${p.id}" ${U.dzS===p.id?'selected':''}>${esc(dzSiteN(p.id))}</option>`).join('')}</select>${dzHO()?'':'-->'}
    <input class="qei" placeholder="Find doc no., area, name…" value="${esc(U.dzQ||'')}" onchange="setUI('dzQ',this.value)">
    <label class="dzck"><input type="checkbox" ${U.dzOld?'checked':''} onchange="setUI('dzOld',this.checked)"> Show old revisions</label>
    <button class="btn sm" onclick="dzRegCsv()">⬇ Excel</button>
    ${ed?`<select class="qei p" onchange="if(this.value){ dzNew(this.value); }"><option value="">+ New design…</option>${els.map(k=>`<option value="${k}">${DZ_EL[k]}</option>`).join('')}</select>`:''}</div>`;
-  const R=dzRegRows(), op=U.dzX||'';
+  const R=dzRegRows(), op=U.dzX||''; let curS=null;
+  if(dzHO()&&!U.dzS){ const SI=[...new Set(A.map(dzSiteOf))]; if(SI.length) h=h.replace(/(<div class="chips noprint dzrf">)/,panel('Site-wise',simpleTable([['Site'],['Documents',1],['Approved',1],['Drafts',1],['Not safe',1],['Engineer checked',1],['']],SI.map(si=>{ const X=A.filter(d=>dzSiteOf(d)===si), ap=X.filter(d=>d.status==='Approved'), dr=X.filter(d=>d.status==='Draft'), ns=dr.filter(d=>{ const z=S.get(d.id); return !z.ok&&!z.err; }), vc=ap.filter(d=>/^Accepted/.test(S.get(d.id).dec));
+    return `<tr><td><b>${esc(dzSiteN(si))}</b></td><td class="r">${new Set(X.map(d=>d.no)).size}</td><td class="r">${ap.length||'—'}</td><td class="r">${dr.length||'—'}</td><td class="r">${ns.length?`<b class="neg">${ns.length}</b>`:'—'}</td><td class="r">${vc.length} / ${ap.length}</td><td><button class="btn sm" onclick="setUI('dzS','${si}')">View</button></td></tr>`; })),'designs of every site, kept apart')+'$1'); }
   const rows=R.map(d=>{ const s=S.get(d.id), revs=dzRevs(c,d.no), L=revs[revs.length-1], old=L.id!==d.id;
+    const sh=dzHO()&&!U.dzS&&curS!==dzSiteOf(d)?(curS=dzSiteOf(d),`<tr class="dzsite"><td colspan="8">🏗 ${esc(dzSiteN(curS))}</td></tr>`):'';
     const sy=String(s.sys||''), syS=sy.length>70?sy.slice(0,68)+'…':sy;
     let t=`<tr class="${old?'dzold':''}"><td class="calc"><b>${esc(d.no)}</b><br><b>R${d.rev||0}</b>${revs.length>1?` <button class="lnk" onclick="setUI('dzX','${op===d.no?'':esc(d.no)}')">${revs.length} revs ${op===d.no?'▴':'▾'}</button>`:''}</td>
      <td class="calc" style="white-space:normal;min-width:230px;max-width:330px"><b>${esc(dzElTxt(d))}</b><br><small>${esc(dzSiteN(d.site))}${d.area?' · '+esc(d.area):''}</small><br><small class="muted" title="${esc(sy)}">${esc(syS||'—')}${s.grid?' · '+esc(String(s.grid)):''}</small></td>
@@ -8605,16 +8619,18 @@ PAGES.dzReg=()=>{ if(!dzLv()) return dzLocked(); const c=CO.get(), U=state.ui, A
      <td class="calc" style="white-space:normal;max-width:200px"><small>${esc(d.revWhy||(num(d.rev)?'':'First issue'))}</small></td>
      <td class="calc nowrap noprint"><button class="btn sm" onclick="${dzOpen(d)}">Open</button> <button class="btn sm" onclick="dzRepOpen('${d.id}')">Report</button> <button class="btn sm" onclick="state.ui.t5D='${d.id}';go('dzPack')">Verify</button></td></tr>`;
     if(op===d.no&&!old) t+=`<tr class="dzhist"><td colspan="8"><b>Revision history · ${esc(d.no)}</b><table class="sheet"><thead><tr><th>Rev</th><th>Status</th><th>Date</th><th>Reason</th><th>Approved</th><th>Log</th></tr></thead><tbody>${revs.slice().reverse().map(x=>`<tr><td><b>R${x.rev||0}</b></td><td>${dzStP(x.status)}</td><td>${fmtD(x.date)}</td><td style="white-space:normal">${esc(x.revWhy||(num(x.rev)?'':'First issue'))}</td><td>${x.appBy?esc(x.appBy)+' · '+fmtD(x.appAt):'—'}</td><td style="white-space:normal"><small>${(x.log||[]).map(l=>fmtD(l.at)+' '+esc(l.who||'')+': '+esc(l.act)).join('<br>')||'—'}</small></td><td><button class="btn sm" onclick="${dzOpen(x)}">Open</button></td></tr>`).join('')}</tbody></table></td></tr>`;
-    return t; });
+    return sh+t; });
   h+=panel('Design register',R.length?simpleTable([['Doc no. · Rev'],['Element · site · system'],['Calculation'],['Status'],['Designed · approved'],['Engineer check'],['Reason for revision'],['']],rows):'<p class="note">No design matches. Clear the filters or make a new design.</p>');
   h+=`<p class="note">🔒 <b>How revisions work:</b> an approved design is locked — nobody can change it. Click <b>New revision</b> on it: a copy (R1, R2 …) is made as a draft with the reason written. The old revision stays <b>in force</b> until the new one is approved; then the old one becomes <b>Superseded</b> automatically. Withdrawing an approval also locks the design — correct it by a new revision.</p>`;
-  return h; };
+  return h0+h; };
+function dzSiteReg(c,A,S){ const R=A.slice().sort((a,b)=>(a.no||'').localeCompare(b.no||''));
+  return panel('Approved designs · '+R.length,R.length?simpleTable([['Doc no. · Rev'],['Element · area'],['System · grid'],['Approved'],['']],R.map(d=>{ const s=S.get(d.id), sy=String(s.sys||''); return `<tr><td><b>${esc(d.no)}</b><br><b>R${d.rev||0}</b></td><td style="white-space:normal"><b>${esc(dzElTxt(d))}</b>${d.area?'<br><small>'+esc(d.area)+'</small>':''}</td><td style="white-space:normal;max-width:380px"><small>${esc(sy.length>110?sy.slice(0,108)+'…':sy)}${s.grid?' · '+esc(String(s.grid)):''}</small></td><td><small>${esc(d.appBy||'')}<br>${fmtD(d.appAt)}</small></td><td class="nowrap"><button class="btn sm" onclick="${dzOpen(d)}">View</button> <button class="btn sm" onclick="dzRepOpen('${d.id}')">Report</button></td></tr>`; })):'<p class="note">HO has not approved any design for this site yet.</p>'); }
 /* ---- 3. Verification: status of every design, then the pack of the chosen one ---- */
 { const _p=PAGES.dzPack; PAGES.dzPack=function(){ const h=_p.apply(this,arguments); if(typeof dzLv==='function'&&!dzLv()) return h; const c=CO.get(), U=state.ui;
     const D=dzLive(c).filter(d=>U.t5All||d.status!=='Superseded').sort((a,b)=>(a.no||'').localeCompare(b.no||'')||num(a.rev)-num(b.rev)); if(!D.length) return h;
     const sel=U.t5D&&D.some(x=>x.id===U.t5D)?U.t5D:(D[0]||{}).id;
     const t=panel('Check of every design',`<div class="chips noprint"><label class="dzck"><input type="checkbox" ${U.t5All?'checked':''} onchange="setUI('t5All',this.checked)"> Show superseded</label></div>`+simpleTable([['Doc no.'],['Element'],['Status'],['Calculation check'],['References'],['Material sources'],['Checklist'],['Engineer decision'],['']],D.map(d=>{ const s=dzSum(c,d);
-      return `<tr class="${d.id===sel?'dzsel':''}"><td class="calc"><b>${esc(d.no)} R${d.rev||0}</b></td><td class="calc">${esc(dzElTxt(d))}</td><td class="calc">${dzStP(d.status)}</td><td class="calc">${dzCalcPill(s)}${s.n?'<br><small class="muted">'+s.n+' checks</small>':''}</td>
+      return `<tr class="${d.id===sel?'dzsel':''}"><td class="calc"><b>${esc(d.no)} R${d.rev||0}</b>${dzHO()?'<br><small class="muted">'+esc(dzSiteN(dzSiteOf(d)))+'</small>':''}</td><td class="calc">${esc(dzElTxt(d))}</td><td class="calc">${dzStP(d.status)}</td><td class="calc">${dzCalcPill(s)}${s.n?'<br><small class="muted">'+s.n+' checks</small>':''}</td>
        <td class="calc">${s.refs?PILL('ok',s.refs+' codes'):PILL('na','—')}</td><td class="calc">${s.mNo?PILL('bd',s.mNo+' of '+s.mAll+' need source'):PILL('ok','All '+s.mAll+' referenced')}</td>
        <td class="calc">${s.ans}/${T5_CHK.length}${s.nok?' '+PILL('bd',s.nok+' not OK'):''}</td><td class="calc">${dzVerPill(s)}${s.eng?'<br><small>'+esc(s.eng)+'</small>':''}</td><td class="calc noprint"><button class="btn sm ${d.id===sel?'p':''}" onclick="setUI('t5D','${d.id}')">${d.id===sel?'Showing':'Check'}</button></td></tr>`; }))
       +'<p class="note">Each design is checked separately: its calculation (all checks within allowed), the codes it uses, the source of every material value, the 12-point checklist and the engineer\'s decision. The pack of the chosen design is below.</p>','one line per design');
@@ -8626,19 +8642,204 @@ const QD_TABS=[['qe','Material Calculator'],['draft','Drafting']];
 QD_TABS.forEach(([k])=>{ const o=PAGES[k]; if(!o) return; PAGES[k]=function(){ return `<div class="sgt"><div>${QD_TABS.filter(([r])=>PAGES[r]).map(([r,l])=>`<button class="${r===k?'on':''}" onclick="go('${r}')">${l}</button>`).join('')}</div></div>`+o.apply(this,arguments); }; });
 (()=>{ const s=document.createElement('style'); s.textContent=`.dzlock{background:#f1f5f9;border:1px solid #cbd5e1;border-radius:8px;padding:8px 12px;margin:10px 0;font-size:13.5px}.dzlock.top{background:#ecfdf5;border-color:#86efac;display:flex;gap:8px;align-items:center;flex-wrap:wrap}.dzlock.dr{background:#fff7ed;border-color:#fdba74}
 .dzrf{align-items:center;gap:6px}.dzrf .qei{width:auto;text-align:left}.dzrf input.qei{width:200px}.dzck{font-size:13px;display:inline-flex;gap:4px;align-items:center}
-tr.dzold td{opacity:.6}tr.dzsel td{background:#ecfdf5}tr.dzhist>td{background:#f8fafc;padding:10px}tr.dzhist table{margin-top:6px}.lnk{border:0;background:none;color:#0f766e;cursor:pointer;font-size:12px;padding:0 2px}td.nowrap{white-space:nowrap}#main .coi:disabled,#main .dzin:disabled{background:#eceff2!important;color:#475569;border-color:#d5dbe1;cursor:not-allowed}`; document.head.appendChild(s); })();
+tr.dzsite td{background:#163049;color:#fff;font-weight:700;padding:6px 10px}tr.dzold td{opacity:.6}tr.dzsel td{background:#ecfdf5}tr.dzhist>td{background:#f8fafc;padding:10px}tr.dzhist table{margin-top:6px}.lnk{border:0;background:none;color:#0f766e;cursor:pointer;font-size:12px;padding:0 2px}td.nowrap{white-space:nowrap}#main .coi:disabled,#main .dzin:disabled{background:#eceff2!important;color:#475569;border-color:#d5dbe1;cursor:not-allowed}`; document.head.appendChild(s); })();
 try{ setNav(); render(); }catch(e){ console.error(e); }
+/* Slab page has its own design list: show only this site's slab designs (HO also the one opened from the register) */
+{ const _s=PAGES.dzSlab; PAGES.dzSlab=function(){ const g=CO.get; CO.get=function(){ const c=g.apply(CO,arguments); const keep=c.dzDes.filter(x=>x.el!=='Slab'||x.del||((dzSiteOf(x)===PRJ.cur||(dzHO()&&x.id===state.ui.dzSel))&&dzSiteSees(x))); Object.defineProperty(c,'__flt',{value:1,enumerable:false}); c.dzDes=keep; return c; };
+  try{ return _s.apply(this,arguments); } finally{ CO.get=g; } }; }
+{ const _cs=coSave; coSave=function(c){ if(c&&c.__flt){ console.warn('filtered company copy not saved'); return; } return _cs.apply(this,arguments); }; }
+
+/* ================= trk15 · Design requests: site asks HO for a design, with the material it has · HO sees which site needs what ================= */
+const DQ_EL=[['Slab','Slab'],['Beam','Beam'],['Wall','Wall · aluminium'],['Column','Column / wall'],['Bprop','Back-propping'],['Plat','External platform'],['Cant','Cantilever slab']];
+const DQ_WHY=['New element / new drawing','Drawing changed','Material not available','Client / consultant asked','Site condition changed','Safety concern','Faster cycle / cost saving','Other'];
+const dqCo=()=>{ const c=CO.get(); c.dzReq=Array.isArray(c.dzReq)?c.dzReq:[]; return c; };
+const dqMine=r=>dzHO()?(!state.ui.dzS||r.site===state.ui.dzS):r.site===PRJ.cur;
+function dqSt(c,r){ const d=r.dzId&&c.dzDes.find(x=>x.id===r.dzId&&!x.del); const t=todayStr();
+  if(r.status==='Cancelled') return {k:'x',p:PILL('na','Cancelled')};
+  if(r.kind==='rev'&&!d){ const o=c.dzDes.find(x=>x.id===r.revOf); return {k:'new',p:r.need&&r.need<t?PILL('bd','Change requested · late'):PILL('wn','Change requested'),late:r.need&&r.need<t,o}; }
+  if(d){ const L=dzLatest(c,d)||d; if(L.status==='Approved') return {k:'ok',p:PILL('ok','Approved · '+esc(L.no)+' R'+(L.rev||0)),d:L}; return {k:'wip',p:PILL('wn','In design · '+esc(L.no)),d:L}; }
+  return {k:'new',p:r.need&&r.need<t?PILL('bd','Requested · late'):PILL('wn','Requested'),late:r.need&&r.need<t}; }
+let DQF=null;
+function dqOpen(){ DQF={el:'Slab',site:dzHO()?(state.ui.dzS||PRJ.cur):PRJ.cur,area:'',need:'',dwg:'',note:'',why:'',mats:{}}; render(); }
+function dqSet(k,v){ if(!DQF) return; DQF[k]=v; if(k==='el'||k==='site') render(); }
+function dqMat(id,on){ if(!DQF) return; DQF.mats[id]=!!on; }
+function dqSave(){ const F=DQF; if(!F) return; if(!F.why) return toast('Pick why it is required.'); if(F.kind==='rev'&&!String(F.note||'').trim()) return toast('Write what should change.'); if(!F.kind&&!F.area.trim()) return toast('Write the area / location.'); const c=dqCo();
+  if(F.kind==='rev'&&c.dzReq.some(r=>r.kind==='rev'&&r.revOf===F.revOf&&r.status!=='Cancelled'&&!r.dzId)) return toast('A change for '+F.no+' is already requested.');
+  c.dzReq.push({id:uid(),_u:nowMs(),kind:F.kind||'',revOf:F.revOf||'',no:F.no||'',why:F.why,site:F.site,el:F.el,area:String(F.area||'').trim(),need:F.need,dwg:F.dwg||'',note:F.note,mats:Object.keys(F.mats||{}).filter(k=>F.mats[k]),by:dzHO()?'HO':'Site',who:audWho(),at:todayStr(),status:'Open',dzId:''});
+  const rv=F.kind==='rev'; DQF=null; coSave(c); toast(rv?'Change request sent to HO · '+F.no+' stays in force until HO approves the new revision.':'Design request sent to HO.'); render(); }
+function dqCancel(id){ askConfirm('Cancel this design request?',()=>{ const c=dqCo(), r=c.dzReq.find(x=>x.id===id); if(r){ r.status='Cancelled'; r._u=nowMs(); coSave(c); } },'Cancel request'); }
+/* HO starts the design from the request: site, area and the request are linked */
+function dqStart(id){ const c0=dqCo(), r=c0.dzReq.find(x=>x.id===id); if(!r) return; if(r.kind==='rev'){ const n0=c0.dzDes.length, P=window.prompt; window.prompt=(m,v)=>P.call(window,m,[r.why,r.note].filter(Boolean).join(': ')||v||''); try{ dzRev(dzLatest(c0,c0.dzDes.find(x=>x.id===r.revOf)).id); }finally{ window.prompt=P; } const c=dqCo(); if(c.dzDes.length<=n0) return; const d=c.dzDes[c.dzDes.length-1], q=c.dzReq.find(x=>x.id===id); d.reqId=r.id; q.dzId=d.id; q.status='In design'; coSave(c); return; } const n0=c0.dzDes.length; dzNew(r.el); const c=dqCo(); if(c.dzDes.length<=n0) return;
+  const d=c.dzDes[c.dzDes.length-1], q=c.dzReq.find(x=>x.id===id); d.site=r.site; d.area=r.area; d.reqId=r.id; q.dzId=d.id; q.status='In design'; q._u=nowMs(); coSave(c); state.ui.dzSel=d.id; go(DZ_PG[d.el]||'dzSlab'); }
+const dqMatN=(c,ids)=>{ const M=dzMats(c); return (ids||[]).map(id=>(M.find(m=>m.id===id)||{}).n).filter(Boolean); };
+function dqForm(c){ const F=DQF; if(!F) return ''; const M=dzMats(c), G=['Sheathing','Secondary','Primary','Support','Tie'];
+  const why=`<label>Why required *<select class="coi" style="border-color:${F.why?'':'#dc2626'}" onchange="dqSet('why',this.value)"><option value="">— pick —</option>${DQ_WHY.map(w=>`<option ${F.why===w?'selected':''}>${w}</option>`).join('')}</select></label>`;
+  if(F.kind==='rev') return `<div class="panel chf"><div class="ph"><span>🔁 Request a change from HO · ${esc(F.no)}</span><small>${esc(F.area||'')}</small></div><div class="pb"><div class="chg">${why}
+   <label>What should change *<input class="coi" style="width:380px" value="${esc(F.note||'')}" placeholder="slab now 200 mm · height 3.6 m · use H-beam" onchange="dqSet('note',this.value)"></label>
+   <label>Needed by<input class="coi" type="date" value="${F.need||''}" onchange="dqSet('need',this.value)"></label></div>
+   <p class="note">${esc(F.no)} stays in force until HO approves the new revision.</p><div class="chips"><button class="btn p" onclick="dqSave()">Send to HO</button><button class="btn" onclick="DQF=null;render()">Cancel</button></div></div></div>`;
+  return `<div class="panel chf"><div class="ph"><span>+ Request a design from HO</span><small>tick the material you have at site</small></div><div class="pb"><div class="chg">${why}
+   ${dzHO()?`<label>Site<select class="coi" onchange="dqSet('site',this.value)">${PRJ.list.map(p=>`<option value="${p.id}" ${F.site===p.id?'selected':''}>${esc(dzSiteN(p.id))}</option>`).join('')}</select></label>`:''}
+   <label>Element<select class="coi" onchange="dqSet('el',this.value)">${DQ_EL.filter(([k])=>DZ_PG[k]).map(([k,l])=>`<option value="${k}" ${F.el===k?'selected':''}>${l}</option>`).join('')}</select></label>
+   <label>Area / location<input class="coi" style="width:220px" value="${esc(F.area)}" placeholder="Tower A · L6 slab" onchange="dqSet('area',this.value)"></label>
+   <label>Needed by<input class="coi" type="date" value="${F.need}" onchange="dqSet('need',this.value)"></label>
+   <label>Drawing / size<input class="coi" style="width:220px" value="${esc(F.dwg)}" placeholder="drg no., slab 200 mm, height 3.2 m" onchange="dqSet('dwg',this.value)"></label>
+   <label>Reason / note<input class="coi" style="width:280px" value="${esc(F.note)}" placeholder="e.g. client changed slab level, ply 12 mm not in store" onchange="dqSet('note',this.value)"></label></div>
+   <div class="dqm">${G.map(g=>{ const L=M.filter(m=>m.g===g); return L.length?`<div><b>${g}</b>${L.map(m=>`<label class="dzck"><input type="checkbox" ${F.mats[m.id]?'checked':''} onchange="dqMat('${m.id}',this.checked)"> ${esc(m.n)}</label>`).join('')}</div>`:''; }).join('')}</div>
+   <p class="note">Not in the list? Add it in Material Master (or ask HO) — HO designs with what your site has.</p>
+   <div class="chips"><button class="btn p" onclick="dqSave()">Send to HO</button><button class="btn" onclick="DQF=null;render()">Cancel</button></div></div></div>`; }
+function dqPanel(){ const c=dqCo(), ho=dzHO(), t=todayStr(), R=c.dzReq.filter(r=>dqMine(r)&&(state.ui.dqAll||r.status!=='Cancelled'));
+  const X=R.map(r=>({r,s:dqSt(c,r)})), open=X.filter(x=>x.s.k==='new'||x.s.k==='wip'), late=X.filter(x=>x.s.late);
+  let h=`<div class="chips dqbar"><b style="font-size:15px">Design requests</b> ${open.length?PILL(late.length?'bd':'wn',open.length+' open'+(late.length?' · '+late.length+' late':'')):PILL('ok','none open')}<button class="btn sm p" onclick="dqOpen()">+ Request a design</button>
+    <label class="dzck"><input type="checkbox" ${state.ui.dqDone?'checked':''} onchange="setUI('dqDone',this.checked)"> show approved</label></div>`+dqForm(c);
+  if(ho&&!state.ui.dzS){ const SI=[...new Set(c.dzReq.filter(r=>r.status!=='Cancelled').map(r=>r.site))]; if(SI.length) h+=panel('Which site needs which design',simpleTable([['Site'],['Requested',1],['In design',1],['Late',1],['Next needed by'],['Approved',1]],SI.map(si=>{ const Y=c.dzReq.filter(r=>r.site===si&&r.status!=='Cancelled').map(r=>({r,s:dqSt(c,r)})), nx=Y.filter(y=>y.s.k==='new'||y.s.k==='wip').map(y=>y.r.need).filter(Boolean).sort()[0];
+    return `<tr><td><b>${esc(dzSiteN(si))}</b></td><td class="r">${Y.filter(y=>y.s.k==='new').length||'—'}</td><td class="r">${Y.filter(y=>y.s.k==='wip').length||'—'}</td><td class="r">${Y.filter(y=>y.s.late).length?`<b class="neg">${Y.filter(y=>y.s.late).length}</b>`:'—'}</td><td style="padding-left:16px">${nx?fmtD(nx):'—'}</td><td class="r">${Y.filter(y=>y.s.k==='ok').length||'—'}</td></tr>`; })),'design requests from sites'); const W=new Map(); c.dzReq.filter(r=>r.status!=='Cancelled'&&r.why&&monthOf(r.at)===monthOf(t)).forEach(r=>W.set(r.why,(W.get(r.why)||0)+1)); if(W.size) h+=`<div class="chips dqws"><label>Why requested · this month</label>${[...W.entries()].sort((a,b)=>b[1]-a[1]).map(([w,n])=>`<span class="dqw ${/Material/.test(w)?'m':/Client/.test(w)?'c':/Safety/.test(w)?'s':''}">${esc(w)} · <b>${n}</b></span>`).join('')}</div>`; }
+  const L=X.filter(x=>state.ui.dqDone||x.s.k!=='ok').sort((a,b)=>(a.r.need||'9').localeCompare(b.r.need||'9'));
+  if(L.length) h+=panel('Requests',simpleTable([['Needed by'],...(ho?[['Site']]:[]),['Element · area'],['Why required'],['Drawing / note'],['Material available at site'],['Requested'],['Status'],['']],L.map(({r,s})=>`<tr><td style="white-space:nowrap">${r.need?(s.late?`<b class="neg">${fmtD(r.need)}</b>`:fmtD(r.need)):'—'}</td>${ho?`<td><b>${esc(dzSiteN(r.site))}</b></td>`:''}
+    <td><b>${r.kind==='rev'?'🔁 Change of '+esc(r.no||''):esc((DQ_EL.find(x=>x[0]===r.el)||[,r.el])[1])}</b><br><small>${esc(r.area)}</small></td><td style="white-space:normal;max-width:170px">${r.why?`<span class="dqw ${/Material/.test(r.why)?'m':/Client/.test(r.why)?'c':/Safety/.test(r.why)?'s':''}">${esc(r.why)}</span>`:'<small class="muted">—</small>'}</td><td style="white-space:normal;max-width:220px"><small>${esc(r.dwg||'')}${r.note?(r.dwg?'<br>':'')+esc(r.note):''}</small></td>
+    <td style="white-space:normal;max-width:300px"><small>${esc(dqMatN(c,r.mats).join(' · ')||'—')}</small></td><td><small>${esc(r.who||'')}<br>${fmtD(r.at)}</small></td><td>${s.p}</td>
+    <td class="nowrap">${s.d?`<button class="btn sm" onclick="${dzOpen(s.d)}">Open</button>`:ho&&r.status!=='Cancelled'?`<button class="btn sm p" onclick="dqStart('${r.id}')">${r.kind==='rev'?'Start revision':'Start design'}</button>`:''} ${!s.d&&r.status!=='Cancelled'&&(ho||r.by==='Site')?`<button class="btn sm" onclick="dqCancel('${r.id}')">✕</button>`:''}</td></tr>`)),'oldest need first');
+  else if(!DQF) h+=`<p class="note" style="margin:-4px 0 14px">${ho?'No open request. Sites ask here for the designs they need.':'Need a design? Click “+ Request a design” — HO designs it with the material you have.'}</p>`;
+  return h; }
+{ const _r=PAGES.dzReg; PAGES.dzReg=function(){ const h=_r.apply(this,arguments); if(!dzLv()) return h; const p=dqPanel(), i=h.indexOf('<div class="panel"><div class="ph"><span>Design register');
+  return i>=0?h.slice(0,i)+p+h.slice(i):h+p; }; }
+/* a design started from a request shows what the site asked for and the material it has */
+DZ_TABS.forEach(([k])=>{ const o=PAGES[k]; if(!o) return; PAGES[k]=function(){ let h=o.apply(this,arguments); try{ const c=dqCo(), d=c.dzDes.find(x=>x.id===state.ui.dzSel&&!x.del&&x.reqId); if(!d||DZ_PG[d.el]!==k) return h; const r=c.dzReq.find(x=>x.id===d.reqId); if(!r) return h;
+  const b=`<div class="dzlock dr">📨 <b>Requested by ${esc(dzSiteN(r.site))}</b> (${esc(r.who||'')}, ${fmtD(r.at)})${r.need?' · needed by <b>'+fmtD(r.need)+'</b>':''}${r.dwg?' · '+esc(r.dwg):''}${r.note?' · '+esc(r.note):''}<br>Material at site: <b>${esc(dqMatN(c,r.mats).join(' · ')||'not given')}</b> — pick these in the design.</div>`;
+  return h.replace(/(<div class="sgt">[\s\S]*?<\/div><\/div>)/,'$1'+b); }catch(e){ return h; } }; });
+(()=>{ const s=document.createElement('style'); s.textContent='.dqbar{align-items:center;gap:8px;margin:6px 0 10px}.dqm{display:flex;flex-wrap:wrap;gap:18px;margin:4px 0}.dqm>div{display:flex;flex-direction:column;gap:3px;min-width:180px}.dqm b{font-size:12.5px;color:#5d6a76}.dqw{display:inline-block;background:#eef2ff;color:#3730a3;border-radius:6px;padding:2px 7px;font-size:12px}.dqw.m{background:#fff7ed;color:#9a3412}.dqw.c{background:#f5f3ff;color:#6d28d9}.dqw.s{background:#fef2f2;color:#b91c1c}.dqws{align-items:center;gap:6px;margin:-4px 0 12px}'; document.head.appendChild(s); })();
+
+/* revision: the site cannot revise an approved design — it asks HO for a change; HO makes the new revision */
+function dqReqRev(id){ const c=dqCo(), d=c.dzDes.find(x=>x.id===id); if(!d) return; const L=dzLatest(c,d)||d;
+  if(c.dzReq.some(r=>r.kind==='rev'&&r.revOf===L.id&&r.status!=='Cancelled'&&!r.dzId)) return toast('A change for '+L.no+' is already requested.');
+  DQF={kind:'rev',revOf:L.id,no:L.no+' R'+(L.rev||0),site:dzSiteOf(L),el:L.el,area:L.area||'',why:'',note:'',need:'',mats:{}}; go('dzReg'); window.scrollTo&&setTimeout(()=>{ const e=document.querySelector('.chf'); if(e) e.scrollIntoView({behavior:'smooth',block:'center'}); },60); }
+{ const _rv=dzRev; dzRev=function(id){ if(dzSiteView()) return dqReqRev(id); return _rv.apply(this,arguments); }; }
+const dqSiteLbl=h=>dzSiteView()?h.replace(/>New revision<\/button>/g,'>Request change from HO</button>').replace(/makes a draft copy R\d+\./,'— HO makes the new revision.'):h;
+DZ_TABS.forEach(([k])=>{ const o=PAGES[k]; if(!o) return; PAGES[k]=function(){ return dqSiteLbl(o.apply(this,arguments)); }; });
+/* register: what changed lately, and revisions on the way */
+{ const _r=PAGES.dzReg; PAGES.dzReg=function(){ let h=dqSiteLbl(_r.apply(this,arguments)); if(!dzLv()) return h; const c=dqCo(), t=todayStr(), A=dzLive(c), wk=new Date(t); wk.setDate(wk.getDate()-14); const w=wk.toISOString().slice(0,10);
+  const NEW=A.filter(d=>d.status==='Approved'&&num(d.rev)>0&&(d.appAt||'')>=w), WIP=A.filter(d=>d.status==='Draft'&&num(d.rev)>0);
+  if(!NEW.length&&!WIP.length) return h;
+  const b=`<div class="panel dqrev"><div class="ph"><span>🔁 Revisions</span><small>last 14 days</small></div><div class="pb">${NEW.map(d=>{ const o=dzRevs(c,d.no).filter(x=>num(x.rev)<num(d.rev)).pop(); return `<div class="dqr ok"><b>${esc(d.no)} R${d.rev}</b> approved ${fmtD(d.appAt)} by ${esc(d.appBy||'')} · replaces R${o?o.rev||0:num(d.rev)-1} · <i>${esc(d.revWhy||'')}</i> <button class="btn sm" onclick="${dzOpen(d)}">Open R${d.rev}</button> <button class="btn sm" onclick="dzRepOpen('${d.id}')">Report</button></div>`; }).join('')}
+    ${WIP.map(d=>`<div class="dqr wip"><b>${esc(d.no)} R${d.rev}</b> in design by HO · <i>${esc(d.revWhy||'')}</i> · R${num(d.rev)-1} stays in force until R${d.rev} is approved <button class="btn sm" onclick="${dzOpen(d)}">Open</button></div>`).join('')}</div></div>`;
+  const i=h.indexOf('<div class="chips dqbar">'); return i>=0?h.slice(0,i)+b+h.slice(i):b+h; }; }
+(()=>{ const s=document.createElement('style'); s.textContent='.dqrev .dqr{padding:7px 10px;border-radius:8px;margin:4px 0;font-size:13.5px}.dqr.ok{background:#ecfdf5}.dqr.wip{background:#fff7ed}.dqr i{color:#475569}'; document.head.appendChild(s); })();
+
+/* ================= trk16 · HO: Material · All Sites — company asset by location, rental and store stock of every site, surplus vs requests ================= */
+const cmLocs=c=>coLocs(c);
+function cmRental(){ const R=new Map(), S=[]; coAll().forEach(({p,st})=>{ S.push(p); withState(st,()=>{ (state.items||[]).forEach(i=>{ if(!(i.item||'').trim()) return; const b=itemTotals(i.id).bal; if(Math.abs(b)<1e-9) return; const k=norm(i.item); const r=R.get(k)||{item:i.item,v:new Set(),q:{},sqm:0,kg:0}; r.q[p.id]=(r.q[p.id]||0)+b; r.sqm+=b*num(i.sqmPerNo); r.kg+=b*num(i.kgPerNo); r.v.add(sysName(i.systemId)); R.set(k,r); }); }); });
+  return {R:[...R.values()].sort((a,b)=>b.sqm-a.sqm||a.item.localeCompare(b.item)),S}; }
+function cmStore(){ const R=new Map(), S=[]; coAll().forEach(({p,st})=>{ S.push(p); withState(st,()=>{ (state.storeItems||[]).forEach(i=>{ if(!(i.item||'').trim()||(typeof isConsItem==='function'&&isConsItem(i))) return; let b=0; try{ b=storeBal(i.id).inStore; }catch(e){} if(Math.abs(b)<1e-9) return; const k=ikey(i.item,i.unit||''); const r=R.get(k)||{item:i.item,unit:i.unit||'',q:{}}; r.q[p.id]=(r.q[p.id]||0)+b; R.set(k,r); }); }); });
+  return {R:[...R.values()].sort((a,b)=>a.item.localeCompare(b.item)),S}; }
+const cmHd=(c,L)=>L.map(l=>`<th class="r" title="${esc(l.name)}">${esc(l.code||l.name)}${l.kind==='Store'?'<br><small>yard</small>':''}</th>`).join('');
+PAGES.coMat=()=>{ const c=CO.get(), L=cmLocs(c), N=needMaps(), U=state.ui, V=['own','rent','store'].includes(U.cmV)?U.cmV:'own';
+  const ST=[...coStock(c).values()], keys=new Map(); ST.forEach(x=>{ if(x.good>1e-9||x.tin>1e-9) keys.set(ikey(x.item,x.unit),{item:x.item,unit:x.unit}); });
+  const REQ=LIVE(c).r.filter(r=>r.status==='Raised'), rows=[...keys.values()].map(({item,unit})=>{ const k=ikey(item,unit), q={}; let tot=0,tr=0,sur=0;
+    L.forEach(l=>{ const s=ST.find(x=>x.loc===l.id&&ikey(x.item,x.unit)===k); const g=s?Math.max(0,s.good):0; q[l.id]=g; tot+=g; if(s) tr+=s.tin; try{ sur+=surplusAt(c,l.id,item,unit,N).sur; }catch(e){} });
+    const rq=REQ.filter(r=>ikey(r.item,r.unit)===k), rqn=rq.reduce((a,r)=>a+num(r.qty),0); return {item,unit,q,tot,tr,sur,rq,rqn}; }).sort((a,b)=>b.rqn-a.rqn||a.item.localeCompare(b.item));
+  const RT=cmRental(), SS=cmStore(), match=rows.filter(r=>r.rqn>0&&r.sur>0).length;
+  let h=`<div class="kpis">${kpi('Sites · yards',PRJ.list.length+' · '+L.filter(l=>l.kind==='Store').length)}${kpi('Requests waiting',REQ.length,match?match+' can be met from surplus':'',REQ.length?'warn':'good')}${kpi('Surplus lines',rows.filter(r=>r.sur>1e-9).length,'company asset not needed where it is')}${kpi('Rental on all sites',fmtN(RT.R.reduce((a,r)=>a+r.sqm,0),0)+' sqm',RT.R.length+' items')}</div>`;
+  h+=`<div class="chips">${[['own','Company asset · where it is'],['rent','Rental · all sites'],['store','Site store stock']].map(([k,l])=>`<button class="btn ${V===k?'p':''}" onclick="setUI('cmV','${k}')">${l}</button>`).join('')}</div>`;
+  if(V==='own') h+=panel('Company asset · every site and yard',rows.length?`<div class="tw cmx"><table class="sheet"><thead><tr><th>Item</th><th>Unit</th>${cmHd(c,L)}<th class="r">Total</th><th class="r">In transit</th><th class="r">Surplus</th><th class="r">Requested</th><th></th></tr></thead><tbody>${rows.map(r=>`<tr><td><b>${esc(r.item)}</b></td><td>${esc(r.unit)}</td>${L.map(l=>`<td class="r">${r.q[l.id]?fmtN(r.q[l.id]):'<span class="muted">—</span>'}</td>`).join('')}<td class="r"><b>${fmtN(r.tot)}</b></td><td class="r">${r.tr?fmtN(r.tr):'—'}</td><td class="r">${r.sur>1e-9?`<b class="pos">${fmtN(r.sur)}</b>`:'—'}</td><td class="r">${r.rqn?`<b class="neg">${fmtN(r.rqn)}</b><br><small class="muted">${esc([...new Set(r.rq.map(x=>locSh(c,x.site)))].join(', '))}</small>`:'—'}</td><td>${r.rqn&&r.sur>1e-9?`<button class="btn sm p" onclick="go('coSur')">Match →</button>`:r.rqn?`<button class="btn sm" onclick="go('coReq')">Decide</button>`:''}</td></tr>`).join('')}</tbody></table></div>`:'<p class="note">No company asset recorded yet. Add it in Company Asset (opening balances or a purchase).</p>','good stock at each location');
+  if(V==='rent') h+=panel('Rental on site · all sites',RT.R.length?`<div class="tw cmx"><table class="sheet"><thead><tr><th>Item</th><th>Vendor / system</th>${RT.S.map(p=>`<th class="r">${esc(locSh(c,p.id))}</th>`).join('')}<th class="r">Total nos</th><th class="r">Sqm</th><th class="r">MT</th></tr></thead><tbody>${RT.R.map(r=>`<tr><td><b>${esc(r.item)}</b></td><td><small>${esc([...r.v].join(', '))}</small></td>${RT.S.map(p=>`<td class="r">${r.q[p.id]?fmtN(r.q[p.id]):'<span class="muted">—</span>'}</td>`).join('')}<td class="r"><b>${fmtN(Object.values(r.q).reduce((a,x)=>a+x,0))}</b></td><td class="r">${r.sqm?fmtN(r.sqm,1):'—'}</td><td class="r">${r.kg?fmtN(r.kg/1000,2):'—'}</td></tr>`).join('')}</tbody></table></div>`:'<p class="note">No rental material on any site.</p>','received − dispatched, per site');
+  if(V==='store') h+=panel('Site store stock · all sites',SS.R.length?`<div class="tw cmx"><table class="sheet"><thead><tr><th>Item</th><th>Unit</th>${SS.S.map(p=>`<th class="r">${esc(locSh(c,p.id))}</th>`).join('')}<th class="r">Total</th></tr></thead><tbody>${SS.R.map(r=>`<tr><td><b>${esc(r.item)}</b></td><td>${esc(r.unit)}</td>${SS.S.map(p=>`<td class="r">${r.q[p.id]?fmtN(r.q[p.id]):'<span class="muted">—</span>'}</td>`).join('')}<td class="r"><b>${fmtN(Object.values(r.q).reduce((a,x)=>a+x,0))}</b></td></tr>`).join('')}</tbody></table></div>`:'<p class="note">No store stock on any site.</p>','in each site store now (consumables left out)');
+  h+='<p class="note"><b>How it works:</b> a site asks on <b>Site Requisitions</b> → HO sees here who has it (other sites, yard, surplus) → <b>Match</b> on Surplus Material sends it as an Inter-site Transfer → the receiving site confirms. Rental is shown per site so you can shift or de-hire it.</p>';
+  return h; };
+(()=>{ const s=document.createElement('style'); s.textContent='.cmx{max-height:70vh;overflow:auto}.cmx thead th{position:sticky;top:0;z-index:2}.cmx td:first-child,.cmx th:first-child{position:sticky;left:0;background:#fff;z-index:1}.cmx thead th:first-child{z-index:3;background:inherit}.pos{color:#15803d}'; document.head.appendChild(s); })();
+
+/* ================= trk14 · Site Observations: observations to any site · training sessions · asked by HO (weekly / monthly) ================= */
+const OB_T=[['obs','Observations'],['trn','Training sessions'],['ask','Asked from sites']];
+const obHO=()=>{ const r=tkRole(); return r==='ho'||r==='hod'; };
+const obSites=()=>PRJ.list.map(p=>({id:p.id,name:p.name||p.id}));
+const obSN=id=>(PRJ.list.find(p=>p.id===id)||{}).name||id||'—';
+const obCo=()=>{ const c=CO.get(); c.siteObs=Array.isArray(c.siteObs)?c.siteObs:[]; c.trn=Array.isArray(c.trn)?c.trn:[]; c.ask=Array.isArray(c.ask)?c.ask:[]; return c; };
+const obMine=x=>obHO()?(!state.ui.obS||x.site===state.ui.obS):x.site===PRJ.cur;
+const obWeek=d=>{ const t=new Date((d||todayStr())+'T00:00:00'); const day=(t.getDay()+6)%7; t.setDate(t.getDate()-day); return t.toISOString().slice(0,10); };
+const obPer=(f,d)=>f==='weekly'?obWeek(d):f==='monthly'?monthOf(d):'';
+/* site's own NC / best practice entries count as observations too */
+function obSiteObs(site){ const st=site===PRJ.cur?state:readProject(site); return ((st&&st.practices)||[]).map(r=>({date:r.date,site})); }
+function obDone(c,a,per){ const fromD=a.freq==='once'?(a.date||''):'';
+  const L=a.what==='trn'?c.trn.filter(x=>x.site===a.site).map(x=>x.date):c.siteObs.filter(x=>x.site===a.site&&x.by!=='HO').map(x=>x.date).concat(obSiteObs(a.site).map(x=>x.date));
+  return L.filter(d=>d&&(a.freq==='once'?d>=fromD:obPer(a.freq,d)===per)).length; }
+function obAskSt(c,a){ const t=todayStr(), per=obPer(a.freq,t), n=obDone(c,a,per);
+  if(n) return {ok:1,txt:a.freq==='weekly'?'Done this week':a.freq==='monthly'?'Done this month':'Done',n};
+  const late=a.freq==='once'?(a.due&&t>a.due):a.freq==='monthly'?num(t.slice(8,10))>num(a.day||28):((new Date(t+'T00:00:00').getDay()+6)%7)>=Math.max(0,num(a.day||5)-1);
+  return {late,txt:(late?'Late · ':'Due · ')+(a.freq==='weekly'?'this week':a.freq==='monthly'?'this month':(a.due?'by '+fmtD(a.due):''))}; }
+/* forms (one open at a time) */
+let OBF=null;
+function obOpen(k){ const s=obHO()?(state.ui.obS||''):PRJ.cur; OBF=k==='obs'?{k,site:s,date:todayStr(),type:'Observation',title:'',desc:'',action:'',due:''}:k==='trn'?{k,site:s,date:todayStr(),topic:'',trainer:audWho(),aud:'Workers',con:'',att:'',hrs:'1',notes:''}:{k,site:s,what:'trn',freq:'weekly',day:'5',due:'',note:''}; render(); }
+function obSet(f,v){ if(!OBF) return; OBF[f]=v; if(f==='freq'||f==='what'||f==='type') render(); }
+function obSave(){ const F=OBF; if(!F) return; if(!F.site) return toast('Pick the site.'); const c=obCo(), b={id:uid(),_u:nowMs(),by:obHO()?'HO':'Site',who:audWho(),at:todayStr()};
+  if(F.k==='obs'){ if(!F.title.trim()) return toast('Write the observation.'); c.siteObs.push(Object.assign(b,{site:F.site,date:F.date,type:F.type,to:F.to||'',title:F.title.trim(),desc:F.desc,action:F.action,due:F.due,status:'Open',reply:'',photos:[]})); }
+  else if(F.k==='trn'){ if(!F.topic.trim()) return toast('Write the topic.'); c.trn.push(Object.assign(b,{site:F.site,date:F.date,topic:F.topic.trim(),trainer:F.trainer,aud:F.aud,con:F.con,att:num(F.att),hrs:num(F.hrs),notes:F.notes,photos:[]})); }
+  else { c.ask.push(Object.assign(b,{site:F.site,what:F.what,freq:F.freq,day:F.day,due:F.due,note:F.note,date:todayStr(),active:true})); }
+  OBF=null; coSave(c); toast('Saved.'); render(); }
+function obUpd(arr,id,f,v){ const c=obCo(), x=c[arr].find(r=>r.id===id); if(!x) return; x[f]=v; if(f==='status') x.closedAt=v==='Closed'?todayStr():''; x._u=nowMs(); coSave(c); render(); }
+function obDel(arr,id){ askConfirm('Delete this entry?',()=>{ const c=obCo(); c[arr]=c[arr].filter(r=>r.id!==id); coSave(c); render(); },'Delete'); }
+function obPhoto(arr,id){ const inp=document.createElement('input'); inp.type='file'; inp.accept='image/*'; inp.multiple=true; inp.onchange=async()=>{ const c=obCo(), x=c[arr].find(r=>r.id===id); if(!x) return; x.photos=x.photos||[];
+  for(const f of [...inp.files].slice(0,6)){ try{ const d=await shrinkImage(f); const pid='ph-'+uid(); phPut(pid,d); x.photos.push(pid); }catch(e){ toast('Could not read one photo.'); } }
+  x._u=nowMs(); coSave(c); toast('Photo added'); render(); }; inp.click(); }
+const obThumbs=(arr,x)=>`<div class="thumbs">${(x.photos||[]).map(p=>PH[p]?`<span class="th"><img src="${PH[p]}" alt="" onclick="viewPhoto('${p}')"></span>`:`<span class="th miss" title="Photo is on another device">📷</span>`).join('')}<button class="addph" onclick="obPhoto('${arr}','${x.id}')">📷 +</button></div>`;
+const obSiteSel=(v,f)=>obHO()?`<label>Site<select class="coi" onchange="obSet('${f||'site'}',this.value)"><option value="">— pick —</option>${obSites().map(s=>`<option value="${s.id}" ${v===s.id?'selected':''}>${esc(s.name)}</option>`).join('')}</select></label>`:'';
+function obCons(site){ const st=!site||site===PRJ.cur?state:readProject(site); return [...new Set(((st&&st.contractors)||[]).map(c=>c.name||c.contractor||'').filter(Boolean))]; }
+function obForm(){ const F=OBF; if(!F) return ''; const dl=`<datalist id="obCL">${obCons(F.site).map(n=>`<option value="${esc(n)}">`).join('')}</datalist>`; const inp=(f,l,t,w)=>`<label>${l}<input class="coi" ${t?`type="${t}"`:''} style="${w?'width:'+w+'px':''}" value="${esc(F[f]||'')}" onchange="obSet('${f}',this.value)"></label>`;
+  let b='';
+  if(F.k==='obs') b=obSiteSel(F.site)+inp('date','Date','date')+`<label>Type<select class="coi" onchange="obSet('type',this.value)">${['Observation','Non-Conformance (NC)','Best Practice','Safety'].map(x=>`<option ${F.type===x?'selected':''}>${x}</option>`).join('')}</select></label>`+inp('title','Observation','',320)+inp('desc','Details','',320)+`<label>Given to (contractor / team)<input class="coi" list="obCL" style="width:200px" value="${esc(F.to||'')}" onchange="obSet('to',this.value)" placeholder="${obHO()?'site formwork team':'contractor / gang'}"></label>`+inp('action','Action required','',260)+inp('due','Close by','date');
+  else if(F.k==='trn') b=obSiteSel(F.site)+inp('date','Date','date')+inp('topic','Topic','',280)+inp('trainer','Given by (trainer)','',170)+`<label>Trained<select class="coi" onchange="obSet('aud',this.value)">${['Workers','Staff','Workers + Staff'].map(x=>`<option ${F.aud===x?'selected':''}>${x}</option>`).join('')}</select></label>`+`<label>Contractor / gang<input class="coi" list="obCL" style="width:190px" value="${esc(F.con||'')}" onchange="obSet('con',this.value)"></label>`+inp('att','People attended','number',90)+inp('hrs','Hours','number',70)+inp('notes','Notes','',300);
+  else b=obSiteSel(F.site)+`<label>Ask for<select class="coi" onchange="obSet('what',this.value)"><option value="trn" ${F.what==='trn'?'selected':''}>Training session</option><option value="obs" ${F.what==='obs'?'selected':''}>Site observation</option></select></label>
+    <label>How often<select class="coi" onchange="obSet('freq',this.value)"><option value="weekly" ${F.freq==='weekly'?'selected':''}>Every week</option><option value="monthly" ${F.freq==='monthly'?'selected':''}>Every month</option><option value="once" ${F.freq==='once'?'selected':''}>Once</option></select></label>
+    ${F.freq==='weekly'?`<label>By (day)<select class="coi" onchange="obSet('day',this.value)">${['Mon','Tue','Wed','Thu','Fri','Sat'].map((d,i)=>`<option value="${i+1}" ${num(F.day)===i+1?'selected':''}>${d}</option>`).join('')}</select></label>`:F.freq==='monthly'?inp('day','By date of month','number',90):inp('due','Due date','date')}`+inp('note','Note to site','',300);
+  const t={obs:'+ Give an observation',trn:'+ Upload a training session',ask:'+ Ask a site'}[F.k];
+  return `<div class="panel chf"><div class="ph"><span>${t}</span></div><div class="pb"><div class="chg">${b}</div>${dl}<div class="chips"><button class="btn p" onclick="obSave()">Save</button><button class="btn" onclick="OBF=null;render()">Cancel</button></div></div></div>`; }
+/* the page */
+{ const _p=PAGES.practice; PAGES.practice=function(){ const c=obCo(), U=state.ui, T=OB_T.some(x=>x[0]===U.obT)?U.obT:'obs', ho=obHO(), t=todayStr();
+  const A=c.ask.filter(a=>a.active!==false&&obMine(a)), AS=A.map(a=>({a,s:obAskSt(c,a)})), due=AS.filter(x=>!x.s.ok), late=due.filter(x=>x.s.late);
+  const O=c.siteObs.filter(obMine), Oo=O.filter(x=>x.status!=='Closed'), Tr=c.trn.filter(obMine), Tm=Tr.filter(x=>monthOf(x.date)===monthOf(t));
+  let h=`<div class="kpis">${kpi('Open observations',Oo.length,Oo.filter(x=>x.due&&x.due<t).length?Oo.filter(x=>x.due&&x.due<t).length+' past close date':'',Oo.length?'warn':'good')}${kpi('Training this month',Tm.length,Tm.reduce((s,x)=>s+num(x.att),0)+' people trained','good')}${kpi('Asked · due now',due.length,late.length?late.length+' late':'all on time',late.length?'bad':due.length?'warn':'good')}${kpi('Sites',ho?obSites().length:1,ho?'all sites':obSN(PRJ.cur))}</div>`;
+  h+=`<div class="chips obbar">${OB_T.map(([k,l])=>[k,k==='ask'&&!ho?'Asked by HO':l]).map(([k,l])=>`<button class="btn ${T===k?'p':''}" onclick="OBF=null;setUI('obT','${k}')">${l}${k==='ask'&&due.length?` <span class="bdg ${late.length?'bd':'wn'}">${due.length}</span>`:''}</button>`).join('')}
+    ${ho?`<select class="qei" onchange="setUI('obS',this.value)"><option value="">All sites</option>${obSites().map(s=>`<option value="${s.id}" ${U.obS===s.id?'selected':''}>${esc(s.name)}</option>`).join('')}</select>`:''}
+    <button class="btn p" onclick="obOpen('${T}')">${{obs:'+ Give observation',trn:'+ Upload training',ask:ho?'+ Ask a site':''}[T]||''}</button></div>`.replace('<button class="btn p" onclick="obOpen(\'ask\')"></button>','');
+  if(!ho&&due.length&&T!=='ask') h+=`<div class="dzlock ${late.length?'':'dr'}" style="background:${late.length?'#fef2f2':''}">📌 <b>Asked by HO:</b> ${due.map(x=>`${x.a.what==='trn'?'Training session':'Site observation'} · ${x.s.txt}`).join(' · ')}</div>`;
+  h+=obForm();
+  if(T==='obs'){ const F=['open','late','closed','all'].includes(U.obF)?U.obF:'open', late_=x=>x.status!=='Closed'&&x.due&&x.due<t, GB=U.obB==='HO'||U.obB==='Site'?U.obB:'';
+    const O0=O; { const O=O0.filter(x=>!GB||(x.by||'HO')===GB);
+    if(ho){ const S=obSites().filter(s=>!U.obS||s.id===U.obS); h+=panel('Observations · site-wise',simpleTable([['Site'],['Open',1],['Overdue',1],['Closed this month',1],['Given this month',1],['Oldest open'],['']],S.map(s=>{ const X=c.siteObs.filter(x=>x.site===s.id), op=X.filter(x=>x.status!=='Closed'), od=op.filter(late_), cm=X.filter(x=>x.status==='Closed'&&monthOf(x.closedAt||x._d||x.date)===monthOf(t)), gm=X.filter(x=>monthOf(x.date)===monthOf(t)), old=op.map(x=>x.date).sort()[0];
+      return `<tr><td><b>${esc(s.name)}</b></td><td class="r">${op.length?`<b>${op.length}</b>`:'—'}</td><td class="r">${od.length?`<b class="neg">${od.length}</b>`:'—'}</td><td class="r">${cm.length||'—'}</td><td class="r">${gm.length||'—'}</td><td style="padding-left:16px">${old?fmtD(old)+` <small class="muted">· ${Math.round((new Date(t)-new Date(old))/864e5)} days</small>`:'<span class="muted">none open</span>'}</td><td><button class="btn sm" onclick="state.ui.obF='open';setUI('obS','${s.id}')">View</button></td></tr>`; })),'which site is slow to close'); }
+    h+=`<div class="chips">${[['open','Open'],['late','Overdue'],['closed','Closed'],['all','All']].map(([k,l])=>{ const n=k==='open'?O.filter(x=>x.status!=='Closed').length:k==='late'?O.filter(late_).length:k==='closed'?O.filter(x=>x.status==='Closed').length:O.length; return `<button class="btn sm ${F===k?'p':''}" onclick="setUI('obF','${k}')">${l} · ${n}</button>`; }).join('')}<span style="width:14px"></span><label>Given by</label>${[['','All'],['HO','HO'],['Site','Site formwork team']].map(([k,l])=>`<button class="btn sm ${GB===k?'p':''}" onclick="setUI('obB','${k}')">${l}</button>`).join('')}</div>`;
+    const L=O.filter(x=>F==='all'||(F==='open'?x.status!=='Closed':F==='late'?late_(x):x.status==='Closed')).sort((a,b)=>F==='closed'?(b.date||'').localeCompare(a.date||''):(a.due||'9').localeCompare(b.due||'9')||(a.date||'').localeCompare(b.date||''));
+    h+=panel(ho?'Observations · all sites (by HO and by site formwork teams)':'Observations at this site (from HO and our team)',L.length?simpleTable([['Date'],...(ho?[['Site']]:[]),['Type'],['Given by → to'],['Observation'],['Action required'],['Close by'],['Status'],['Site reply'],['Photos'],['']],L.map(x=>`<tr><td>${fmtD(x.date)}</td>${ho?`<td><b>${esc(obSN(x.site))}</b></td>`:''}<td>${x.type==='Non-Conformance (NC)'?PILL('bd','NC'):x.type==='Best Practice'?PILL('ok','Best practice'):x.type==='Safety'?PILL('wn','Safety'):PILL('na','Observation')}</td>
+      <td style="white-space:normal;min-width:120px">${(x.by||'HO')==='HO'?PILL('na','HO'):PILL('ok','Site FW')}<br><small>${esc(x.who||'')}</small>${x.to?'<br><small class="muted">→ '+esc(x.to)+'</small>':''}</td><td style="white-space:normal;min-width:180px"><b>${esc(x.title)}</b>${x.desc?'<br><small>'+esc(x.desc)+'</small>':''}${x.status==='Closed'&&x.closedAt?'<br><small class="muted">closed '+fmtD(x.closedAt)+'</small>':''}</td><td style="white-space:normal">${esc(x.action||'—')}</td><td style="white-space:nowrap">${x.due?(x.status!=='Closed'&&x.due<t?`<span class="neg">${fmtD(x.due)}</span>`:fmtD(x.due)):'—'}</td>
+      <td><select class="coi" onchange="obUpd('siteObs','${x.id}','status',this.value)">${['Open','Closed'].map(s=>`<option ${x.status===s?'selected':''}>${s}</option>`).join('')}</select></td><td><input class="coi" style="width:170px" value="${esc(x.reply||'')}" placeholder="what was done" onchange="obUpd('siteObs','${x.id}','reply',this.value)"></td><td>${obThumbs('siteObs',x)}</td><td><button class="btn sm" onclick="obDel('siteObs','${x.id}')">✕</button></td></tr>`)):(O.length?'<p class="note">Nothing in this list.</p>':'<p class="note">No observations yet. Click “+ Give observation”.</p>'));
+    h+=`<details class="obold" ${U.obOld?'open':''} ontoggle="state.ui.obOld=this.open"><summary>This site's NC / best practice register (with photos)</summary>${_p.apply(this,arguments)}</details>`; } }
+  else if(T==='trn'){ const L=Tr.slice().sort((a,b)=>(b.date||'').localeCompare(a.date||''));
+    if(ho){ const S=obSites().filter(s=>!U.obS||s.id===U.obS); h+=panel('Training · site-wise',simpleTable([['Site'],['This week',1],['This month',1],['Workers trained',1],['Staff trained',1],['Last session']],S.map(s=>{ const X=c.trn.filter(x=>x.site===s.id), w=X.filter(x=>obWeek(x.date)===obWeek(t)).length, m=X.filter(x=>monthOf(x.date)===monthOf(t)); const last=X.map(x=>x.date).sort().pop();
+      return `<tr><td><b>${esc(s.name)}</b></td><td class="r">${w||'—'}</td><td class="r">${m.length||'—'}</td><td class="r">${m.filter(x=>(x.aud||'Workers')!=='Staff').reduce((a,x)=>a+num(x.att),0)||'—'}</td><td class="r">${m.filter(x=>x.aud==='Staff').reduce((a,x)=>a+num(x.att),0)||'—'}</td><td style="padding-left:16px">${last?fmtD(last):'<span class="muted">none yet</span>'}</td></tr>`; }))); }
+    if(L.length){ const CW=new Map(); L.filter(x=>monthOf(x.date)===monthOf(t)).forEach(x=>{ const k=(ho?obSN(x.site)+' · ':'')+(x.con||'(no contractor)'); const g=CW.get(k)||{n:0,w:0,st:0,h:0,last:''}; g.n++; if(x.aud==='Staff') g.st+=num(x.att); else g.w+=num(x.att); g.h+=num(x.hrs); if(x.date>g.last) g.last=x.date; CW.set(k,g); });
+      const T0=[...CW.values()].reduce((a,g)=>({n:a.n+g.n,w:a.w+g.w,st:a.st+g.st,h:a.h+g.h}),{n:0,w:0,st:0,h:0});
+      if(CW.size) h+=panel('Contractor-wise · '+monthLabel(monthOf(t)),simpleTable([['Contractor / gang'],['Sessions',1],['Workers trained',1],['Staff trained',1],['Hours',1],['Last session']],[...[...CW.entries()].sort((a,b)=>b[1].w-a[1].w).map(([k,g])=>`<tr><td><b>${esc(k)}</b></td><td class="r">${g.n}</td><td class="r">${g.w||'—'}</td><td class="r">${g.st||'—'}</td><td class="r">${fmtN(g.h,1)}</td><td style="padding-left:16px">${fmtD(g.last)}</td></tr>`),`<tr class="fmt"><td><b>Total</b></td><td class="r"><b>${T0.n}</b></td><td class="r"><b>${T0.w}</b></td><td class="r"><b>${T0.st}</b></td><td class="r"><b>${fmtN(T0.h,1)}</b></td><td></td></tr>`]),'this month'); }
+    h+=panel('Training sessions',L.length?simpleTable([['Date'],...(ho?[['Site']]:[]),['Topic'],['Given by'],['Trained'],['People',1],['Hours',1],['Notes'],['Photos · attendance sheet'],['']],L.map(x=>`<tr><td>${fmtD(x.date)}</td>${ho?`<td><b>${esc(obSN(x.site))}</b></td>`:''}<td style="white-space:normal;min-width:160px"><b>${esc(x.topic)}</b></td><td>${esc(x.trainer||'—')}</td><td>${esc(x.aud||'Workers')}${x.con?'<br><small class="muted">'+esc(x.con)+'</small>':''}</td><td class="r">${fmtN(x.att)}</td><td class="r">${fmtN(x.hrs,1)}</td><td style="white-space:normal">${esc(x.notes||'')}</td><td>${obThumbs('trn',x)}</td><td><button class="btn sm" onclick="obDel('trn','${x.id}')">✕</button></td></tr>`)):'<p class="note">No training session yet. Click “+ Upload training”.</p>','add photos of the session and the attendance sheet'); }
+  else { h+=panel(ho?'Asked from sites':'Asked by HO',AS.length?simpleTable([...(ho?[['Site']]:[]),['Asked for'],['How often'],['By'],['This period'],['Note'],['Asked on'],...(ho?[['']]:[])],AS.map(({a,s})=>`<tr>${ho?`<td><b>${esc(obSN(a.site))}</b></td>`:''}<td>${a.what==='trn'?'Training session':'Site observation'}</td><td>${a.freq==='weekly'?'Every week':a.freq==='monthly'?'Every month':'Once'}</td><td>${a.freq==='weekly'?['Mon','Tue','Wed','Thu','Fri','Sat'][num(a.day||5)-1]:a.freq==='monthly'?'date '+(a.day||28):(a.due?fmtD(a.due):'—')}</td>
+      <td>${s.ok?PILL('ok','✓ '+s.txt):s.late?PILL('bd',s.txt):PILL('wn',s.txt)}</td><td style="white-space:normal">${esc(a.note||'')}</td><td>${fmtD(a.date)} · ${esc(a.who||'')}</td>${ho?`<td><button class="btn sm" onclick="obDel('ask','${a.id}')">Stop</button></td>`:''}</tr>`)):`<p class="note">${ho?'Nothing asked yet. Click “+ Ask a site” — for example a training session every week, or a site observation every month.':'HO has not asked anything yet.'}</p>`,'done = the site has uploaded it for this week / month');
+    if(!ho) h+='<p class="note">To do what is asked: upload a training session on the <b>Training sessions</b> tab, or give an observation on the <b>Observations</b> tab. It turns ✓ by itself.</p>'; }
+  return h; }; }
+(()=>{ const s=document.createElement('style'); s.textContent='.obold{margin-top:16px}.obold>summary{cursor:pointer;font-weight:700;color:#1e3a5f;padding:8px 0;font-size:15px}.panel td:first-child{white-space:nowrap}.obbar{align-items:center;gap:6px}.obbar .qei{width:auto;text-align:left}.obbar .btn.p:last-child{margin-left:auto}.chf{border:2px solid #0f766e}.chg{display:flex;flex-wrap:wrap;gap:12px;align-items:flex-end;margin:4px 0 10px}.chg label{display:flex;flex-direction:column;font-size:12.5px;color:#5d6a76;gap:3px}'; document.head.appendChild(s); })();
+T2_NAMES.practice='Site Dashboard';
+try{ render(); }catch(e){ console.error(e); }
 
 /* ================= trk13 · menu clean-up · 7 groups · old pages become tabs ================= */
 const T13=[
- {h:'dashboard',n:'Site Dashboard',t:[['dashboard','Dashboard'],['meeting','Review Meeting']],sub:{qsum:'dashboard',manual:'dashboard'}},
- {h:'planning',n:'Planning',t:[['planning','Formwork Scheduling'],['cycle','Cycle Planning'],['dehire','De-hire Planning']]},
- {h:'rent',n:'Hire Charges & Bills',t:[['rent','Hire Charges'],['invoices','Vendor Bill Check'],['siDmg','Damage charges']]},
- {h:'prpo',n:'Purchase',t:[['prpo','PR & PO'],['rentbuy','Material Earnings']]},
- {h:'setup',n:'Project Setup',t:[['setup','Systems & Areas'],['scope','Scope & Work Breakdown'],['rates','Rate Contracts']],sub:{tkStages:'setup',tkSetup:'scope'}},
- {h:'coMaster',n:'Masters',t:[['coMaster','Material Master'],['coHR','Height Rules']]},
- {h:'data',n:'Backup & Settings',t:[['data','Backup & Settings'],['audit','Change Log'],['bin','Recently Deleted'],['cflx','Sync Conflicts'],['storage','Storage File'],['coUsers','Users'],['coLog','Company Log'],['coCflx','Company Conflicts']]}];
-const T13_CO=new Set(['coMaster','coHR','coUsers','coLog','coCflx']);
+ {h:'coMat',n:'Material · All Sites',t:[['coMat','Overview'],['coReq','Site Requisitions'],['coSur','Surplus Material'],['coTr','Inter-site Transfers'],['coRent','Rental Asset Register']]},
+ {h:'tkMap',n:'Progress Map',t:[['tkMap','Progress Map'],['sitemap','Site Layout · material by zone']]},
+ {h:'tkAll',n:'All Projects',t:[['tkAll','All Projects'],['portfolio','Portfolio Overview'],['coPvA','Plan vs Actual'],['coReport','Performance Report']]},
+ {h:'dashboard',n:'Site Dashboard',t:[['dashboard','Dashboard'],['meeting','Review Meeting'],['practice','Site Observations'],['notes','Site Notes']],sub:{qsum:'dashboard',manual:'dashboard'}},
+ {h:'coLedger',n:'Company Asset',t:[['coLedger','Asset Ledger'],['coDep','Depreciation'],['coAssets','Site Asset Registers']]},
+ {h:'planning',n:'Planning',t:[['planning','Formwork Scheduling'],['cycle','Cycle Planning'],['dehire','De-hire Planning'],['coWO','Work Orders']]},
+ {h:'rent',n:'Hire Charges & Bills',t:[['rent','Hire Charges'],['invoices','Vendor Bill Check'],['siDmg','Damage charges'],['coIdle','Idle Assets']]},
+ {h:'prpo',n:'Purchase',t:[['prpo','PR & PO'],['rentbuy','Material Earnings'],['coPR','PR & PO Register']]},
+ {h:'setup',n:'Project Setup',t:[['setup','Systems & Areas'],['scope','Scope & Work Breakdown'],['rates','Rate Contracts'],['coSites','Sites & Stores'],['coOpen','Opening Balances']],sub:{tkStages:'setup',tkSetup:'scope'}},
+ {h:'data',n:'Backup & Settings',t:[['data','Backup & Settings'],['health','Data Check'],['coHealth','Data Integrity'],['audit','Change Log'],['bin','Recently Deleted'],['cflx','Sync Conflicts'],['storage','Storage File'],['coUsers','Users'],['coLog','Company Log'],['coCflx','Company Conflicts']]}];
+const T13_CO={has:k=>/^co/.test(k)};
+T2_NAMES.coMaster='Material Master'; /* Height Rules not needed: Material Master opens direct, no tabs */
 const t13Badge=()=>{ try{ return sideBadges()||{}; }catch(e){ return {}; } };
 const t13Show=(r,cur)=>PAGES[r]&&(!T13_CO.has(r)||coAllowed())&&(!/^(cflx|coCflx)$/.test(r)||r===cur||t13Badge()[r]);
 const t13Of={}; T13.forEach(g=>{ g.t.forEach(([k])=>t13Of[k]=g); Object.keys(g.sub||{}).forEach(k=>t13Of[k]=g); });
@@ -8647,22 +8848,26 @@ Object.keys(t13Of).forEach(k=>{ const o=PAGES[k]; if(!o) return; PAGES[k]=functi
 T13.forEach(g=>{ T2_NAMES[g.h]=g.n; g.t.forEach(([k])=>{ if(k!==g.h){ T2_ALIAS[k]=g.h; T2_NAMES[k]=g.n; } }); Object.keys(g.sub||{}).forEach(k=>{ T2_ALIAS[k]=g.h; T2_NAMES[k]=g.n; }); });
 /* the menu: 7 groups (site) · company groups added for head office */
 const M13_SITE=[
- ['Daily',['home','dashboard','tkMap'],['health','tkSheet','quick','sitemap','practice','notes']],
- ['Progress',['tkEntry','tkTarget','tkLook'],['labour']],
+ ['Daily',['home','dashboard','tkMap'],[]],
+ ['Progress',['tkEntry','tkTarget','tkLook'],['tkSheet','labour']],
  ['Store',['stkSum','ioSum','isSum','siReqm'],[]],
  ['Design',['dzSlab','dzReg','dzCrit','dzPack','qe'],[]],
  ['Planning',['planning'],[]],
  ['Cost & Rental',['rent','prpo'],[]],
- ['Setup',['setup','coMaster','data'],['more']]];
+ ['Setup',['setup','coMaster','data'],[]]];
+/* HO formwork department: short menu, company pages are tabs */
 const M13_HO=[
- ['Daily',['home','tkAll','dashboard'],['portfolio','health','coHealth','quick','sitemap','practice','notes']],
- ['Progress',['tkTarget','tkLook','tkMap'],['tkSheet','tkEntry','coPvA','coReport','labour']],
- ['Store',['stkSum','ioSum','isSum','siReqm'],['coReq','coSur','coTr']],
- ['Company Asset',['coLoc'],['coLedger','coDep','coAssets']],
+ ['Daily',['home','tkAll','dashboard'],[]],
+ ['Progress',['tkTarget','tkLook','tkMap'],[]],
+ ['Store',['coMat','stkSum','ioSum','isSum','siReqm'],[]],
+ ['Company Asset',['coLedger'],[]],
  ['Design',['dzSlab','dzReg','dzCrit','dzPack','qe'],[]],
- ['Planning',['planning'],['coWO']],
- ['Cost & Rental',['rent','prpo'],['coPR','coRent','coIdle']],
- ['Setup',['setup','coMaster','data'],['coSites','coOpen','more']]];
+ ['Planning',['planning'],[]],
+ ['Cost & Rental',['rent','prpo'],[]],
+ ['Setup',['setup','coMaster','data'],[]]];
+/* company store pages join the Store tabs */
+[].forEach(([h,T])=>{ const g=SG.find(x=>x.h===h); if(!g) return; T.forEach(([k,l])=>{ if(!PAGES[k]) return; g.t.push([k,l]); SG_OF[k]=g; T2_ALIAS[k]=h; T2_NAMES[k]=g.n; const o=PAGES[k]; PAGES[k]=function(){ return sgTabs(k)+o.apply(this,arguments); }; }); });
+SG.forEach(g=>g.t.forEach(([k])=>{ const o=PAGES[k]; if(!o) return; PAGES[k]=function(){ const h=o.apply(this,arguments); return coAllowed()?h:h.replace(/<button[^>]*go\('co[A-Za-z]+'\)[^>]*>[^<]*<\/button>/g,''); }; }));
 T2_SITE.length=0; M13_SITE.forEach(x=>T2_SITE.push(x)); T2_HO.length=0; M13_HO.forEach(x=>T2_HO.push(x));
 t2Build=function(){ if(!t2On()){ T2_CUR=null; return; }
   const {M}=tkAllPages(), coK=new Set(NAV_CO.flatMap(g=>g.items.map(x=>x[0]))), used=new Set();
@@ -8670,15 +8875,30 @@ t2Build=function(){ if(!t2On()){ T2_CUR=null; return; }
   const lab=k=>T2_NAMES[k]||M.get(k)||k, parts=[];
   t2Parts().forEach(([g,v,f])=>{ const V=v.filter(ok); V.forEach(k=>used.add(k)); const Fd=f.filter(ok); Fd.forEach(k=>used.add(k)); if(V.length||Fd.length) parts.push({g,v:V,f:Fd}); });
   const pins=tkPins().filter(k=>ok(k)&&!T2_ALIAS[k]); pins.forEach(k=>used.add(k)); if(pins.length) parts.splice(1,0,{g:'Pinned',v:pins,f:[]});
-  const alias=Object.keys(T2_ALIAS).filter(k=>PAGES[k]);
+  const alias=Object.keys(T2_ALIAS).filter(k=>PAGES[k]); if(t2Parts()!==T2_HO) ['dzSlab'].forEach(k=>{ if(PAGES[k]&&!used.has(k)) alias.push(k); });
   T2_CUR={parts,lab};
   NAV.length=0; parts.forEach(p=>NAV.push({g:p.g,items:[...p.v,...p.f].map(k=>[k,lab(k)])})); NAV.push({g:'_alias',items:alias.map(k=>[k,lab(k)])}); };
 /* a badge on a tab also shows on its menu item */
 { const _b=sideBadges; sideBadges=function(){ const B=_b.apply(this,arguments)||{}; T13.concat(typeof SG!=='undefined'?SG:[]).forEach(g=>{ if(B[g.h]) return; const x=g.t.map(([k])=>B[k]).find(Boolean); if(x) B[g.h]=x; }); return B; }; }
 /* tab routes highlight their menu item (two steps: tkSetup → scope → setup) */
 Object.keys(T2_ALIAS).forEach(k=>{ let v=T2_ALIAS[k], n=0; while(T2_ALIAS[v]&&n++<4) v=T2_ALIAS[v]; T2_ALIAS[k]=v; });
+/* More Pages removed: the menu choice (Site / HO / HoD) is a small box on Backup & Settings */
+function t13RoleBox(){ const r=tkRole()||'site'; return `<div class="panel"><div class="ph"><span>My menu</span><small>changes only the menu · data is the same</small></div><div class="pb"><div class="chips">${Object.entries(TK_ROLES).map(([k,v])=>`<button class="btn ${r===k?'p':''}" onclick="tkSetRole('${k}')">${esc(v.name)}</button>`).join('')}</div></div></div>`; }
+{ const o=PAGES.data; if(o) PAGES.data=function(){ const h=o.apply(this,arguments); return h.replace(/^(<div class="sgt">[\s\S]*?<\/div><\/div>)/,'$1'+t13RoleBox()); }; }
+PAGES.more=function(){ setTimeout(()=>go('data'),0); return '<p class="note">Opening Backup &amp; Settings…</p>'; }; T2_ALIAS.more='data'; T2_ALIAS.mypages='data'; T2_ALIAS.coHR='coMaster'; T2_ALIAS.coHealth='data';
+try{ tkLS('ft_allpages',null); }catch(e){}
 TK_ROLES.site.menu=[['Daily',[['home','Today'],['dashboard','Site Dashboard'],['tkMap','Progress Map']]]];
 try{ setNav(); render(); }catch(e){ console.error(e); }
+/* tab bars: no grey title (it is not a tab), no small up/down scroll arrows */
+(()=>{ const s=document.createElement('style'); s.textContent='.sgt>b{display:none!important}.sgt,.sgt>div{overflow-y:hidden!important;scrollbar-width:thin}.sgt>div::-webkit-scrollbar{height:4px;width:0}.sgt .bdg{vertical-align:2px;margin-left:4px}'; document.head.appendChild(s); })();
+/* Height Rules not needed: the page is closed (its saved values stay untouched) */
+PAGES.coHR=function(){ setTimeout(()=>go('coMaster'),0); return '<p class="note">Opening Material Master…</p>'; };
+
+/* Asset Location = Material · All Sites overview (same table) */
+PAGES.coLoc=function(){ setTimeout(()=>{ state.ui.cmV='own'; go('coMat'); },0); return '<p class="note">Opening Material · All Sites…</p>'; }; T2_ALIAS.coLoc='coMat';
+/* the Site | Company switch is not needed any more: HO's menu already holds the company pages (Material · All Sites, Company Asset …) */
+(()=>{ const s=document.createElement('style'); s.textContent='body.t2m .wsw,.wsw{display:none!important}'; document.head.appendChild(s); })();
+try{ if(typeof wsGet==='function'&&wsGet()==='company') wsSet('site'); }catch(e){}
 </script>
 </body>
 </html>
