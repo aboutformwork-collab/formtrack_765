@@ -661,7 +661,7 @@ select.dzin{width:auto;max-width:230px;text-align:left}
 <input type="file" id="restoreFile" accept=".json" style="display:none" onchange="if(this.files[0])restoreBackup(this.files[0]);this.value=''">
 <input type="file" id="fsPick" style="display:none" onchange="fsOpenFile(this.files[0]);this.value=''">
 
-<script>window.__FORMTRACK_PWA=true; window.__FORMTRACK_VER="2026.11.24-0011"; window.__FORMTRACK_VERNAME="24 Nov 00:11"; window.__FT_TRIAL_FROM=1793358725887; window.__FT_OWNER_KEYS=["FTK1.KFWlfr8L9B9vCV5zDqch0g==.dbjdxh8PZxOLP1CNQ2z3RabZkTuh7AORMJY1xre+tWo=", "FTK1.Osl5ooyWCagTRuMdk06Obg==.rchABMlUZsicdxq192DnzmUcdgRXTqVE0LzUln8iqDY="]; window.__FT_ACCESS_PUB="SC1QzgBryXETIvpdPX-L1vNG0PfXbclYD1uqU4rGGy0"; window.__FT_BLOCKED=[];</script>
+<script>window.__FORMTRACK_PWA=true; window.__FORMTRACK_VER="2026.11.24-0101"; window.__FORMTRACK_VERNAME="24 Nov 01:01"; window.__FT_TRIAL_FROM=1793358725887; window.__FT_OWNER_KEYS=["FTK1.KFWlfr8L9B9vCV5zDqch0g==.dbjdxh8PZxOLP1CNQ2z3RabZkTuh7AORMJY1xre+tWo=", "FTK1.Osl5ooyWCagTRuMdk06Obg==.rchABMlUZsicdxq192DnzmUcdgRXTqVE0LzUln8iqDY="]; window.__FT_ACCESS_PUB="SC1QzgBryXETIvpdPX-L1vNG0PfXbclYD1uqU4rGGy0"; window.__FT_BLOCKED=[];</script>
 <script>
 /* FormTrack */
 const STORE_KEY = 'formtrack_data_v2';
@@ -9176,6 +9176,64 @@ function rpCalc(sId,m){ const s=sysObj(sId)||{}, U=rpUsed(sId,m); let rows=[];
   const k=h.indexOf('<div class="panel'); return k>=0?h.slice(0,k)+p+h.slice(k):h+p; }; }
 (()=>{ const s=document.createElement('style'); s.textContent='.rpcalc{background:#fff;border:1px solid #e4ddd2;border-radius:8px;padding:8px}.rpcalc tr.rpuse td{background:#ecfdf5}.panel td .btn.sm+.btn.sm{margin-left:4px}'; document.head.appendChild(s); })();
 try{ render(); }catch(e){}
+
+/* ================= trk23 · shared work: one element done with two systems (e.g. RW with two vendors) — work done is split for repetition and system cost ================= */
+const wsL=()=>{ state.workShare=Array.isArray(state.workShare)?state.workShare:[]; return state.workShare; };
+function wsSet_(sId,aId){ const r=rateRow(sId,aId); if(r&&num(r.requiredSqm)>0&&(sysObj(sId)||{}).rentOnReq==='Only required sqm') return num(r.requiredSqm); let b=0; try{ b=Math.max(0,rentBalOn(sId,aId,todayStr())); }catch(e){} return b||num((r||{}).requiredSqm); }
+function wsShares(g){ const M=g.members||[]; if(g.basis==='pct'){ const t=M.reduce((a,m)=>a+num(m.pct),0)||1; return M.map(m=>num(m.pct)/t); } const S=M.map(m=>wsSet_(m.sys,m.area)), t=S.reduce((a,x)=>a+x,0)||1; return S.map(x=>x/t); }
+/* execution list with shared groups split by share */
+const wsSrc=g=>(g.src&&g.src.length)?g.src:(g.members||[]).map(m=>m.area);
+function wsSplit(E){ const G=wsL().filter(g=>(g.members||[]).length>1); if(!G.length) return E; const out=[], inG=new Map(); G.forEach(g=>wsSrc(g).forEach(a=>inG.set(a,g)));
+  const sh=new Map(G.map(g=>[g.id,wsShares(g)]));
+  E.forEach(e=>{ const g=inG.get(e.areaId); if(!g||sysUnit(e.systemId)!=='sqm') return out.push(e); const S=sh.get(g.id); g.members.forEach((m,i)=>{ if(S[i]>0) out.push(Object.assign({},e,{id:e.id+'#'+i,systemId:m.sys,areaId:m.area,sqm:num(e.sqm)*S[i],_ws:g.id})); }); });
+  return out; }
+function wsWrap(fn){ return function(){ const E=state.execution; state.execution=wsSplit(E); try{ return fn.apply(this,arguments); } finally{ state.execution=E; } }; }
+costGrouped=wsWrap(costGrouped); workQty=wsWrap(workQty);
+/* editor */
+function wsNew(){ wsL().push({id:uid(),name:'Shared work',basis:'set',members:[]}); state.wsU=nowMs(); save(); render(); }
+function wsDel(id){ askConfirm('Remove this shared-work rule? Work done goes back to how it was entered.',()=>{ state.workShare=wsL().filter(g=>g.id!==id); state.wsU=nowMs(); save(); render(); },'Remove'); }
+function wsTog(id,sys,area,on){ const g=wsL().find(x=>x.id===id); if(!g) return; g.members=(g.members||[]).filter(m=>!(m.sys===sys&&m.area===area)); if(on) g.members.push({sys,area,pct:0}); state.wsU=nowMs(); save(); render(); }
+function wsSrcTog(id,area,on){ const g=wsL().find(x=>x.id===id); if(!g) return; g.src=wsSrc(g).filter(a=>a!==area); if(on) g.src.push(area); state.wsU=nowMs(); save(); render(); }
+function wsF(id,k,v,i){ const g=wsL().find(x=>x.id===id); if(!g) return; if(i!=null) g.members[i].pct=num(v); else g[k]=v; state.wsU=nowMs(); save(); render(); }
+/* system-wise repetition: each system's own work ÷ its own set */
+function wsRep(){ const E=wsSplit(state.execution), out=[];
+  rentalSystems().filter(s=>!isPcs(s.id)).forEach(s=>{ const A=ledgerAreas(s.id); if(!A.length) return; const ex=sumSqm(E.filter(e=>e.systemId===s.id)); let sd=0,days=0; const m0=monthOf(projectStart()), m1=thisMonth();
+    for(let m=m0;m<=m1;m=addMonth(m,1)){ const pe=periodEnd(m); days+=Number(pe.slice(8)); A.forEach(a=>{ const r=monthRent(s.id,a,m); sd+=num(r.sqmDaysAll||r.sqmDays); }); }
+    const capped=s.rentOnReq==='Only required sqm', req=A.reduce((a,x)=>a+num((rateRow(s.id,x)||{}).requiredSqm),0), now=A.reduce((a,x)=>{ try{ return a+Math.max(0,rentBalOn(s.id,x,todayStr())); }catch(e){ return a; } },0), avg=days?sd/days:0;
+    const set=capped&&req?req:avg; out.push({s,ex,avg,now,req,capped,set,rep:set?ex/set:0,repNow:(capped&&req?req:now)?ex/(capped&&req?req:now):0,shared:E.some(e=>e.systemId===s.id&&e._ws)}); });
+  return out; }
+function wsPanel(){ const R=wsRep(), G=wsL(), pairs=[]; rentalSystems().filter(s=>!isPcs(s.id)).forEach(s=>ledgerAreas(s.id).forEach(a=>pairs.push({sys:s.id,area:a})));
+  let h=panel('Repetition · system-wise',simpleTable([['System'],['Work done (sqm)',1],['Set used',1],['Repetitions',1],['Same with set on site today',1],['Note']],R.map(x=>`<tr><td><b>${esc(x.s.name)}</b></td><td class="r">${fmtN(x.ex,1)}${x.shared?' <small class="muted">incl. share</small>':''}</td><td class="r">${fmtN(x.set,1)} <small class="muted">${x.capped&&x.req?'required (billed)':'average on site'}</small></td><td class="r"><b>${x.set?fmtN(x.rep,2):'—'}</b></td><td class="r">${x.repNow?fmtN(x.repNow,2):'—'} <small class="muted">÷ ${fmtN(x.capped&&x.req?x.req:x.now,1)}</small></td><td><small class="muted">${x.ex?'':'no work entered'}</small></td></tr>`)),'each system: its own work ÷ its own set');
+  h+=panel('Shared work · one element, two systems',(G.length?G.map(g=>{ const S=wsShares(g); return `<div class="lotbox"><div class="chips"><input class="coi" style="width:220px" value="${esc(g.name)}" onchange="wsF('${g.id}','name',this.value)"><label>Split work done</label><button class="btn sm ${g.basis!=='pct'?'p':''}" onclick="wsF('${g.id}','basis','set')">by set sqm</button><button class="btn sm ${g.basis==='pct'?'p':''}" onclick="wsF('${g.id}','basis','pct')">fixed %</button><button class="btn sm" onclick="wsDel('${g.id}')">Remove</button></div>
+    <div class="chips"><label>1. Work entered on</label>${state.areas.filter(a=>(a.name||'').trim()&&state.execution.some(e=>e.areaId===a.id)).map(a=>`<label class="dzck"><input type="checkbox" ${wsSrc(g).includes(a.id)?'checked':''} onchange="wsSrcTog('${g.id}','${a.id}',this.checked)"> ${esc(areaName(a.id))} <small class="muted">${fmtN(sumSqm(state.execution.filter(e=>e.areaId===a.id)),1)} sqm</small></label>`).join(' ')}</div>
+    <div class="chips"><label>2. Split to (system · its material area)</label>${pairs.map(p=>{ const on=(g.members||[]).some(m=>m.sys===p.sys&&m.area===p.area); return `<label class="dzck"><input type="checkbox" ${on?'checked':''} onchange="wsTog('${g.id}','${p.sys}','${p.area}',this.checked)"> ${esc(sysName(p.sys))} · ${esc(areaName(p.area))}</label>`; }).join(' ')}</div>
+    ${(g.members||[]).length?simpleTable([['System · area'],['Set sqm',1],['Share',1],...(g.basis==='pct'?[['%',1]]:[])],g.members.map((m,i)=>`<tr><td><b>${esc(sysName(m.sys))}</b> · ${esc(areaName(m.area))}</td><td class="r">${fmtN(wsSet_(m.sys,m.area),1)}</td><td class="r"><b>${Math.round(S[i]*1000)/10} %</b></td>${g.basis==='pct'?`<td class="r"><input class="coi" type="number" style="width:80px;text-align:right" value="${m.pct||''}" onchange="wsF('${g.id}','pct',this.value,${i})"></td>`:''}</tr>`)):'<p class="note">Tick the systems and their areas used together for this element.</p>'}</div>`; }).join(''):'<p class="note">No shared work yet.</p>')
+    +`<div class="acts"><button class="btn sm p" onclick="wsNew()">+ Shared work rule</button></div><p class="note">When one element (e.g. retaining wall) is cast with two systems together and the work is entered as one quantity, add a rule here: 1. tick where the work is entered, 2. tick each system with the area its material is booked on. The work is split between them — by each system's set sqm (required sqm when billed on required, else sqm on site) or by a fixed %. Repetition and system cost then use each system's share.</p>`,'work entered once, split between systems');
+  return h; }
+
+/* ---- matrix version: for each work (where it is entered) tick the material sets used; work is split by set sqm ---- */
+function wmAvg(sId,aId){ const s=sysObj(sId)||{}, r=rateRow(sId,aId); if(s.rentOnReq==='Only required sqm'&&r&&num(r.requiredSqm)>0) return num(r.requiredSqm); let sd=0,days=0; for(let m=monthOf(projectStart());m<=thisMonth();m=addMonth(m,1)){ const pe=periodEnd(m); days+=Number(pe.slice(8)); const x=monthRent(sId,aId,m); sd+=num(x.sqmDaysAll||x.sqmDays); } return days?sd/days:0; }
+const wmS=()=>{ state.workMap=state.workMap&&typeof state.workMap==='object'?state.workMap:{}; return state.workMap; };
+const wmPairs=()=>{ const P=[]; rentalSystems().filter(s=>!isPcs(s.id)).forEach(s=>ledgerAreas(s.id).forEach(a=>P.push({sys:s.id,area:a}))); return P; };
+const wmRow=w=>{ const M=wmS()[w]; if(Array.isArray(M)) return M; return wmPairs().filter(p=>p.area===w); };   /* default: material booked on the same area */
+function wmTog(w,sys,area,on){ const M=wmRow(w).filter(m=>!(m.sys===sys&&m.area===area)); if(on) M.push({sys,area}); wmS()[w]=M; state.wmU=nowMs(); save(); render(); }
+function wmShares(M){ const S=M.map(m=>wsSet_(m.sys,m.area)), t=S.reduce((a,x)=>a+x,0); return t?S.map(x=>x/t):M.map(()=>1/Math.max(1,M.length)); }
+wsSplit=function(E){ const W=wmS(); if(!Object.keys(W).length) return E; const cache=new Map(), out=[];
+  E.forEach(e=>{ if(!Array.isArray(W[e.areaId])||sysUnit(e.systemId)!=='sqm') return out.push(e); const M=W[e.areaId]; if(!M.length) return out.push(e);
+    if(!cache.has(e.areaId)) cache.set(e.areaId,wmShares(M)); const S=cache.get(e.areaId); M.forEach((m,i)=>{ if(S[i]>0) out.push(Object.assign({},e,{id:e.id+'#'+i,systemId:m.sys,areaId:m.area,sqm:num(e.sqm)*S[i],_ws:1})); }); });
+  return out; };
+wsPanel=function(){ const R=wsRep(), P=wmPairs(), WA=state.areas.filter(a=>(a.name||'').trim()&&state.execution.some(e=>e.areaId===a.id&&sysUnit(e.systemId)==='sqm'));
+  let h=panel('Repetition · system-wise',simpleTable([['System'],['Work done (sqm)',1],['Set used',1],['Repetitions',1],['Same with set on site today',1]],R.map(x=>`<tr><td><b>${esc(x.s.name)}</b></td><td class="r">${fmtN(x.ex,1)}</td><td class="r">${fmtN(x.set,1)} <small class="muted">${x.capped&&x.req?'required (billed)':'average on site'}</small></td><td class="r"><b>${x.set?fmtN(x.rep,2):'—'}</b></td><td class="r">${x.repNow?fmtN(x.repNow,2):'—'} <small class="muted">÷ ${fmtN(x.capped&&x.req?x.req:x.now,1)}</small></td></tr>`)),'each system: its own work ÷ its own set');
+  const set=P.map(p=>wsSet_(p.sys,p.area));
+  h+=panel('Which material set did each work use?',`<div class="tw"><table class="sheet wm"><thead><tr><th>Work entered on</th><th class="r">Work done (sqm)</th>${P.map((p,i)=>`<th class="c">${esc(sysName(p.sys))}<br><small>${esc(areaName(p.area))}</small><br><small class="muted">set ${fmtN(set[i],0)}</small></th>`).join('')}</tr></thead><tbody>${WA.map(a=>{ const M=wmRow(a.id), S=wmShares(M), ex=sumSqm(state.execution.filter(e=>e.areaId===a.id&&sysUnit(e.systemId)==='sqm'));
+      return `<tr><td><b>${esc(areaName(a.id))}</b></td><td class="r">${fmtN(ex,1)}</td>${P.map(p=>{ const i=M.findIndex(m=>m.sys===p.sys&&m.area===p.area); return `<td class="c ${i>=0?'on':''}"><label><input type="checkbox" ${i>=0?'checked':''} onchange="wmTog('${a.id}','${p.sys}','${p.area}',this.checked)">${i>=0?` <b>${Math.round(S[i]*1000)/10} %</b><br><small>${fmtN(ex*S[i],1)} sqm</small>`:''}</label></td>`; }).join('')}</tr>`; }).join('')}${(()=>{ const W=P.map(()=>0); WA.forEach(a=>{ const M=wmRow(a.id), S=wmShares(M), ex=sumSqm(state.execution.filter(e=>e.areaId===a.id&&sysUnit(e.systemId)==='sqm')); M.forEach((m,i)=>{ const k=P.findIndex(p=>p.sys===m.sys&&p.area===m.area); if(k>=0) W[k]+=ex*S[i]; }); });
+      return `<tr class="fmt"><td><b>Work given to each set</b></td><td></td>${W.map(w=>`<td class="c">${w?fmtN(w,1):'—'}</td>`).join('')}</tr><tr class="fmt"><td><b>Average set on site</b></td><td><small class="muted">over the months</small></td>${P.map(p=>`<td class="c">${fmtN(wmAvg(p.sys,p.area),1)}</td>`).join('')}</tr><tr class="fmt"><td><b>Repetitions of each set</b></td><td><small class="muted">work ÷ average set</small></td>${W.map((w,i)=>{ const a=wmAvg(P[i].sys,P[i].area); return `<td class="c"><b>${w&&a?fmtN(w/a,2):'—'}</b></td>`; }).join('')}</tr>`; })()}</tbody></table></div>
+    <p class="note">One row for each work you enter (pile cap, column, retaining wall …). Tick every material set that was used for it — e.g. <b>Retaining wall</b> → the RW + Column set of one vendor and the RW set of another; <b>Pile Cap</b> → the Pile Cap set and the RW with Pile Cap set. The work is split between the ticked sets by their set sqm (required sqm when billed on required, else sqm on site). Repetition and system cost use these shares.</p>`,'work → material');
+  return h; };
+{ const o=PAGES.dashboard; PAGES.dashboard=function(){ const h=o.apply(this,arguments); const t=state.ui.dashTab; if(t!=='rep') return h; return h+wsPanel(); }; }
+try{ render(); }catch(e){}
+
+(()=>{ const s=document.createElement('style'); s.textContent='.wm th.c,.wm td.c{text-align:center;min-width:110px}.wm td.c.on{background:#ecfdf5}.wm td.c label{display:block;cursor:pointer}'; document.head.appendChild(s); })();
 </script>
 </body>
 </html>
