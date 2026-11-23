@@ -661,7 +661,7 @@ select.dzin{width:auto;max-width:230px;text-align:left}
 <input type="file" id="restoreFile" accept=".json" style="display:none" onchange="if(this.files[0])restoreBackup(this.files[0]);this.value=''">
 <input type="file" id="fsPick" style="display:none" onchange="fsOpenFile(this.files[0]);this.value=''">
 
-<script>window.__FORMTRACK_PWA=true; window.__FORMTRACK_VER="2026.11.23-1817"; window.__FORMTRACK_VERNAME="23 Nov 18:17"; window.__FT_TRIAL_FROM=1793358725887; window.__FT_OWNER_KEYS=["FTK1.KFWlfr8L9B9vCV5zDqch0g==.dbjdxh8PZxOLP1CNQ2z3RabZkTuh7AORMJY1xre+tWo=", "FTK1.Osl5ooyWCagTRuMdk06Obg==.rchABMlUZsicdxq192DnzmUcdgRXTqVE0LzUln8iqDY="]; window.__FT_ACCESS_PUB="SC1QzgBryXETIvpdPX-L1vNG0PfXbclYD1uqU4rGGy0"; window.__FT_BLOCKED=[];</script>
+<script>window.__FORMTRACK_PWA=true; window.__FORMTRACK_VER="2026.11.24-0011"; window.__FORMTRACK_VERNAME="24 Nov 00:11"; window.__FT_TRIAL_FROM=1793358725887; window.__FT_OWNER_KEYS=["FTK1.KFWlfr8L9B9vCV5zDqch0g==.dbjdxh8PZxOLP1CNQ2z3RabZkTuh7AORMJY1xre+tWo=", "FTK1.Osl5ooyWCagTRuMdk06Obg==.rchABMlUZsicdxq192DnzmUcdgRXTqVE0LzUln8iqDY="]; window.__FT_ACCESS_PUB="SC1QzgBryXETIvpdPX-L1vNG0PfXbclYD1uqU4rGGy0"; window.__FT_BLOCKED=[];</script>
 <script>
 /* FormTrack */
 const STORE_KEY = 'formtrack_data_v2';
@@ -9088,6 +9088,94 @@ try{ t20Look(); render(); }catch(e){}
   h=h.replace(/<div class="tdprog">[\s\S]*?<\/div><\/div>/,'');
   return t20Ins(h,k); }; }
 (()=>{ const s=document.createElement('style'); s.textContent='#main .qcard.tdc{background:var(--card,#fffdf8);border:1px solid #e4ddd2;border-radius:12px;box-shadow:none;padding:0;overflow:hidden}#main .qcard.tdc .tdtop{background:#efe7da;padding:10px 14px;margin:0;border-bottom:1px solid #e4ddd2;display:flex;align-items:center;gap:12px}#main .qcard.tdc .tdtop h3{font-size:15px;margin:0;color:#1f2a37}#main .qcard.tdc>*:not(.tdtop){margin-left:14px;margin-right:14px}#main .qcard.tdc>*:last-child{margin-bottom:12px}#main .qcard.tdc .tdtop label{margin-left:auto}#main .qcard.tdc+.qcard{margin-top:14px}'; document.head.appendChild(s); })();
+/* bill only the required sqm (vendor agreed): one-click switch per system on Hire Charges */
+function t20ReqOn(id,on){ const s=state.systems.find(x=>x.id===id); if(!s) return; s.rentOnReq=on?'Only required sqm':'All sqm on site'; s._u=nowMs(); try{ C.rent.clear(); }catch(e){} save(); toast(on?esc(s.name)+': rent now on required sqm only.':esc(s.name)+': rent on all sqm on site.'); render(); }
+{ const o=PAGES.rent; if(o) PAGES.rent=function(){ const h=o.apply(this,arguments); const m=state.ui.month||thisMonth();
+  const L=rentalSystems().map(s=>{ const R=state.rates.filter(r=>r.systemId===s.id&&num(r.requiredSqm)>0); if(!R.length) return null; let on=0; R.forEach(r=>{ try{ on+=Math.max(0,rentBalOn(s.id,r.areaId,periodEnd(m))); }catch(e){} }); const req=R.reduce((a,r)=>a+num(r.requiredSqm),0), capped=s.rentOnReq==='Only required sqm'; return {s,req,on,capped}; }).filter(x=>x&&(x.on>x.req+0.01||x.capped));
+  if(!L.length) return h;
+  const p=panel('Rent on required sqm',simpleTable([['System · vendor'],['Required sqm',1],['On site now',1],['Extra',1],['Rent counted on'],['']],L.map(x=>`<tr><td><b>${esc(x.s.name)}</b> <small class="muted">${esc(x.s.vendor||'')}</small></td><td class="r">${fmtN(x.req,1)}</td><td class="r">${fmtN(x.on,1)}</td><td class="r">${x.on>x.req?`<b class="neg">${fmtN(x.on-x.req,1)}</b>`:'—'}</td><td>${x.capped?PILL('ok','Required sqm only'):PILL('wn','All sqm on site')}</td><td>${x.capped?`<button class="btn sm" onclick="t20ReqOn('${x.s.id}',false)">Charge all sqm</button>`:`<button class="btn sm p" onclick="t20ReqOn('${x.s.id}',true)">Bill only ${fmtN(x.req,0)} sqm</button>`}</td></tr>`))+'<p class="note">Use “Bill only required sqm” when the vendor agreed to bill the required quantity (rate contract → Required sqm), even if more material was sent. The extra is still shown, but not counted in rent or cost.</p>','vendor sent more than required');
+  const k=h.indexOf('<div class="panel'); return k>=0?h.slice(0,k)+p+h.slice(k):h+p; }; }
+
+/* ================= trk21 · rent start by pour lot (work order): rent for a lot starts only when that lot is 100 % received ================= */
+const RM_LOT='When pour lot is complete';
+if(!RENT_MODES.includes(RM_LOT)) RENT_MODES.push(RM_LOT);
+const lotRML=m=>m===RM_LOT?'When pour lot is 100 % received':RML(m);
+/* lots per system × area (rate contract row): "130+130" · empty = one lot of the required sqm */
+function lotList(sId,aId){ const r=rateRow(sId,aId)||{}; const L=String(r.lots||'').split(/[+,;\s]+/).map(num).filter(x=>x>0); return L.length?L:(num(r.requiredSqm)>0?[num(r.requiredSqm)]:[]); }
+const lotBase=sys=>(sys&&sys.lotDate)==='Invoice date'?'inv':'rec';
+function lotInfo(sId,aId){ const k='LOT|'+sId+'|'+aId; if(C.bal.has(k)) return C.bal.get(k);
+  const sys=sysObj(sId), L=lotList(sId,aId), R=state.ledger.filter(t=>t.systemId===sId&&t.areaId===aId&&t.type==='Received'&&t.date).slice().sort((a,b)=>a.date.localeCompare(b.date)), bs=lotBase(sys);
+  let cum=0, tgt=0; const lots=L.map((q,i)=>({i,q,from:(tgt+=q)-q,to:tgt,done:'',doc:''}));
+  R.forEach(t=>{ cum+=num(t.sqm); const dt=bs==='inv'?(t.rentFrom||t.date):t.date; lots.forEach(l=>{ if(!l.done&&cum>=l.to-1e-6){ l.done=dt; l.doc=t.challan||''; } }); });
+  /* a later lot can't start before the one before it */
+  lots.forEach((l,i)=>{ if(l.done&&i&&lots[i-1].done&&l.done<lots[i-1].done) l.done=lots[i-1].done; });
+  const res={L,lots,total:tgt,rec:cum,R,bs}; C.bal.set(k,res); return res; }
+{ const _b=rentBalOn; rentBalOn=function(sId,aId,d){ const sys=sysObj(sId); if(!sys||sys.rentMode!==RM_LOT||!lotList(sId,aId).length) return _b.apply(this,arguments);
+  const k='RL|'+sId+'|'+aId+'|'+d; if(C.bal.has(k)) return C.bal.get(k);
+  const I=lotInfo(sId,aId); let b=I.lots.filter(l=>l.done&&l.done<=d).reduce((a,l)=>a+l.q,0);
+  /* material beyond all lots: from its own date (received or invoice) */
+  let cum=0; I.R.forEach(t=>{ const q=num(t.sqm), over=Math.max(0,Math.min(q,cum+q-I.total)); cum+=q; const dt=I.bs==='inv'?(t.rentFrom||t.date):t.date; if(over>0&&dt<=d) b+=over; });
+  state.ledger.forEach(t=>{ if(t.systemId===sId&&t.areaId===aId&&t.type==='Dispatched'&&t.date&&(dispCharged(sId)?t.date<d:t.date<=d)) b-=num(t.sqm); });
+  b+=shiftNet(sId,aId,d); C.bal.set(k,b); return b; }; }
+function lotSet(sId,aId,v){ const r=rateRow(sId,aId); if(!r) return toast('Enter the rate for this area first (Rate Contracts).'); r.lots=String(v||'').trim(); r._u=nowMs(); clearCaches(); save(); render(); }
+function lotMode(sId,on){ const s=sysObj(sId); if(!s) return; s.rentMode=on?RM_LOT:RENT_MODES[0]; s._u=nowMs(); clearCaches(); save(); toast(on?esc(s.name)+': rent starts when each pour lot is fully received.':esc(s.name)+': rent from received date.'); render(); }
+function lotDateSet(sId,v){ const s=sysObj(sId); if(!s) return; s.lotDate=v; s._u=nowMs(); clearCaches(); save(); render(); }
+/* Hire Charges: rent start by pour lot */
+{ const o=PAGES.rent; if(o) PAGES.rent=function(){ const h=o.apply(this,arguments); const m=state.ui.month||thisMonth(), sel=state.ui.lotSys||'';
+  const S=rentalSystems().filter(s=>!isPcs(s.id)&&state.rates.some(r=>r.systemId===s.id&&num(r.rate)>0)); if(!S.length) return h;
+  const on=S.filter(s=>s.rentMode===RM_LOT);
+  let b=`<div class="chips"><label>Rent starts for</label>${S.map(s=>`<button class="btn sm ${s.rentMode===RM_LOT?'p':''}" onclick="lotMode('${s.id}',${s.rentMode!==RM_LOT})" title="click to switch">${esc(s.name)} · ${esc(lotRML(s.rentMode||RENT_MODES[0]))}</button>`).join('')}</div>`;
+  on.forEach(s=>{ const A=ledgerAreas(s.id).filter(a=>rateRow(s.id,a));
+    b+=`<div class="lotbox"><div class="chips"><b>${esc(s.name)}</b><label style="margin-left:12px">Lot complete date</label>${['Received date','Invoice date'].map(x=>`<button class="btn sm ${(s.lotDate||'Received date')===x?'p':''}" onclick="lotDateSet('${s.id}','${x}')">${x} of the last challan</button>`).join('')}</div>`
+     +simpleTable([['Area'],['Pour lots (sqm)'],['Lot'],['Lot sqm',1],['Received so far',1],['100 % received on'],['Rent from'],['Rent this month',1]],A.flatMap(a=>{ const I=lotInfo(s.id,a), r=rateRow(s.id,a)||{}, mr=monthRent(s.id,a,m);
+       const inp=`<input class="coi" style="width:140px" value="${esc(r.lots||'')}" placeholder="${num(r.requiredSqm)?fmtN(r.requiredSqm,0)+' (one lot)':'e.g. 130+130'}" onchange="lotSet('${s.id}','${a}',this.value)">`;
+       if(!I.lots.length) return [`<tr><td><b>${esc(areaName(a))}</b></td><td>${inp}</td><td colspan="6" class="muted">Enter lots (e.g. 130+130) or Required sqm in Rate Contracts — until then rent is from received date.</td></tr>`];
+       return I.lots.map((l,i)=>{ const got=Math.max(0,Math.min(l.q,I.rec-l.from)); return `<tr><td>${i?'':`<b>${esc(areaName(a))}</b>`}</td><td>${i?'':inp}</td><td>Pour ${i+1}</td><td class="r">${fmtN(l.q,1)}</td><td class="r">${got>=l.q-1e-6?fmtN(got,1):`<b class="neg">${fmtN(got,1)}</b> <small class="muted">(${Math.round(got/l.q*100)} %)</small>`}</td><td>${l.done?fmtD(l.done)+(l.doc?' <small class="muted">'+esc(l.doc)+'</small>':''):PILL('wn','not yet')}</td><td>${l.done?PILL('ok',fmtD(l.done)):PILL('na','no rent yet')}</td><td class="r">${i?'':money(mr.rent)}</td></tr>`; })
+        .concat(I.rec>I.total+1e-6?[`<tr><td></td><td></td><td colspan="2">Extra over the lots</td><td class="r">${fmtN(I.rec-I.total,1)}</td><td colspan="3"><small class="muted">counted from its own ${I.bs==='inv'?'invoice':'received'} date${s.rentOnReq==='Only required sqm'?' · not billed (required sqm only)':''}</small></td></tr>`]:[]); }))+'</div>'; });
+  b+='<p class="note">Work order says rent starts only when the material for a pour is fully received? Click the system above so it reads <b>When pour lot is 100 % received</b>, enter the lots per area (e.g. <b>130+130</b> for 2 pours). Each lot is charged from the received / invoice date of the challan that completes it. Partly received lots are not charged.</p>';
+  const p=panel('Rent start · as per work order',b,'received date · invoice date · or when a pour lot is complete');
+  const k=h.indexOf('<div class="panel'); return k>=0?h.slice(0,k)+p+h.slice(k):h+p; }; }
+(()=>{ const s=document.createElement('style'); s.textContent='.lotbox{border:1px solid #e4ddd2;border-radius:10px;padding:8px 10px;margin:10px 0;background:#fffdf8}'; document.head.appendChild(s); })();
+try{ clearCaches(); render(); }catch(e){}
+
+/* ================= trk22 · which rent goes into system cost: app calculation · vendor bill · my amount (with reason) + calculation box ================= */
+const rpS=()=>{ state.rentPick=state.rentPick&&typeof state.rentPick==='object'?state.rentPick:{}; return state.rentPick; };
+const rpGet=(sId,m)=>rpS()[sId+'|'+m]||{use:'app'};
+let RP_RAW=0;   /* 1 = give the plain app value (no pick applied) */
+function rpApp(sId,m){ RP_RAW++; try{ return systemMonthRent(sId,m).rent; } finally{ RP_RAW--; } }
+function rpUsed(sId,m){ const p=rpGet(sId,m), app=rpApp(sId,m), bill=invoiceFor(sId,m);
+  if(p.use==='bill'&&bill!=null) return {v:num(bill),src:'Vendor bill',app,bill,p};
+  if(p.use==='mine'&&p.amt!=null&&p.amt!=='') return {v:num(p.amt),src:'My amount',app,bill,p};
+  return {v:app,src:'App calculation',app,bill,p}; }
+function rpSet(sId,m,use){ const k=sId+'|'+m, P=rpS(), o=P[k]||{}; if(use==='bill'&&invoiceFor(sId,m)==null) return toast('Enter the vendor bill for '+monthLabel(m)+' on Vendor Bill Check first.');
+  if(use==='mine'){ const a=prompt('My amount for '+sysName(sId)+' · '+monthLabel(m)+' ('+cur()+')',o.amt!=null?o.amt:Math.round(rpApp(sId,m))); if(a===null) return; if(!(num(a)>=0)) return toast('Enter an amount.'); o.amt=num(a); }
+  if(use!=='app'){ const w=prompt('Why use '+(use==='bill'?'the vendor bill':'this amount')+' for system cost?\n(e.g. bill agreed after reconciliation · vendor gave 5 % discount · 2 days idle not charged)',o.why||''); if(w===null) return; if(!w.trim()) return toast('Write the reason.'); o.why=w.trim(); }
+  P[k]=Object.assign(o,{use,by:audWho(),at:todayStr()}); state.rentPickU=nowMs(); try{ clearCaches(); }catch(e){} save(); render(); }
+/* system cost (and work-type cost) use the picked amount: scale that month's rent by picked ÷ app */
+function rpScaled(fn){ return function(){ const o=monthRent; const F=new Map(); monthRent=function(sId,aId,m){ const r=o.apply(this,arguments); if(RP_RAW) return r; const k=sId+'|'+m; if(!F.has(k)){ const p=rpGet(sId,m); let f=1; if(p.use!=='app'){ const u=rpUsed(sId,m); f=u.app>0?u.v/u.app:1; } F.set(k,f); } const f=F.get(k); return f===1?r:Object.assign({},r,{rent:r.rent*f,excess:r.excess*f}); };
+  try{ return fn.apply(this,arguments); } finally{ monthRent=o; } }; }
+costGrouped=rpScaled(costGrouped); workQty=rpScaled(workQty);
+/* the calculation box: how the app worked it out, the bill, the pick and why */
+function rpCalc(sId,m){ const s=sysObj(sId)||{}, U=rpUsed(sId,m); let rows=[];
+  RP_RAW++; try{ ledgerAreas(sId).forEach(a=>{ const r=monthRent(sId,a,m); if(!r.rent&&!num(r.notCounted)) return;
+    rows.push(r.pcs?`<tr><td>${esc(areaName(a))}</td><td colspan="4">${fmtN(r.pcsDays)} piece-days × rate per piece per day</td><td class="r">${money(r.rent)}</td></tr>`
+      :`<tr><td>${esc(areaName(a))}</td><td class="r">${fmtN(r.rate,2)}</td><td class="r">${fmtN(r.sqmDays,1)}</td><td class="r">${r.dim}</td><td>${fmtN(r.rate,2)} × ${fmtN(r.sqmDays,1)} ÷ ${r.dim}${num(r.notCounted)?` <small class="neg">· extra over ${fmtN(r.req,0)} sqm not counted ${money(r.notCounted)}</small>`:''}</td><td class="r"><b>${money(r.rent)}</b></td></tr>`); }); } finally{ RP_RAW--; }
+  const notes=[`Rent starts: <b>${esc(typeof lotRML==='function'?lotRML(s.rentMode||RENT_MODES[0]):RML(s.rentMode||RENT_MODES[0]))}</b>`,`Rent on: <b>${esc(s.rentOnReq||'All sqm on site')}</b>`,`Return day: <b>${dispCharged(sId)?'charged':'not charged'}</b>`];
+  return `<div class="rpcalc"><table class="sheet"><thead><tr><th>Area</th><th class="r">Rate</th><th class="r">Sqm-days</th><th class="r">Days</th><th>Working</th><th class="r">Rent</th></tr></thead><tbody>${rows.join('')||'<tr><td colspan="6" class="muted">No rent this month.</td></tr>'}
+   <tr class="fmt"><td colspan="5"><b>App calculation</b> <small class="muted">sqm on site each day × rate ÷ days in month</small></td><td class="r"><b>${money(U.app)}</b></td></tr>
+   <tr><td colspan="5">Vendor bill</td><td class="r">${U.bill!=null?money(U.bill):'<span class="muted">not entered</span>'}</td></tr>
+   ${U.bill!=null?`<tr><td colspan="5">Bill − app</td><td class="r ${U.bill-U.app>1?'neg':''}">${(U.bill-U.app>0?'+':'')+money(U.bill-U.app)}</td></tr>`:''}
+   <tr class="rpuse"><td colspan="5"><b>Taken for system cost: ${esc(U.src)}</b>${U.p.why?`<br><small>Reason: ${esc(U.p.why)} · ${esc(U.p.by||'')} ${fmtD(U.p.at)}</small>`:''}</td><td class="r"><b>${money(U.v)}</b></td></tr></tbody></table><p class="note">${notes.join(' · ')}</p></div>`; }
+{ const o=PAGES.rent; if(o) PAGES.rent=function(){ const h=o.apply(this,arguments); const m=state.ui.month||thisMonth(), S=rentalSystems().filter(s=>rpApp(s.id,m)>0||invoiceFor(s.id,m)!=null); if(!S.length) return h; const op=state.ui.rpOpen||'';
+  let tot=0; const rows=S.map(s=>{ const U=rpUsed(s.id,m); tot+=U.v; const b=(k,l)=>`<button class="btn sm ${U.p.use===k||(k==='app'&&U.src==='App calculation'&&U.p.use!=='mine'&&U.p.use!=='bill')?'p':''}" onclick="rpSet('${s.id}','${m}','${k}')">${l}</button>`;
+    return `<tr><td><b>${esc(s.name)}</b> <small class="muted">${esc(s.vendor||'')}</small></td><td class="r">${money(U.app)}</td><td class="r">${U.bill!=null?money(U.bill):'<span class="muted">—</span>'}</td><td class="r">${U.p.use==='mine'?money(U.p.amt):'<span class="muted">—</span>'}</td>
+     <td class="nowrap">${b('app','App')}${b('bill','Vendor bill')}${b('mine','My amount')}</td><td class="r"><b>${money(U.v)}</b></td><td style="white-space:normal;max-width:220px"><small>${esc(U.p.why||(U.src==='App calculation'?'worked out from challans and rates':''))}</small></td>
+     <td><button class="btn sm" onclick="setUI('rpOpen','${op===s.id?'':s.id}')">${op===s.id?'Hide':'Calculation'}</button></td></tr>${op===s.id?`<tr><td colspan="8">${rpCalc(s.id,m)}</td></tr>`:''}`; });
+  const p=panel('Rent taken for system cost · '+monthLabel(m),simpleTable([['Vendor'],['App calculation',1],['Vendor bill',1],['My amount',1],['Use for system cost'],['Taken',1],['Why'],['']],rows.concat([`<tr class="fmt"><td><b>Total</b></td><td class="r">${money(S.reduce((a,s)=>a+rpApp(s.id,m),0))}</td><td></td><td></td><td></td><td class="r"><b>${money(tot)}</b></td><td colspan="2"></td></tr>`]))
+    +'<p class="note">Pick per vendor and month which amount goes into <b>System cost</b>: the app calculation (default), the vendor bill, or your own amount. Bill and own amount need a reason. <b>Calculation</b> shows how the app worked it out.</p>','one choice per vendor per month');
+  const k=h.indexOf('<div class="panel'); return k>=0?h.slice(0,k)+p+h.slice(k):h+p; }; }
+(()=>{ const s=document.createElement('style'); s.textContent='.rpcalc{background:#fff;border:1px solid #e4ddd2;border-radius:8px;padding:8px}.rpcalc tr.rpuse td{background:#ecfdf5}.panel td .btn.sm+.btn.sm{margin-left:4px}'; document.head.appendChild(s); })();
+try{ render(); }catch(e){}
 </script>
 </body>
 </html>
