@@ -661,7 +661,7 @@ select.dzin{width:auto;max-width:230px;text-align:left}
 <input type="file" id="restoreFile" accept=".json" style="display:none" onchange="if(this.files[0])restoreBackup(this.files[0]);this.value=''">
 <input type="file" id="fsPick" style="display:none" onchange="fsOpenFile(this.files[0]);this.value=''">
 
-<script>window.__FORMTRACK_PWA=true; window.__FORMTRACK_VER="2026.11.24-1656"; window.__FORMTRACK_VERNAME="24 Nov 16:56"; window.__FT_TRIAL_FROM=1793358725887; window.__FT_OWNER_KEYS=["FTK1.KFWlfr8L9B9vCV5zDqch0g==.dbjdxh8PZxOLP1CNQ2z3RabZkTuh7AORMJY1xre+tWo=", "FTK1.Osl5ooyWCagTRuMdk06Obg==.rchABMlUZsicdxq192DnzmUcdgRXTqVE0LzUln8iqDY="]; window.__FT_ACCESS_PUB="SC1QzgBryXETIvpdPX-L1vNG0PfXbclYD1uqU4rGGy0"; window.__FT_BLOCKED=[];</script>
+<script>window.__FORMTRACK_PWA=true; window.__FORMTRACK_VER="2026.11.24-2012"; window.__FORMTRACK_VERNAME="24 Nov 20:12"; window.__FT_TRIAL_FROM=1793358725887; window.__FT_OWNER_KEYS=["FTK1.KFWlfr8L9B9vCV5zDqch0g==.dbjdxh8PZxOLP1CNQ2z3RabZkTuh7AORMJY1xre+tWo=", "FTK1.Osl5ooyWCagTRuMdk06Obg==.rchABMlUZsicdxq192DnzmUcdgRXTqVE0LzUln8iqDY="]; window.__FT_ACCESS_PUB="SC1QzgBryXETIvpdPX-L1vNG0PfXbclYD1uqU4rGGy0"; window.__FT_BLOCKED=[];</script>
 <script>
 /* FormTrack */
 const STORE_KEY = 'formtrack_data_v2';
@@ -3979,7 +3979,7 @@ function openProjects(){
   const list=[...PRJ.list].sort((a,b)=>(a.id===PRJ.cur?-1:b.id===PRJ.cur?1:(a.name||'').localeCompare(b.name||'')));
   d.innerHTML=`<div class="cfm-box wide" role="dialog" aria-modal="true" aria-label="Projects"><p><b>Projects</b><br><span style="color:var(--muted);font-size:13px">Each project keeps its own data. Tap one to open it.</span></p>
   <div class="prjlist">${list.map(p=>`<button class="prjrow ${p.id===PRJ.cur?'on':''}" onclick="switchProject('${p.id}')"><span class="pi">${esc((p.name||'P').trim().charAt(0).toUpperCase())}</span><span class="pn"><b>${esc(p.name||'Project')}</b><small>${p.company?esc(p.company)+' · ':''}${p.pct==null?'scope not entered':p.pct+'% of scope done'}</small></span>${p.id===PRJ.cur?'<span class="pill ok">OPEN</span>':''}</button>`).join('')}</div>
-  <div class="prjnew"><input id="prjName" placeholder="New project name, e.g. DLF Bay View" aria-label="New project name"><button class="btn p" id="prjAdd">+ Add project</button></div>
+  <div class="prjnew"><input id="prjName" placeholder="New project name, e.g. Riverside Towers" aria-label="New project name"><button class="btn p" id="prjAdd">+ Add project</button></div>
   <div class="acts"><button class="btn" id="cfmNo">Close</button></div></div>`;
   d.querySelector('#cfmNo').onclick=()=>d.remove(); d.onclick=e=>{ if(e.target===d) d.remove(); };
   const inp=d.querySelector('#prjName'); const add=()=>{ const v=inp.value.trim(); if(!v){ inp.focus(); return; } addProject(v); };
@@ -9573,6 +9573,202 @@ try{ render(); }catch(e){}
 /* the dashboard is rental: own (asset) systems are kept out of rental cost figures and shown only in their own box */
 let CG_OWN=0;
 { const _c=costGrouped; costGrouped=function(){ const r=_c.apply(this,arguments); if(state.route!=='dashboard'||CG_OWN) return r; return r.filter(g=>(sysObj(g.s)||{}).ownership!=='Owned'); }; }
+
+/* ================= trk32 · sync: key-value settings (transport per challan, rent pick, work → material links) travel with the storage file ================= */
+const MAP_KEYS=[['chTr','chTrU'],['rentPick','rentPickU'],['workMap','wmU'],['coefs','coefsU']];
+{ const _m=mergeState; mergeState=function(raw){ const inc=raw&&raw.format==='formtrack'?raw.state:raw; const r=_m.apply(this,arguments);
+  try{ MAP_KEYS.forEach(([k,u])=>{ const T=inc&&inc[k]; if(!T||typeof T!=='object'||Array.isArray(T)) return; const M=state[k]&&typeof state[k]==='object'?state[k]:(state[k]={});
+      const newer=num(inc[u])>num(state[u]); let ch=0;
+      Object.keys(T).forEach(key=>{ if(!(key in M)){ M[key]=T[key]; ch++; } else if(newer&&JSON.stringify(M[key])!==JSON.stringify(T[key])){ M[key]=T[key]; ch++; } });
+      if(newer){ Object.keys(M).forEach(key=>{ if(!(key in T)&&num(inc[u])>num(state[u])){ /* removed on the other laptop after our last change */ delete M[key]; ch++; } }); state[u]=inc[u]; }
+      if(ch) r.updated=(r.updated||0)+ch; });
+    clearCaches(); }catch(e){ console.warn(e); }
+  return r; }; }
+
+/* ================= trk33 · Budget vs actual: the project's formwork budget (₹/sqm) against what the app has worked out so far ================= */
+const BG_HEADS=[['hire','Hire – rental systems','rent of all rental systems (challans × rate)'],['own','Own material / asset','cost sheet of own systems, charged on work done'],['pur','Purchase – ply, timber, MS, accessories','enter actual'],['cons','Consumables','store issues (oil, nails, tie rods …)'],['lab','Labour','labour entries / sqm rate'],['tr','Transport','transport per challan'],['oth','Other','enter actual']];
+function bgS(){ state.budget=state.budget&&typeof state.budget==='object'?state.budget:{}; const B=state.budget; B.h=B.h||{}; return B; }
+function bgSet(k,f,v){ const B=bgS(); if(k==='area') B.area=num(v); else { B.h[k]=Object.assign({},B.h[k]||{},{[f]:num(v)}); } B._u=nowMs(); state.budgetU=B._u; save(); render(); }
+function bgActual(){ const keep={l:state.meta.costLab,c:state.meta.costStore,t:state.meta.costTr}, R={hire:0,own:0,cons:0,lab:0,tr:0,sqm:0};
+  state.meta.costLab=state.meta.costStore=state.meta.costTr=true; clearCaches(); CG_OWN++;
+  try{ withUI({period:'todate',month:thisMonth(),groupBy:'system',sysSel:[]},()=>costGrouped()).forEach(g=>{ const own=(sysObj(g.s)||{}).ownership==='Owned'; R.hire+=own?0:num(g.rent)+num(g.xs); R.own+=num(g.own)+(own?num(g.rent):0); R.cons+=num(g.cons); R.lab+=num(g.lab); R.tr+=num(g.tr); R.sqm+=num(g.sqm); }); }
+  finally{ CG_OWN--; state.meta.costLab=keep.l; state.meta.costStore=keep.c; state.meta.costTr=keep.t; clearCaches(); }
+  return R; }
+PAGES.budget=function(){ const B=bgS(), A=bgActual(), area=num(B.area), done=A.sqm, pc=area?Math.min(1,done/area):0;
+  const act=k=>k==='pur'||k==='oth'?num((B.h[k]||{}).act):num(A[k]);
+  const rows=BG_HEADS.map(([k,l,how])=>{ const b=num((B.h[k]||{}).amt), a=act(k), exp=b*pc, d=a-exp;
+    return {k,l,how,b,a,exp,d}; });
+  const T=rows.reduce((x,r)=>({b:x.b+r.b,a:x.a+r.a,exp:x.exp+r.exp,d:x.d+r.d}),{b:0,a:0,exp:0,d:0});
+  const ps=(v,q)=>q?money(v/q):'—', inp=(k,f,v,w)=>`<input class="coi" type="number" style="width:${w||120}px;text-align:right" value="${v||''}" onchange="bgSet('${k}','${f}',this.value)">`;
+  const dd=d=>Math.abs(d)<1?'<span class="muted">—</span>':`<b class="${d>0?'neg':'pos'}">${d>0?'+':'−'}${money(Math.abs(d))}</b>`;
+  let h=`<div class="kpis">${kpi('Budget',area&&T.b?money(T.b/area)+' <small>/sqm</small>':'—',area?money(T.b)+' for '+fmtN(area,0)+' sqm':'enter the total formwork area')}${kpi('Actual so far',done?money(T.a/done)+' <small>/sqm</small>':'—',money(T.a)+' on '+fmtN(done,0)+' sqm done',done&&area&&T.b&&T.a/done>T.b/area?'bad':'')}${kpi('Work done',area?fmtN(pc*100,1)+' %':'—',fmtN(done,0)+' of '+fmtN(area,0)+' sqm')}${kpi(T.d>0?'Over budget so far':'Within budget so far',area&&T.b?money(Math.abs(T.d)):'—','actual vs budget for the work done',T.d>0?'bad':'good')}</div>`;
+  const tb=simpleTable([['Cost head'],['Budget '+cur(),1],['Budget /sqm',1],['Actual so far '+cur(),1],['Actual /sqm',1],['Budget for work done',1],['Over (+) / under (−)',1]],
+    rows.map(r=>`<tr><td><b>${r.l}</b><br><small class="muted">${r.how}</small></td><td class="r">${inp(r.k,'amt',(B.h[r.k]||{}).amt)}</td><td class="r">${ps(r.b,area)}</td><td class="r">${r.k==='pur'||r.k==='oth'?inp(r.k,'act',(B.h[r.k]||{}).act):money(r.a)}</td><td class="r scrk">${ps(r.a,done)}</td><td class="r">${money(r.exp)}</td><td class="r">${dd(r.d)}</td></tr>`),
+    `<tr><td><b>Total</b></td><td class="r"><b>${money(T.b)}</b></td><td class="r"><b>${ps(T.b,area)}</b></td><td class="r"><b>${money(T.a)}</b></td><td class="r"><b>${ps(T.a,done)}</b></td><td class="r">${money(T.exp)}</td><td class="r">${dd(T.d)}</td></tr>`);
+  h+=panel('Budget vs actual',`<div class="chips"><label>Total formwork area (sqm)</label>${inp('area','',B.area,130)}</div>`+tb+`<p class="note">Budget for work done = budget × ${fmtN(pc*100,1)} % (work done ÷ total area). <b>+</b> red = spending faster than the work; <b>−</b> green = within budget. Actuals come from the app (all heads counted here, whatever is ticked on the dashboard); Purchase and Other – type the actual.</p>`,'project to date');
+  return h; };
+{ const g=T13.find(x=>x.h==='planning'); if(g&&!g.t.some(([k])=>k==='budget')){ g.t.splice(1,0,['budget','Budget vs actual']); t13Of.budget=g; T2_ALIAS.budget='planning'; T2_NAMES.budget=g.n; const o=PAGES.budget; PAGES.budget=function(){ return t13Tabs('budget')+o.apply(this,arguments); }; } }
+(()=>{ const s=document.createElement('style'); s.textContent='b.pos{color:var(--good,#15803d)}'; document.head.appendChild(s); })();
+try{ t2Build(); }catch(e){}
+
+/* ================= trk34 · Sheets: an Excel inside the app. Everyone builds their own layout; answer cells carry a tag, so the result is the same for all ================= */
+const XS_COL=i=>{ let s=''; i++; while(i>0){ const m=(i-1)%26; s=String.fromCharCode(65+m)+s; i=Math.floor((i-1)/26); } return s; };
+const XS_IDX=s=>{ let n=0; for(const ch of s) n=n*26+(ch.charCodeAt(0)-64); return n-1; };
+const XS_STD=[['area','Area','sqm'],['kg','Total weight','kg'],['mt','Total weight','MT'],['md','Labour','mandays'],['oil','Shuttering oil','litre']];
+function xsL(){ state.sheets=Array.isArray(state.sheets)?state.sheets:[]; return state.sheets; }
+function xsCur(){ const L=xsL().filter(s=>!s.del); let s=L.find(x=>x.id===state.ui.xsId); if(!s) s=L[0]; return s||null; }
+function xsTouch(s){ s._u=nowMs(); save(); }
+/* tags: standard ones + every item in the Material Master */
+function xsTags(){ const T=XS_STD.map(([k,l,u])=>({k:'std:'+k,l:l+' ('+u+')',u})); const seen=new Set();
+  state.items.slice().sort((a,b)=>String(a.item).localeCompare(String(b.item))).forEach(i=>{ const n=String(i.item||'').trim(); if(!n||seen.has(n.toLowerCase())) return; seen.add(n.toLowerCase()); T.push({k:'it:'+i.id,l:n,u:'nos'}); });
+  return T; }
+const xsTagName=k=>{ if(!k) return ''; const s=XS_STD.find(x=>'std:'+x[0]===k); if(s) return s[1]+' ('+s[2]+')'; const it=itemObj(String(k).slice(3)); return it?it.item:k; };
+const xsTagShort=k=>{ const n=xsTagName(k); return n.length>18?n.slice(0,17)+'…':n; };
+
+/* ---------- formula engine (no eval) ---------- */
+const XE=e=>({e});
+const isE=v=>v&&typeof v==='object'&&!Array.isArray(v)&&v.e;
+function xsTok(src){ const T=[]; let i=0; const s=src;
+  while(i<s.length){ const c=s[i];
+    if(/\s/.test(c)){ i++; continue; }
+    if(c==='"'){ let j=i+1, v=''; while(j<s.length&&s[j]!=='"'){ v+=s[j]; j++; } T.push({t:'s',v}); i=j+1; continue; }
+    const m=s.slice(i).match(/^(\d+\.?\d*|\.\d+)(e[+-]?\d+)?/i); if(m){ T.push({t:'n',v:parseFloat(m[0])}); i+=m[0].length; continue; }
+    const r=s.slice(i).match(/^\$?([A-Z]{1,2})\$?(\d+)(?::\$?([A-Z]{1,2})\$?(\d+))?(?![A-Z0-9_(])/i); if(r){ const U=x=>x.toUpperCase(); T.push(r[3]?{t:'g',a:[U(r[1]),+r[2]],b:[U(r[3]),+r[4]]}:{t:'r',c:U(r[1]),n:+r[2]}); i+=r[0].length; continue; }
+    const f=s.slice(i).match(/^[A-Za-z_][A-Za-z0-9_.]*/); if(f){ T.push({t:'f',v:f[0].toUpperCase()}); i+=f[0].length; continue; }
+    const o=s.slice(i).match(/^(<=|>=|<>|[-+*/^&=<>(),%×÷])/); if(o){ T.push({t:'o',v:o[0]==='×'?'*':o[0]==='÷'?'/':o[0]}); i+=o[0].length; continue; }
+    throw new Error('bad '+c); }
+  return T; }
+function xsParse(src){ const T=xsTok(src); let p=0; const pk=()=>T[p], eat=v=>{ const t=T[p]; if(!t||(v&&t.v!==v)) throw new Error('expected '+v); p++; return t; };
+  const cmp=()=>{ let a=cat(); while(pk()&&['=','<>','<','>','<=','>='].includes(pk().v)){ const o=eat().v; a={k:'b',o,a,b:cat()}; } return a; };
+  const cat=()=>{ let a=add(); while(pk()&&pk().v==='&'){ eat(); a={k:'b',o:'&',a,b:add()}; } return a; };
+  const add=()=>{ let a=mul(); while(pk()&&(pk().v==='+'||pk().v==='-')&&pk().t==='o'){ const o=eat().v; a={k:'b',o,a,b:mul()}; } return a; };
+  const mul=()=>{ let a=pw(); while(pk()&&(pk().v==='*'||pk().v==='/')){ const o=eat().v; a={k:'b',o,a,b:pw()}; } return a; };
+  const pw=()=>{ let a=un(); while(pk()&&pk().v==='^'){ eat(); a={k:'b',o:'^',a,b:un()}; } return a; };
+  const un=()=>{ if(pk()&&pk().t==='o'&&(pk().v==='-'||pk().v==='+')){ const o=eat().v; const x=un(); return o==='-'?{k:'neg',x}:x; } let x=pri(); if(pk()&&pk().v==='%'){ eat(); x={k:'b',o:'/',a:x,b:{k:'n',v:100}}; } return x; };
+  const pri=()=>{ const t=pk(); if(!t) throw new Error('end');
+    if(t.t==='n'){ p++; return {k:'n',v:t.v}; } if(t.t==='s'){ p++; return {k:'s',v:t.v}; }
+    if(t.t==='r'){ p++; return {k:'r',c:t.c,n:t.n}; } if(t.t==='g'){ p++; return {k:'g',a:t.a,b:t.b}; }
+    if(t.t==='f'){ p++; if(t.v==='TRUE') return {k:'n',v:1}; if(t.v==='FALSE') return {k:'n',v:0}; eat('('); const args=[]; if(pk()&&pk().v!==')'){ args.push(cmp()); while(pk()&&pk().v===','){ eat(); args.push(cmp()); } } eat(')'); return {k:'fn',n:t.v,args}; }
+    if(t.v==='('){ eat('('); const x=cmp(); eat(')'); return x; }
+    throw new Error('unexpected '+t.v); };
+  const x=cmp(); if(p<T.length) throw new Error('extra'); return x; }
+const xsNum=v=>{ if(isE(v)) return v; if(Array.isArray(v)) v=v[0]; if(v===''||v==null) return 0; if(typeof v==='number') return v; const n=parseFloat(String(v).replace(/,/g,'')); return isNaN(n)?XE('#VALUE!'):n; };
+const xsFlat=a=>a.flat(Infinity);
+const xsNums=args=>xsFlat(args).filter(v=>typeof v==='number');
+function xsItem(name){ const n=String(name||'').trim().toLowerCase(); if(!n) return null; return state.items.find(i=>String(i.item||'').trim().toLowerCase()===n)||state.items.find(i=>String(i.item||'').toLowerCase().includes(n))||null; }
+function xsCombos(list){ return String(list).split(/[,;]/).map(x=>x.trim()).filter(Boolean).map(l=>({l:l.replace(/\s*m$/i,'')+' m',v:l.split('+').reduce((a,b)=>a+(parseFloat(b)||0),0)})); }
+function xsPick(h,mn,mx,list){ let best=null; xsCombos(list).forEach(c=>{ const left=h-c.v; if(left>=mn-1e-9&&left<=mx+1e-9&&(!best||left<best.left)) best={...c,left}; }); return best; }
+const XS_FN={
+  SUM:a=>xsNums(a).reduce((x,y)=>x+y,0), MIN:a=>Math.min(...xsNums(a)), MAX:a=>Math.max(...xsNums(a)),
+  AVERAGE:a=>{ const n=xsNums(a); return n.length?n.reduce((x,y)=>x+y,0)/n.length:XE('#DIV/0!'); }, COUNT:a=>xsNums(a).length,
+  ROUND:a=>{ const x=xsNum(a[0]), d=xsNum(a[1]??0); if(isE(x)) return x; const f=10**d; return Math.round(x*f)/f; },
+  ROUNDUP:a=>{ const x=xsNum(a[0]), d=xsNum(a[1]??0); if(isE(x)) return x; const f=10**d; return Math.sign(x)*Math.ceil(Math.abs(x)*f-1e-9)/f; },
+  ROUNDDOWN:a=>{ const x=xsNum(a[0]), d=xsNum(a[1]??0); if(isE(x)) return x; const f=10**d; return Math.sign(x)*Math.floor(Math.abs(x)*f+1e-9)/f; },
+  CEILING:a=>{ const x=xsNum(a[0]), s=xsNum(a[1]??1); return s?Math.ceil(x/s-1e-9)*s:0; }, FLOOR:a=>{ const x=xsNum(a[0]), s=xsNum(a[1]??1); return s?Math.floor(x/s+1e-9)*s:0; },
+  INT:a=>Math.floor(xsNum(a[0])), ABS:a=>Math.abs(xsNum(a[0])), SQRT:a=>{ const x=xsNum(a[0]); return x<0?XE('#NUM!'):Math.sqrt(x); }, PI:()=>Math.PI,
+  IF:a=>xsNum(a[0])?(a[1]??1):(a[2]??0), AND:a=>xsFlat(a).every(v=>xsNum(v))?1:0, OR:a=>xsFlat(a).some(v=>xsNum(v))?1:0, NOT:a=>xsNum(a[0])?0:1,
+  IFERROR:a=>isE(a[0])?a[1]:a[0], TEXT:a=>{ const x=xsNum(a[0]); const d=((String(a[1]||'0').split('.')[1])||'').length; return isE(x)?x:x.toFixed(d); },
+  /* app data */
+  MASTER:a=>{ const it=xsItem(a[0]); if(!it) return XE('#ITEM?'); const f=String(a[1]||'kg').toLowerCase(); return f.startsWith('sqm')?num(it.sqmPerNo):f.startsWith('rate')?num(it.ratePcDay):num(it.kgPerNo); },
+  STOCK:a=>{ const it=xsItem(a[0]); if(!it) return XE('#ITEM?'); try{ return itemBalOn(it.id,null,todayStr()); }catch(e){ return XE('#ITEM?'); } },
+  SCOPE:a=>{ const q=String(a[0]||'').trim().toLowerCase(); return state.scope.filter(s=>{ const an=String(areaName(s.areaId)||'').toLowerCase(), el=String(s.element||'').toLowerCase(); return !q||an===q||el===q||an.includes(q); }).reduce((x,s)=>x+num(s.scopeSqm),0); },
+  PICKSIZE:a=>{ const b=xsPick(xsNum(a[0]),xsNum(a[1]),xsNum(a[2]),a[3]); return b?b.l:XE('#NO FIT'); },
+  PICKLEN:a=>{ const b=xsPick(xsNum(a[0]),xsNum(a[1]),xsNum(a[2]),a[3]); return b?b.v:XE('#NO FIT'); } };
+const XS_APP=/\b(MASTER|STOCK|SCOPE)\s*\(/i;
+function xsEval(sh){ const C=new Map(), busy=new Set();
+  const raw=ref=>((sh.cells||{})[ref]||{}).v;
+  const val=ref=>{ if(C.has(ref)) return C.get(ref); if(busy.has(ref)) return XE('#CYCLE'); const r=raw(ref); let out;
+    if(r==null||r==='') out='';
+    else if(typeof r==='string'&&r.startsWith('=')){ busy.add(ref); try{ out=ev(xsParse(r.slice(1))); }catch(e){ out=XE('#ERROR'); } busy.delete(ref); }
+    else { const n=parseFloat(String(r).replace(/,/g,'')); out=(/^\s*-?[\d,]*\.?\d+\s*$/.test(String(r))&&!isNaN(n))?n:String(r); }
+    if(Array.isArray(out)) out=out[0]; C.set(ref,out); return out; };
+  const ev=x=>{ switch(x.k){
+    case 'n': return x.v; case 's': return x.v;
+    case 'r': return val(x.c+x.n);
+    case 'g': { const c0=XS_IDX(x.a[0]), c1=XS_IDX(x.b[0]), r0=Math.min(x.a[1],x.b[1]), r1=Math.max(x.a[1],x.b[1]), o=[]; for(let c=Math.min(c0,c1);c<=Math.max(c0,c1);c++) for(let r=r0;r<=r1;r++) o.push(val(XS_COL(c)+r)); return o; }
+    case 'neg': { const v=xsNum(ev(x.x)); return isE(v)?v:-v; }
+    case 'fn': { const f=XS_FN[x.n]; if(!f) return XE('#NAME?'); const A=x.args.map(ev); if(x.n!=='IFERROR'){ const e=xsFlat(A).find(isE); if(e&&!['IF'].includes(x.n)) return e; } const r=f(A); return typeof r==='number'&&!isFinite(r)?XE('#NUM!'):r; }
+    case 'b': { const A=ev(x.a), B=ev(x.b); if(isE(A)) return A; if(isE(B)) return B;
+      if(x.o==='&') return String(Array.isArray(A)?A[0]:A)+String(Array.isArray(B)?B[0]:B);
+      if(['=','<>','<','>','<=','>='].includes(x.o)){ const a=Array.isArray(A)?A[0]:A, b=Array.isArray(B)?B[0]:B; const r={'=':a==b,'<>':a!=b,'<':a<b,'>':a>b,'<=':a<=b,'>=':a>=b}[x.o]; return r?1:0; }
+      const a=xsNum(A), b=xsNum(B); if(isE(a)) return a; if(isE(b)) return b;
+      if(x.o==='+') return a+b; if(x.o==='-') return a-b; if(x.o==='*') return a*b; if(x.o==='/') return b===0?XE('#DIV/0!'):a/b; if(x.o==='^') return a**b; } }
+    return XE('#ERROR'); };
+  return {val,raw}; }
+const xsFmt=v=>{ if(isE(v)) return `<span class="neg">${esc(v.e)}</span>`; if(typeof v==='number'){ const a=Math.abs(v); const d=Number.isInteger(v)?0:a>=100?1:a>=1?3:4; return fmtN(Math.round(v*10**d)/10**d,d).replace(/(\.\d*?)0+$/,'$1').replace(/\.$/,''); } return esc(String(v)); };
+
+/* ---------- result: tagged cells → standard list ---------- */
+function xsResult(sh){ const E=xsEval(sh), R=[]; Object.entries(sh.tags||{}).forEach(([ref,k])=>{ if(!k) return; const v=E.val(ref); R.push({ref,k,v:typeof v==='number'?v:null}); });
+  const area=R.find(r=>r.k==='std:area'); return {R,area:area?area.v:null}; }
+
+/* ---------- actions ---------- */
+function xsNew(tpl){ const n=prompt('Sheet name (e.g. Cuplock · typical floor)',tpl?'Cuplock · example':'New sheet'); if(n===null) return; const s={id:uid(),_u:nowMs(),name:n.trim()||'Sheet',ncol:8,nrow:24,cells:{},tags:{},by:audWho(),at:todayStr()};
+  if(tpl){ const C={A1:'Item',B1:'Value',C1:'Unit',A2:'Floor-to-floor',B2:'3.15',C2:'m',A3:'Slab',B3:'0.15',C3:'m',A4:'Ply + joist + runner',B4:'0.218',C4:'m',A5:'Height for vertical',B5:'=B2-B3-B4',C5:'m',A6:'Pour zone X',B6:'50',C6:'m',A7:'Pour zone Y',B7:'30',C7:'m',A8:'Grid',B8:'1.2',C8:'m',A9:'Lines X',B9:'=ROUNDUP(B6/B8,0)+1',A10:'Lines Y',B10:'=ROUNDUP(B7/B8,0)+1',A11:'Ledger levels',B11:'2',
+      A13:'Item',B13:'Size',C13:'Nos',D13:'kg / no',E13:'kg',A14:'Vertical',B14:'=PICKSIZE(B5,0.2,0.9,"3,2.5,2+0.5,2")',C14:'=B9*B10',D14:'13.3',E14:'=C14*D14',A15:'Ledger',B15:'1.2 m',C15:'=(B10*(B9-1)+B9*(B10-1))*B11',D15:'4.5',E15:'=C15*D15',A16:'Base jack',C16:'=C14',D16:'3.5',E16:'=C16*D16',A17:'U-head',C17:'=C14',D17:'3.5',E17:'=C17*D17',A18:'Total kg',E18:'=SUM(E14:E17)',A19:'Area sqm',E19:'=B6*B7',A20:'Sets propped',B20:'2',A21:'Total MT',E21:'=E18*B20/1000'};
+    Object.entries(C).forEach(([k,v])=>s.cells[k]={v}); s.tags={E19:'std:area',E18:'std:kg',E21:'std:mt'}; s.note='Example values only – replace with your design and Material Master values.'; }
+  xsL().push(s); state.ui.xsId=s.id; state.ui.xsSel='A1'; save(); render(); }
+function xsRen(){ const s=xsCur(); if(!s) return; const n=prompt('Rename sheet',s.name); if(n===null||!n.trim()) return; s.name=n.trim(); xsTouch(s); render(); }
+function xsDel(){ const s=xsCur(); if(!s) return; askConfirm('Delete the sheet "'+esc(s.name)+'"? It goes to the Recycle bin of this device only if you keep a backup.',()=>{ s.del=1; xsTouch(s); state.ui.xsId=''; render(); },'Delete'); }
+function xsSel(ref){ state.ui.xsSel=ref; const s=xsCur(); render(); setTimeout(()=>{ const td=document.querySelector(`.xsg td[data-r="${ref}"]`); if(td) td.scrollIntoView({block:'nearest',inline:'nearest'}); },0); }
+function xsSet(ref,v,quiet){ const s=xsCur(); if(!s) return; s.cells=s.cells||{}; v=String(v); if(v.startsWith('=')&&v.length>1){ try{ xsParse(v.slice(1)); }catch(e){ toast('Formula not understood: '+e.message); } }
+  if(v==='') delete s.cells[ref]; else s.cells[ref]={v}; const m=ref.match(/^([A-Z]+)(\d+)$/); if(m){ s.ncol=Math.max(s.ncol,XS_IDX(m[1])+2); s.nrow=Math.max(s.nrow,+m[2]+2); } xsTouch(s); if(!quiet) render(); }
+function xsCommit(move){ const i=document.getElementById('xsIn'), ref=state.ui.xsSel; if(!i||!ref) return; xsSet(ref,i.value); if(move){ const m=ref.match(/^([A-Z]+)(\d+)$/); xsSel(m[1]+(+m[2]+1)); } }
+function xsTag(k){ const s=xsCur(), ref=state.ui.xsSel; if(!s||!ref) return; s.tags=s.tags||{}; if(k) { Object.keys(s.tags).forEach(r=>{ if(s.tags[r]===k&&r!==ref) delete s.tags[r]; }); s.tags[ref]=k; } else delete s.tags[ref]; xsTouch(s); render(); }
+function xsGrow(w){ const s=xsCur(); if(!s) return; if(w==='r') s.nrow+=5; else s.ncol=Math.min(52,s.ncol+2); xsTouch(s); render(); }
+function xsPaste(){ const s=xsCur(); if(!s) return; const t=prompt('Paste cells copied from Excel (they go in from the selected cell)'); if(!t) return; const m=(state.ui.xsSel||'A1').match(/^([A-Z]+)(\d+)$/), c0=XS_IDX(m[1]), r0=+m[2];
+  t.replace(/\r/g,'').split('\n').filter((l,i,a)=>l!==''||i<a.length-1).forEach((line,ri)=>line.split('\t').forEach((v,ci)=>{ const ref=XS_COL(c0+ci)+(r0+ri); if(v==='') delete s.cells[ref]; else s.cells[ref]={v}; s.ncol=Math.max(s.ncol,c0+ci+2); s.nrow=Math.max(s.nrow,r0+ri+2); }));
+  xsTouch(s); render(); toast('Pasted.'); }
+function xsCsv(){ const s=xsCur(); if(!s) return; const E=xsEval(s), rows=[]; for(let r=1;r<=s.nrow;r++){ const row=[]; for(let c=0;c<s.ncol;c++){ const v=E.val(XS_COL(c)+r); row.push(isE(v)?v.e:v); } rows.push(row); }
+  while(rows.length&&rows.at(-1).every(v=>v===''||v==null)) rows.pop();
+  const csv=rows.map(r=>r.map(v=>{ v=String(v??''); return /[",\n]/.test(v)?'"'+v.replace(/"/g,'""')+'"':v; }).join(',')).join('\n'); const a=document.createElement('a'); a.href=URL.createObjectURL(new Blob(['﻿'+csv],{type:'text/csv'})); a.download=(s.name||'sheet').replace(/[^\w\- ]+/g,'')+'.csv'; a.click(); }
+function xsSaveCoef(){ const s=xsCur(); if(!s) return; const {R,area}=xsResult(s); if(!area) return toast('Tag one cell as Area (sqm) first – per sqm needs it.');
+  state.coefs=state.coefs&&typeof state.coefs==='object'?state.coefs:{}; let n=0; R.forEach(r=>{ if(r.k==='std:area'||r.v==null) return; state.coefs[r.k]={v:r.v/area,from:s.name,sheet:s.id,by:audWho(),at:todayStr()}; n++; }); state.coefsU=nowMs(); save(); render(); toast(n+' coefficients saved from "'+s.name+'".'); }
+
+/* ---------- page ---------- */
+PAGES.sheets=function(){ const L=xsL().filter(s=>!s.del), s=xsCur();
+  let h=`<div class="xstabs">${L.map(x=>`<button class="${s&&x.id===s.id?'on':''}" onclick="state.ui.xsId='${x.id}';state.ui.xsSel='A1';render()">${esc(x.name)}</button>`).join('')}<button onclick="xsNew(false)">+ New sheet</button>${L.length?'':`<button onclick="xsNew(true)">+ Example sheet</button>`}</div>`;
+  if(!s) return h+panel('Sheets',`<p>Make your own working here, the way you do in Excel. Then <b>tag the answer cells</b> (Area, Total kg, an item from the Material Master …). The app reads only the tags, so everybody's result comes out the same way, whatever the layout.</p><div class="chips"><button class="btn p" onclick="xsNew(false)">+ New sheet</button><button class="btn" onclick="xsNew(true)">+ Start from an example</button></div>`);
+  const E=xsEval(s), sel=state.ui.xsSel||'A1', raw=E.raw(sel), tg=(s.tags||{})[sel]||'';
+  const T=xsTags();
+  h+=`<div class="xstool"><span class="muted">${esc(s.by||'')} ${s.at?fmtD(s.at):''}</span><span style="flex:1"></span><label>Tag this cell</label><select class="coi" style="width:240px" onchange="xsTag(this.value)"><option value="">— no tag —</option><optgroup label="Standard">${T.filter(t=>t.k.startsWith('std:')).map(t=>`<option value="${t.k}" ${t.k===tg?'selected':''}>${esc(t.l)}</option>`).join('')}</optgroup><optgroup label="Material Master">${T.filter(t=>t.k.startsWith('it:')).map(t=>`<option value="${t.k}" ${t.k===tg?'selected':''}>${esc(t.l)}</option>`).join('')}</optgroup></select><span class="xssep"></span><button class="btn sm" onclick="xsPaste()">⬆ Paste from Excel</button><button class="btn sm" onclick="xsCsv()">⬇ Excel</button><button class="btn sm" onclick="xsGrow('r')">+ Rows</button><button class="btn sm" onclick="xsGrow('c')">+ Columns</button><button class="btn sm" onclick="xsRen()">Rename</button><button class="btn sm" onclick="xsDel()">Delete</button></div>`;
+  h+=`<div class="xsfx"><span class="xsref">${sel}</span><span class="xsfxi">ƒx</span><input id="xsIn" class="xsform" value="${esc(raw==null?'':String(raw))}" placeholder="type a value or a formula, e.g. =B6*B7" onkeydown="if(event.key==='Enter'){event.preventDefault();xsCommit(true)}else if(event.key==='Escape'){this.blur();render()}else if(event.key==='Tab'){event.preventDefault();xsSet('${sel}',this.value);const m='${sel}'.match(/^([A-Z]+)(\\d+)$/);xsSel(XS_COL(XS_IDX(m[1])+1)+m[2])}" data-o="${esc(raw==null?'':String(raw))}" onblur="if(this.value!==this.dataset.o)xsSet('${sel}',this.value,true)"></div>`;
+  let g=`<div class="xsgw"><table class="xsg"><thead><tr><th class="xsc"></th>`; const sm=sel.match(/^([A-Z]+)(\d+)$/)||[];
+  for(let c=0;c<s.ncol;c++) g+=`<th class="${XS_COL(c)===sm[1]?'xsselh':''}">${XS_COL(c)}</th>`;
+  g+=`</tr></thead><tbody>`;
+  for(let r=1;r<=s.nrow;r++){ g+=`<tr><th class="xsc ${String(r)===sm[2]?'xsselh':''}">${r}</th>`;
+    for(let c=0;c<s.ncol;c++){ const ref=XS_COL(c)+r, rv=E.raw(ref), v=rv==null||rv===''?'':E.val(ref), t=(s.tags||{})[ref];
+      const isF=typeof rv==='string'&&rv.startsWith('='), cls=rv==null||rv===''?'':isF?(XS_APP.test(rv)?'xsl':'xsf'):(typeof v==='number'?'xsi':'');
+      g+=`<td data-r="${ref}" class="${cls} ${ref===sel?'xssel':''} ${t?'xso':''} ${typeof v==='number'||isE(v)?'xsn':''}" onclick="xsSel('${ref}')" ondblclick="document.getElementById('xsIn').focus()" title="${isF?esc(rv):''}">${v===''?'':xsFmt(v)}${cls==='xsl'?'<i class="xsdot"></i>':''}${t?`<span class="xstag">⇢ ${esc(xsTagShort(t))}</span>`:''}</td>`; }
+    g+=`</tr>`; }
+  g+=`</tbody></table></div>`;
+  const side=`<div class="xsside"><h5>Link to app data</h5><div class="xsfn"><code>MASTER("item","kg")</code><small>kg / sqm / rate of an item from the Material Master</small></div><div class="xsfn"><code>STOCK("item")</code><small>nos on site today</small></div><div class="xsfn"><code>SCOPE("area or element")</code><small>scope sqm from the Scope page</small></div><div class="xsfn"><code>PICKSIZE(height,min,max,"3,2.5,2+0.5")</code><small>best size for the height (PICKLEN gives its length)</small></div><h5 style="margin-top:10px">Functions</h5><div class="muted" style="font-size:12px;line-height:1.6">SUM · MIN · MAX · AVERAGE · COUNT · ROUND · ROUNDUP · ROUNDDOWN · CEILING · FLOOR · INT · ABS · SQRT · IF · AND · OR · IFERROR · TEXT · + − × ÷ ^ % &amp;</div><h5 style="margin-top:10px">Colours</h5><div class="xslg"><span class="xsi">typed number</span><span class="xsl">linked<i class="xsdot"></i></span><span class="xsf">formula</span><span class="xso">tagged</span></div><p class="muted" style="font-size:11.5px;margin:8px 0 0">Keys: arrows move · Enter edit / next row · Delete clears · type to start.</p></div>`;
+  h+=`<div class="xsw">${g}${side}</div>`;
+  if(s.note) h+=`<p class="muted" style="margin:6px 0 0">${esc(s.note)}</p>`;
+  /* result */
+  const {R,area}=xsResult(s);
+  const rows=R.sort((a,b)=>(a.k==='std:area'?-1:0)-(b.k==='std:area'?-1:0)||xsTagName(a.k).localeCompare(xsTagName(b.k))).map(r=>`<tr><td><b>${esc(xsTagName(r.k))}</b></td><td>${r.ref}</td><td class="r">${r.v==null?'<span class="neg">not a number</span>':xsFmt(r.v)}</td><td class="r scrk">${r.k==='std:area'||r.v==null||!area?'—':xsFmt(r.v/area)}</td></tr>`);
+  h+=panel('Result · same format for everyone',(R.length?simpleTable([['Tag'],['Cell'],['Value',1],['Per sqm',1]],rows):'<p class="muted">No cells tagged yet. Select an answer cell and pick a tag above.</p>')+(area?'':`<p class="note">${PILL('wn','missing')} Tag one cell as <b>Area (sqm)</b> – per sqm needs it.</p>`)+`<div class="chips" style="margin-top:6px"><span style="flex:1"></span><button class="btn sm p" onclick="xsSaveCoef()">Save as coefficients</button></div>`,R.length+' tagged');
+  /* compare sheets with the same tags (this site + other sites on this device) */
+  const all=[]; try{ (typeof coAll==='function'?coAll():[]).forEach(({p,st})=>(st.sheets||[]).filter(x=>!x.del).forEach(x=>all.push({site:p.name||st.meta.project,sh:x,st}))); }catch(e){}
+  if(!all.length) L.forEach(x=>all.push({site:state.meta.project,sh:x,st:state}));
+  const res=all.map(a=>{ let o; withState(a.st,()=>{ o=xsResult(a.sh); }); return {...a,...o}; }).filter(a=>a.area&&a.R.length>1);
+  if(res.length>1){ const keys=[...new Set(res.flatMap(a=>a.R.map(r=>r.k)))].filter(k=>k!=='std:area');
+    const cell=(a,k)=>{ const r=a.R.find(x=>x.k===k); return r&&r.v!=null?r.v/a.area:null; };
+    const med=k=>{ const v=res.map(a=>cell(a,k)).filter(x=>x!=null).sort((x,y)=>x-y); return v.length?v[Math.floor(v.length/2)]:null; };
+    const tb=simpleTable([['Per sqm']].concat(res.map(a=>[esc(a.site)+' · '+esc(a.sh.name),1])),keys.map(k=>{ const m=med(k); return `<tr><td><b>${esc(xsTagName(k))}</b></td>${res.map(a=>{ const v=cell(a,k); const off=v!=null&&m&&Math.abs(v-m)/m>0.1; return `<td class="r">${v==null?'<span class="muted">—</span>':(off?`<b class="neg">${xsFmt(v)}</b> ${PILL('wn','check')}`:xsFmt(v))}</td>`; }).join('')}</tr>`; }).concat([`<tr><td class="muted">Area tagged (sqm)</td>${res.map(a=>`<td class="r muted">${xsFmt(a.area)}</td>`).join('')}</tr>`]));
+    h+=panel('Compare sheets',tb+`<p class="muted" style="margin:6px 0 0">Every sheet that has an Area tag, whatever its layout. <b>check</b> = more than 10 % away from the middle value.</p>`,res.length+' sheets'); }
+  return h; };
+document.addEventListener('keydown',function(ev){ if(state.route!=='sheets'||ev.ctrlKey||ev.metaKey||ev.altKey) return; const a=document.activeElement; if(a&&/^(INPUT|TEXTAREA|SELECT)$/.test(a.tagName)) return; if(document.getElementById('askp')||document.getElementById('cfm')) return;
+  const sel=state.ui.xsSel||'A1', m=sel.match(/^([A-Z]+)(\d+)$/); if(!m) return; const c=XS_IDX(m[1]), r=+m[2];
+  const go_=(cc,rr)=>{ ev.preventDefault(); xsSel(XS_COL(Math.max(0,cc))+Math.max(1,rr)); };
+  if(ev.key==='ArrowDown') return go_(c,r+1); if(ev.key==='ArrowUp') return go_(c,r-1); if(ev.key==='ArrowLeft') return go_(c-1,r); if(ev.key==='ArrowRight'||ev.key==='Tab') return go_(c+1,r);
+  if(ev.key==='Enter'||ev.key==='F2'){ ev.preventDefault(); const i=document.getElementById('xsIn'); if(i){ i.focus(); i.setSelectionRange(i.value.length,i.value.length); } return; }
+  if(ev.key==='Delete'||ev.key==='Backspace'){ ev.preventDefault(); xsSet(sel,''); return; }
+  if(ev.key.length===1){ ev.preventDefault(); const i=document.getElementById('xsIn'); if(i){ i.value=ev.key; i.focus(); } } });
+T2_NAMES.sheets='Planning';
+{ const g=T13.find(x=>x.h==='planning'); if(g&&!g.t.some(([k])=>k==='sheets')){ g.t.splice(1,0,['sheets','Sheets']); t13Of.sheets=g; T2_ALIAS.sheets='planning'; const o=PAGES.sheets; PAGES.sheets=function(){ return t13Tabs('sheets')+o.apply(this,arguments); }; } }
+(()=>{ const s=document.createElement('style'); s.textContent=`.xstabs{display:flex;gap:4px;flex-wrap:wrap;margin-bottom:6px}.xstabs button{border:1px solid var(--line,#e4ddd2);background:var(--paper,#fff);border-radius:8px 8px 0 0;padding:6px 12px;font-size:13px;cursor:pointer;color:inherit}.xstabs button.on{background:#0f766e;color:#fff;border-color:#0f766e;font-weight:600}.xstool{display:flex;gap:6px;align-items:center;flex-wrap:wrap;background:var(--paper,#fff);border:1px solid var(--line,#e4ddd2);border-radius:8px 8px 0 0;padding:6px 8px}.xstool label{font-size:12px;color:var(--muted,#6b5f52)}.xssep{width:1px;height:22px;background:#e4ddd2;margin:0 4px}.xsfx{display:flex;align-items:center;gap:10px;background:var(--paper,#fff);border:1px solid var(--line,#e4ddd2);border-top:0;border-radius:0 0 8px 8px;padding:6px 10px}.xsref{font-weight:700;background:#f4f1ec;color:#2b2620;padding:2px 10px;border-radius:5px;min-width:44px;text-align:center}.xsfxi{color:#0f766e;font-style:italic;font-weight:700}.xsform{flex:1;font-family:ui-monospace,Menlo,Consolas,monospace;font-size:14px;border:0;outline:0;background:transparent;color:inherit;padding:4px}.xsw{display:grid;grid-template-columns:minmax(0,1fr) 260px;gap:12px;margin-top:10px;align-items:start}.xsgw{overflow:auto;max-height:70vh;border:1px solid #ddd6cb;border-radius:6px}.xsg{border-collapse:collapse;background:#fff;font-size:13px;color:#2b2620}.xsg th,.xsg td{border:1px solid #e5dfd5;padding:4px 8px;height:28px;min-width:92px;white-space:nowrap;position:relative}.xsg td{cursor:cell}.xsg thead th{position:sticky;top:0;z-index:2;background:#f4f1ec;color:#6b5f52;font-weight:600;text-align:center;font-size:11.5px}.xsg th.xsc{position:sticky;left:0;z-index:1;background:#f4f1ec;color:#6b5f52;min-width:34px;width:34px;text-align:center;font-size:11.5px;font-weight:600}.xsg thead th.xsc{z-index:3}.xsg .xsselh{background:#d8efe8!important;color:#0f766e!important}.xsg td.xsn{text-align:right}.xsg td.xsi{background:#fff7d6;color:#1d4ed8}.xsg td.xsl{background:#e8f1fb;color:#1d4ed8}.xsg td.xso{background:#fff1e8;font-weight:700}.xsg td.xssel{outline:2px solid #0f766e;outline-offset:-2px}.xsdot{position:absolute;top:3px;left:3px;width:6px;height:6px;border-radius:50%;background:#3b82f6}.xstag{display:inline-block;margin-left:6px;font-size:10.5px;font-weight:700;color:#c2410c;background:#fff1e8;border:1px solid #f5c6a5;border-radius:4px;padding:0 4px;vertical-align:middle}.xsside{background:var(--paper,#fff);border:1px solid var(--line,#e4ddd2);border-radius:10px;padding:10px 12px}.xsside h5{margin:0 0 6px;font-size:12px;text-transform:uppercase;letter-spacing:.05em;color:#0f766e}.xsfn{margin-bottom:8px}.xsfn code{display:inline-block;white-space:normal;word-break:break-all;font-size:11.5px;background:#f4f1ec;color:#2b2620;padding:2px 6px;border-radius:4px}.xsfn small{display:block;color:var(--muted,#6b5f52);font-size:11.5px;margin-top:2px}.xslg{display:flex;gap:4px;flex-wrap:wrap}.xslg span{padding:2px 7px;border:1px solid #ddd6cb;font-size:11.5px;position:relative;color:#2b2620}.xslg .xsi{background:#fff7d6}.xslg .xsl{background:#e8f1fb;padding-left:13px}.xslg .xsf{background:#fff}.xslg .xso{background:#fff1e8}@media (max-width:1100px){.xsw{grid-template-columns:1fr}}`; document.head.appendChild(s); })();
+try{ t2Build(); }catch(e){}
 </script>
 </body>
 </html>
